@@ -15,7 +15,7 @@ Este módulo é distribuído diretamente via **GitHub Releases** (não listado n
 1. No Foundry VTT, acesse **Módulos Complementares** (*Add-on Modules*) → **Instalar Módulo** (*Install Module*).
 2. No campo **Manifest URL**, cole a URL direta do `module.json` da última Release deste repositório:
    ```text
-   https://github.com/<SEU-USUARIO>/<SEU-REPOSITORIO>/releases/latest/download/module.json
+   https://github.com/carlos-decastro/t20-compendios-completos/releases/latest/download/module.json
    ```
 3. Clique em **Instalar** e, após entrar no mundo de Tormenta20, ative **Tormenta20 — Compêndios Completos** em **Gerenciar Módulos**.
 
