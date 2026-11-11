@@ -51,7 +51,7 @@ export async function openCheckPromptDialog() {
 
   const payload = await foundry.applications.api.DialogV2.wait({
     classes: ["t20pf2e-dialog-window"],
-    window: { title: "Pedir Teste / Salvaguarda (Estilo PF2e)", icon: "fa-solid fa-dice-d20" },
+    window: { title: "Pedir Teste / Salvaguarda", icon: "fa-solid fa-dice-d20" },
     position: { width: 460 },
     content: `
       <form class="t20pf2e-dialog">

@@ -113,7 +113,7 @@ function renderPf2eRollMetadata(message, root) {
 }
 
 /**
- * Smart Chat Cards (PF2e-style):
+ * Smart Chat Cards (Arton Ledger):
  * - Captures current targeted tokens on attack/d20 rolls into message flags.
  * - Renders Hit / Crit / Miss outcome pills against Target Defense without duplicating T20's native Apply Damage buttons.
  */

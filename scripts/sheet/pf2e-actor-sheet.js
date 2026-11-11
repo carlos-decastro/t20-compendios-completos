@@ -129,7 +129,7 @@ export function buildPF2eSheetClass() {
         }
       }
 
-      // Clickable Compendium Browser triggers (header ABC+D cards + tab buttons)
+      // Clickable Compendium Browser triggers (header identity cards + tab buttons)
       html.find("[data-pf2e-browse]").click((ev) => {
         ev.preventDefault();
         const btn = ev.currentTarget;

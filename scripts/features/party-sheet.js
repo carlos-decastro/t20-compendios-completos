@@ -54,7 +54,7 @@ export class PartySheetT20 extends HandlebarsApplicationMixin(ApplicationV2) {
     id: "t20-party-sheet",
     classes: ["t20pf2e-party-sheet"],
     window: {
-      title: "Ficha do Grupo (Estilo PF2e)",
+      title: "Ficha do Grupo",
       icon: "fa-solid fa-users-rectangle",
       resizable: true
     },

@@ -49,7 +49,7 @@ Hooks.once("init", () => {
 
 Hooks.once("setup", () => {
   if (!globalThis.tormenta20?.applications?.ActorSheetT20CharacterTabbed) {
-    console.warn(`${MODULE_ID} | ActorSheetT20CharacterTabbed not found; skipping PF2e sheet registration.`);
+    console.warn(`${MODULE_ID} | ActorSheetT20CharacterTabbed not found; skipping modern sheet registration.`);
     return;
   }
 
@@ -102,7 +102,7 @@ Hooks.once("setup", () => {
     };
   }
 
-  console.log(`${MODULE_ID} | Ficha PF2e, Navegador e Recursos Tier 1-3 carregados (padrão=${makeDefault}).`);
+  console.log(`${MODULE_ID} | Ficha Moderna, Navegador e Recursos Tier 1-3 carregados (padrão=${makeDefault}).`);
 });
 
 Hooks.on("renderCompendiumDirectory", (_app, html) => {
@@ -115,7 +115,7 @@ Hooks.on("renderCompendiumDirectory", (_app, html) => {
   const btn = document.createElement("button");
   btn.type = "button";
   btn.className = "t20pf2e-directory-btn";
-  btn.innerHTML = `<i class="fa-solid fa-book-atlas"></i> Navegador T20 (PF2e)`;
+  btn.innerHTML = `<i class="fa-solid fa-book-atlas"></i> Navegador T20`;
   btn.addEventListener("click", (ev) => {
     ev.preventDefault();
     CompendiumBrowserT20.open({ category: "magias" });

@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
 Empacota o módulo t20-compendios-completos para publicação via GitHub Releases.
 
@@ -129,3 +129,4 @@ try {
     Remove-Item -Path $stageRoot -Recurse -Force
   }
 }
+

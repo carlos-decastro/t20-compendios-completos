@@ -6,8 +6,8 @@ Todas as alterações notáveis deste módulo serão documentadas neste arquivo.
 
 ### Adicionado
 - **11 compêndios integrados** organizados na pasta **Tormenta20 Completo** (*Criação de Personagem*, *Magias & Equipamentos*, *Bestiário & Guias*): Classes, Raças, Poderes & Habilidades, Magias, Equipamentos & Serviços, Itens Mágicos, Parceiros & Montarias, Ameaças, Divindades, Origens e Guias & Regras.
-- **Ficha de Personagem Estilo PF2e (`CharacterSheetPF2eT20`)**: barra lateral persistente com PV/PM, Defesa, Salvaguardas & Sentidos, Atributos e grade de slots **Raça / Origem / Classe / Divindade** + abas dedicadas (`Personagem`, `Combate`, `Perícias`, `Poderes`, `Magias`, `Inventário`, `Efeitos`, `Diário`).
-- **Automação de Criação & Subida de Nível (`ABC+D` + Espaços de Progressão)**:
+- **Ficha Moderna de Personagem (Tema Pergaminho de Arton)**: barra lateral persistente com PV/PM, Defesa, Salvaguardas & Sentidos, Atributos e grade de slots **Raça / Origem / Classe / Divindade** + abas dedicadas (`Personagem`, `Combate`, `Perícias`, `Poderes`, `Magias`, `Inventário`, `Efeitos`, `Diário`).
+- **Automação de Criação & Subida de Nível (Raça / Origem / Classe / Divindade + Espaços de Progressão)**:
   - Seleção automática e modal interativa de Perícias de Classe e Perícias de Origem/Inteligência.
   - Painel de progressão por nível com slots de Poderes de Classe e cota de Magias por círculo (`Conjurador`).
   - Limpeza segura de itens derivados em casos de downgrade de nível.
@@ -15,7 +15,7 @@ Todas as alterações notáveis deste módulo serão documentadas neste arquivo.
 - **Tema Pergaminho de Arton Unificado (`t20-arton-theme.css` + `arton-ui-theme.js`)**:
   - Identidade visual consistente em Pergaminho Claro (`#F4ECE0` / `#EDE3D2`), Carmesim Real (`#7A1818`), Dourado Envelhecido (`#C59B38`) e Azul Arcano (`#1D4E89`).
   - Estilização das modais `AbilityUseDialog`, cards de chat, barra de envio de mensagens e janelas do sistema `tormenta20`.
-- **Rolagens Estilo PF2e & Transparência no Chat (`roll-metadata.js` + `chat-enhancer.js`)**:
+- **Rolagens Estruturadas & Transparência no Chat (`roll-metadata.js` + `chat-enhancer.js`)**:
   - Badges de características (*traits*) e pílulas de detalhamento de modificadores totalmente localizadas em PT-BR para Ataques, Dano, Perícias, Atributos e Magias/Poderes.
   - Filtro por patamar/nível para opções como **Especialista** na modal de uso de habilidade.
   - Bloqueio/aviso de PM insuficiente e desconto automático de PM com botão de desfazer.
@@ -30,3 +30,4 @@ Todas as alterações notáveis deste módulo serão documentadas neste arquivo.
   - Forja de Armas/Armaduras/Esotéricos (`ForgeModalT20`) com materiais especiais, melhorias e encantos.
   - Gerador de Tesouro & Mercador com suporte a compras via socket (`LootMerchantAppT20`).
   - Escalonador rápido de Ameaças (`Fraco`, `Padrão`, `Elite`, `Chefe`) e alertas de condições no Rastreador de Combate (`combat-enhancer.js`).
+

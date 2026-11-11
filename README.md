@@ -1,6 +1,6 @@
-# Tormenta20 — Compêndios Completos (Estilo PF2e)
+# Tormenta20 — Compêndios Completos
 
-Módulo para **Foundry VTT v14** e o sistema **Tormenta20 (`tormenta20`)**, reunindo **11 compêndios organizados**, uma **ficha completa inspirada no Pathfinder 2e**, automação de **criação e subida de nível (`ABC+D`)**, **identificadores e breakdown de rolagens em PT-BR**, **HUDs flutuantes**, **visão automática de token** e um **tema unificado em Pergaminho de Arton**.
+Módulo para **Foundry VTT v14** e o sistema **Tormenta20 (`tormenta20`)**, reunindo **11 compêndios organizados**, uma **ficha moderna completa**, automação de **criação e subida de nível**, **identificadores e detalhamento de rolagens em PT-BR**, **HUDs flutuantes**, **visão automática de token** e um **tema unificado em Pergaminho de Arton**.
 
 > **Compatibilidade:** Foundry VTT **v14** · Sistema **`tormenta20` 1.6.0+** (verificado em `1.6.6`) · Idioma **Português (Brasil)**
 
@@ -17,7 +17,7 @@ Este módulo é distribuído diretamente via **GitHub Releases** (não listado n
    ```text
    https://github.com/<SEU-USUARIO>/<SEU-REPOSITORIO>/releases/latest/download/module.json
    ```
-3. Clique em **Instalar** e, após entrar no mundo de Tormenta20, ative **Tormenta20 — Compêndios Completos (Estilo PF2e)** em **Gerenciar Módulos**.
+3. Clique em **Instalar** e, após entrar no mundo de Tormenta20, ative **Tormenta20 — Compêndios Completos** em **Gerenciar Módulos**.
 
 ### 2. Instalação Manual (`.zip`)
 
@@ -33,9 +33,9 @@ Este módulo é distribuído diretamente via **GitHub Releases** (não listado n
 
 ## Galeria da Interface
 
-| Ficha de Personagem (Estilo PF2e) | Navegador de Compêndios — Arton |
+| Ficha Moderna de Personagem | Navegador de Compêndios — Arton |
 | :---: | :---: |
-| ![Ficha de Personagem Estilo PF2e](docs/screenshots/ficha-personagem.jpg) | ![Navegador de Compêndios Arton](docs/screenshots/navegador-compendios.jpg) |
+| ![Ficha Moderna de Personagem](docs/screenshots/ficha-personagem.jpg) | ![Navegador de Compêndios Arton](docs/screenshots/navegador-compendios.jpg) |
 
 | HUDs Flutuantes (Ações Rápidas & Vitais) | Cards de Rolagem com Badges e Pills (PT-BR) |
 | :---: | :---: |
@@ -72,10 +72,10 @@ Agrupados automaticamente na pasta **Tormenta20 Completo** na barra de compêndi
 
 ---
 
-### 2. Ficha Estilo Pathfinder 2e + Tema Pergaminho de Arton
+### 2. Ficha Moderna + Tema Pergaminho de Arton
 
 - **Barra lateral persistente**: PV e PM (com valores atuais, máximos e temporários), Defesa total, Salvaguardas & Sentidos (`Fortitude`, `Reflexos`, `Vontade`, `Iniciativa`, `Percepção`) e os 6 Atributos sempre acessíveis.
-- **Cabeçalho `ABC+D`**: slots visuais clicáveis para **Raça**, **Origem**, **Classe** e **Divindade**, além de botão direto para o Navegador de Compêndios e barra de XP.
+- **Cabeçalho de Identidade**: slots visuais clicáveis para **Raça**, **Origem**, **Classe** e **Divindade**, além de botão direto para o Navegador de Compêndios e barra de XP.
 - **8 abas organizadas**: `Personagem`, `Combate`, `Perícias`, `Poderes`, `Magias`, `Inventário`, `Efeitos` e `Diário`.
 - **Tema Unificado (`t20-arton-theme.css` + `arton-ui-theme.js`)**: paletas Pergaminho Claro (`#F4ECE0` / `#EDE3D2`), Carmesim Real (`#7A1818`), Dourado Envelhecido (`#C59B38`) e Azul Arcano (`#1D4E89`) aplicadas também às modais de rolagem (`AbilityUseDialog`), cards do chat, caixa de entrada do chat e fichas nativas/NPCs.
 
@@ -94,7 +94,7 @@ Agrupados automaticamente na pasta **Tormenta20 Completo** na barra de compêndi
 
 ### 4. Navegador de Compêndios — Arton (`CompendiumBrowserT20`)
 
-Acessível diretamente pela ficha ou pelo botão **Navegador T20 (PF2e)** na aba de Compêndios:
+Acessível diretamente pela ficha ou pelo botão **Navegador T20** na aba de Compêndios:
 
 - Abas rápidas para **Classes**, **Raças**, **Origens**, **Divindades**, **Poderes**, **Magias**, **Equipamentos**, **Efeitos & Ações** e **Ameaças**.
 - Busca instantânea, filtros combinados por fonte, tipo, subtipo/classe e propriedades.
@@ -154,3 +154,4 @@ Antes de gerar uma nova release pública, configure em `module.json` os campos `
 - **Código e automação:** licenciado sob a [Licença MIT](LICENSE).
 - **Tormenta20:** todo o universo de Arton, sistema de regras, nomes de classes, raças, magias, poderes, equipamentos, divindades e ameaças são propriedade intelectual da **Jambô Editora** e dos criadores de **Tormenta20 Jogo do Ano**.
 - Projeto comunitário feito de fã para fã, **sem fins lucrativos** e sem afiliação oficial com a Jambô Editora ou com a equipe oficial do sistema `tormenta20` no Foundry VTT.
+

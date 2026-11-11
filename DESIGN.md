@@ -1,6 +1,6 @@
 ---
 version: 1.0.0
-name: Arton Parchment Ledger (PF2e-Inspired T20)
+name: Arton Parchment Ledger (T20)
 description: Visual identity for the Tormenta20 modern tabbed character sheet and compendium browser in warm parchment light mode.
 colors:
   canvas-parchment: "#f4efe6"
@@ -66,7 +66,7 @@ components:
 # Arton Parchment Ledger — Design System
 
 ## Overview
-A light parchment RPG ledger combining Pathfinder 2e's structural clarity (persistent vital sidebar, clickable ABC+D identity slots, single-purpose tabs, integrated Compendium Browser) with Tormenta20's Arton identity: crimson wax (`#7a1c1c`), burnished gold (`#b8860b`), and warm archival paper (`#f4efe6`).
+A light parchment RPG ledger combining crisp structural clarity (persistent vital sidebar, clickable Raça/Origem/Classe/Divindade identity slots, single-purpose tabs, integrated Compendium Browser) with Tormenta20's Arton identity: crimson wax (`#7a1c1c`), burnished gold (`#b8860b`), and warm archival paper (`#f4efe6`).
 
 ## Colors
 - **Primary Canvas (`#f4efe6`) & Elevated Cards (`#fbf8f2`)**: High readability for multi-hour Foundry sessions with comfortable contrast (`#1f1916` ink).

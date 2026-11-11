@@ -126,7 +126,7 @@ export class LootMerchantAppT20 extends HandlebarsApplicationMixin(ApplicationV2
     id: "t20pf2e-loot-merchant",
     classes: ["t20pf2e-loot-app"],
     window: {
-      title: "Baú de Tesouro & Mercador (Estilo PF2e)",
+      title: "Baú de Tesouro & Mercador",
       icon: "fa-solid fa-sack-dollar",
       resizable: true
     },

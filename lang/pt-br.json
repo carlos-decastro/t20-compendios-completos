@@ -1,9 +1,9 @@
 {
   "T20COMP": {
-    "SheetLabel": "Tormenta20 — Ficha Moderna (Estilo PF2e)",
+    "SheetLabel": "Tormenta20 — Ficha Moderna",
     "BrowserTitle": "Navegador de Compêndios de Arton",
     "Settings": {
-      "MakeDefaultName": "Usar Ficha Moderna (PF2e) como padrão",
+      "MakeDefaultName": "Usar Ficha Moderna como padrão",
       "MakeDefaultHint": "Define automaticamente a Ficha Moderna para personagens ao abrir o mundo.",
       "ShowVitalsHudName": "Exibir HUD Rápida de PV e PM nos Tokens",
       "ShowVitalsHudHint": "Mostra um painel compacto na tela para somar/remover PV, PM, aplicar dano e curar o token selecionado.",
