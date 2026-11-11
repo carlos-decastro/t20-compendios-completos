@@ -16,48 +16,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Validate manifest and build release archive
-        run: |
-          set -euo pipefail
-          TAG="${GITHUB_REF_NAME}"
-          VERSION="${TAG#v}"
-          MANIFEST_VERSION=$(jq -r '.version' module.json)
-          if [ "$MANIFEST_VERSION" != "$VERSION" ]; then
-            echo "::warning::Tag ($TAG) differs from module.json version ($MANIFEST_VERSION)"
-          fi
-
-          jq -r '(.esmodules // [])[], (.styles // [])[], (.languages // [] | .[].path)' module.json | while read -r rel; do
-            if [ ! -f "$rel" ]; then
-              echo "Missing declared file: $rel" >&2
-              exit 1
-            fi
-          done
-
-          STAGE_DIR=$(mktemp -d)
-          for f in module.json LICENSE README.md CHANGELOG.md DESIGN.md; do
-            [ -f "$f" ] && cp "$f" "$STAGE_DIR"/
-          done
-          for d in lang packs scripts styles templates; do
-            if [ ! -d "$d" ]; then
-              echo "Missing required directory: $d" >&2
-              exit 1
-            fi
-            cp -r "$d" "$STAGE_DIR"/
-          done
-          find "$STAGE_DIR" \( -name "LOCK" -o -name "*.bak" -o -name ".DS_Store" -o -name "Thumbs.db" \) -delete
-
-          (cd "$STAGE_DIR" && zip -r -9 "${GITHUB_WORKSPACE}/t20-compendios-completos.zip" .)
-          cp module.json "${GITHUB_WORKSPACE}/module.json"
-
-          printf '%s\n' \
-            "## Tormenta20 — Compêndios Completos ${TAG}" \
-            "" \
-            "### Instalação no Foundry VTT v14 (Manifest URL)" \
-            "\`\`\`text" \
-            "https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/module.json" \
-            "\`\`\`" \
-            "" \
-            "Consulte o [CHANGELOG.md](https://github.com/${GITHUB_REPOSITORY}/blob/${TAG}/CHANGELOG.md) para a lista completa de novidades." \
-            > "${GITHUB_WORKSPACE}/release-notes.md"
+        run: python3 .github/scripts/build_release.py
 
       - name: Create or update GitHub Release
         env:
@@ -66,11 +25,11 @@ jobs:
           set -euo pipefail
           TAG="${GITHUB_REF_NAME}"
           if gh release view "$TAG" >/dev/null 2>&1; then
-            gh release upload "$TAG" t20-compendios-completos.zip module.json --clobber
+            gh release upload "$TAG" dist/t20-compendios-completos.zip dist/module.json --clobber
           else
             gh release create "$TAG" \
-              t20-compendios-completos.zip \
-              module.json \
+              dist/t20-compendios-completos.zip \
+              dist/module.json \
               --title "Tormenta20 — Compêndios Completos ${TAG}" \
-              --notes-file "${GITHUB_WORKSPACE}/release-notes.md"
+              --notes-file dist/release-notes.md
           fi
