@@ -232,8 +232,21 @@
 .t20pf2e-dialog-window .t20pf2e-dialog label,
 .t20pf2e-dialog-window .t20pf2e-dialog strong,
 .t20pf2e-dialog-window .t20pf2e-dialog p,
-.t20pf2e-dialog-window .t20pf2e-dialog span {
+.t20pf2e-dialog-window .t20pf2e-dialog span,
+.t20pf2e-dialog-window .t20pf2e-dialog li {
   color: #1f1916;
+}
+
+.t20pf2e-dialog-window .t20pf2e-dialog h1,
+.t20pf2e-dialog-window .t20pf2e-dialog h2,
+.t20pf2e-dialog-window .t20pf2e-dialog h3,
+.t20pf2e-dialog-window .t20pf2e-dialog h4,
+.t20pf2e-dialog-window .t20pf2e-dialog h5,
+.t20pf2e-dialog-window .t20pf2e-dialog h6 {
+  color: #7a1c1c;
+  border-bottom: 1px solid #d5c7b0;
+  padding-bottom: 3px;
+  margin-top: 2px;
 }
 
 .t20pf2e-dialog-window .t20pf2e-dialog input,
@@ -302,14 +315,15 @@
   align-items: center;
   justify-content: space-between;
   font-size: 12.5px;
-  padding: 5px 8px;
+  padding: 6px 9px;
   border-radius: 5px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(200, 155, 60, 0.45);
+  background: #fbf8f2;
+  color: #1f1916;
+  border: 1px solid #c9b99d;
 }
 
 .t20pf2e-dynattr-counter {
-  padding: 1px 7px;
+  padding: 1px 8px;
   border-radius: 10px;
   background: #7d1b1b;
   color: #fff6e6;
@@ -334,28 +348,28 @@
   gap: 2px;
   padding: 8px 6px;
   border-radius: 6px;
-  border: 1.5px solid rgba(255, 255, 255, 0.25);
-  background: rgba(255, 255, 255, 0.07);
-  color: #f4efe6;
+  border: 1.5px solid #c9b99d;
+  background: #fbf8f2;
+  color: #1f1916;
   cursor: pointer;
   transition: background 0.12s ease, border-color 0.12s ease, transform 0.1s ease;
 }
 
 .t20pf2e-dynattr-btn:hover:not(:disabled) {
-  border-color: #c89b3c;
-  background: rgba(200, 155, 60, 0.18);
+  border-color: #7a1c1c;
+  background: #efe6d5;
   transform: translateY(-1px);
 }
 
 .t20pf2e-dynattr-btn.is-selected {
   background: #7d1b1b;
-  border-color: #e2b857;
-  color: #ffffff;
-  box-shadow: 0 0 0 1px rgba(226, 184, 87, 0.45);
+  border-color: #b8860b;
+  color: #fbf8f2;
+  box-shadow: 0 0 0 1px rgba(184, 134, 11, 0.45);
 }
 
 .t20pf2e-dynattr-btn:disabled {
-  opacity: 0.42;
+  opacity: 0.45;
   cursor: not-allowed;
 }
 
@@ -363,12 +377,29 @@
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.5px;
+  color: inherit;
 }
 
 .t20pf2e-dynattr-val {
   font-size: 14px;
   font-weight: 800;
-  color: #e2b857;
+  color: #7a1c1c;
+}
+
+.t20pf2e-dynattr-btn.is-selected .t20pf2e-dynattr-val {
+  color: #f7df94;
+}
+
+.t20pf2e-dialog-window .t20pf2e-dialog .t20pf2e-dynattr-counter {
+  color: #fff6e6;
+}
+
+.t20pf2e-dialog-window .t20pf2e-dialog .t20pf2e-dynattr-btn.is-selected .t20pf2e-dynattr-abbr {
+  color: #fbf8f2;
+}
+
+.t20pf2e-dialog-window .t20pf2e-dialog .t20pf2e-dynattr-btn.is-selected .t20pf2e-dynattr-val {
+  color: #f7df94;
 }
 
 .t20pf2e-dialog .t20pf2e-mini-btn {

@@ -288,6 +288,52 @@
   color: #1f1916;
 }
 
+.t20pf2e-preview-body h1,
+.t20pf2e-preview-body h2,
+.t20pf2e-preview-body h3,
+.t20pf2e-preview-body h4,
+.t20pf2e-preview-body h5,
+.t20pf2e-preview-body h6 {
+  color: #7a1c1c;
+  border-bottom: 1px solid #dfd4bf;
+  padding-bottom: 2px;
+  margin: 10px 0 6px;
+  font-family: "Modesto Condensed", "Palatino Linotype", Georgia, serif;
+}
+
+.t20pf2e-preview-body p,
+.t20pf2e-preview-body li,
+.t20pf2e-preview-body dt,
+.t20pf2e-preview-body dd,
+.t20pf2e-preview-body td,
+.t20pf2e-preview-body blockquote {
+  color: #1f1916;
+}
+
+.t20pf2e-preview-body th {
+  color: #7a1c1c;
+  background: #efe6d5;
+  border-color: #c9b99d;
+}
+
+.t20pf2e-preview-body table {
+  border-color: #c9b99d;
+}
+
+.t20pf2e-preview-body a.content-link,
+.t20pf2e-preview-body a.inline-roll {
+  background: #efe6d5;
+  color: #7a1c1c;
+  border: 1px solid #c9b99d;
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+
+.t20pf2e-preview-body a.content-link i,
+.t20pf2e-preview-body a.inline-roll i {
+  color: #7a1c1c;
+}
+
 .t20pf2e-preview-section {
   color: #7a1c1c;
   border-bottom: 1px solid #dfd4bf;

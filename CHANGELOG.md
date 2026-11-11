@@ -2,6 +2,14 @@
 
 Todas as alterações notáveis deste módulo serão documentadas neste arquivo.
 
+## [0.3.1] — 2026-11-11
+
+### Corrigido
+- **Contraste e leitura em clientes no Modo Escuro do Foundry v14**:
+  - Proteção de escopo de variáveis CSS (`--color-text-*`, `--content-link-*`, `--input-*`) e cabeçalhos (`h1`–`h6`) para impedir que o tema escuro global deixe títulos, links `@UUID`, tabelas e rótulos brancos sobre o pergaminho claro no **Navegador de Compêndios**, diálogos e fichas.
+  - Refatoração visual do seletor de **Atributos Dinâmicos** (ex.: Humano/Osteon) com botões e rótulos em alto contraste sobre fundo Pergaminho Claro.
+  - Garantida cor de texto escura explícita em controles de Defesa e edição de atributos na ficha moderna.
+
 ## [0.3.0] — 2026-11-11
 
 ### Adicionado

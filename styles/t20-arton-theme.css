@@ -874,3 +874,125 @@ form.chat-form prose-mirror#chat-message:focus-within {
   border-bottom: 2px solid #7a1c1c;
 }
 
+/* --------------------------------------------------------------------------
+   4. Foundry v14 Dark Mode Contrast Guard (Light Parchment Ink Scope)
+   Prevents body.theme-dark / .application.theme-dark variables from turning
+   headings, labels, inputs, tables, or compendium links white on parchment.
+   -------------------------------------------------------------------------- */
+
+.tormenta20.sheet.actor.pf2e-style,
+.tormenta20.sheet.actor.pf2e-style .window-content,
+.t20pf2e-browser,
+.t20pf2e-browser .window-content,
+.t20pf2e-dialog-window,
+.t20pf2e-dialog-window .window-content,
+.t20pf2e-forge-app,
+.t20pf2e-forge-app .window-content,
+.t20pf2e-loot-app,
+.t20pf2e-loot-app .window-content,
+.t20pf2e-party-sheet,
+.t20pf2e-party-sheet .window-content,
+.app.window-app.t20pf2e-arton-window,
+.app.window-app.t20pf2e-arton-window > .window-content,
+.app.window-app.dialog,
+.app.window-app.dialog > .window-content,
+.app.window-app.tormenta20,
+.app.window-app.tormenta20 > .window-content,
+.application.t20pf2e-arton-window,
+.application.t20pf2e-arton-window > .window-content,
+.application.dialog,
+.application.dialog > .window-content,
+.t20pf2e-token-actions,
+.t20pf2e-vitals-hud,
+#chat-log .chat-message,
+#chat-notifications .chat-message,
+.chat-popout .chat-message {
+  --color-text-primary: #1f1916;
+  --color-text-emphatic: #7a1c1c;
+  --color-text-secondary: #4b3d33;
+  --color-text-subtle: #594c42;
+  --color-text-dark-primary: #1f1916;
+  --color-text-dark-secondary: #4b3d33;
+  --color-text-dark-5: #594c42;
+  --color-text-dark-6: #4b3d33;
+  --color-text-dark-header: #7a1c1c;
+  --color-text-dark-inactive: #6e5f52;
+  --color-text-hyperlink: #7a1c1c;
+  --color-form-label: #1f1916;
+  --color-form-hint: #594c42;
+  --input-background-color: #fbf8f2;
+  --input-border-color: #c9b99d;
+  --input-text-color: #1f1916;
+  --input-placeholder-color: #7d6d5f;
+  --content-link-background: #efe6d5;
+  --content-link-border-color: #b8860b;
+  --content-link-icon-color: #7a1c1c;
+  --content-link-text-color: #1f1916;
+  color-scheme: light;
+}
+
+.t20pf2e-browser .window-header,
+.t20pf2e-dialog-window .window-header,
+.t20pf2e-forge-app .window-header,
+.t20pf2e-loot-app .window-header,
+.t20pf2e-party-sheet .window-header {
+  background: linear-gradient(180deg, #862121 0%, #6e1818 100%);
+  color: #fbf8f2;
+  border-bottom: 2px solid #b8860b;
+}
+
+.t20pf2e-browser .window-header .window-title,
+.t20pf2e-browser .window-header button,
+.t20pf2e-dialog-window .window-header .window-title,
+.t20pf2e-dialog-window .window-header button,
+.t20pf2e-forge-app .window-header .window-title,
+.t20pf2e-forge-app .window-header button,
+.t20pf2e-loot-app .window-header .window-title,
+.t20pf2e-loot-app .window-header button,
+.t20pf2e-party-sheet .window-header .window-title,
+.t20pf2e-party-sheet .window-header button {
+  color: #fbf8f2;
+}
+
+.application.dialog > .window-content :is(h1, h2, h3, h4, h5, h6),
+.window-app.dialog > .window-content :is(h1, h2, h3, h4, h5, h6),
+.t20pf2e-arton-window > .window-content :is(h1, h2, h3, h4, h5, h6),
+.t20pf2e-browser .window-content :is(h1, h2, h3, h4, h5, h6),
+.t20pf2e-dialog-window .window-content :is(h1, h2, h3, h4, h5, h6),
+.t20pf2e-forge-app .window-content :is(h1, h2, h3, h4, h5, h6),
+.t20pf2e-loot-app .window-content :is(h1, h2, h3, h4, h5, h6),
+.t20pf2e-party-sheet .window-content :is(h1, h2, h3, h4, h5, h6) {
+  color: #7a1c1c;
+}
+
+.application.dialog > .window-content :is(p, li, dt, dd, legend, td, th, blockquote, .hint, .notes),
+.window-app.dialog > .window-content :is(p, li, dt, dd, legend, td, th, blockquote, .hint, .notes),
+.t20pf2e-arton-window > .window-content :is(p, li, dt, dd, legend, td, th, blockquote, .hint, .notes),
+.application.dialog > .window-content :where(label),
+.window-app.dialog > .window-content :where(label),
+.t20pf2e-arton-window > .window-content :where(label) {
+  color: #1f1916;
+}
+
+.t20pf2e-arton-window .t20pf2e-ability-form .t20pf2e-apr-prefix,
+.t20pf2e-arton-window .t20pf2e-ability-form .aprimoramentos-list .item-cost label {
+  color: #7a1c1c;
+}
+
+.application.dialog > .window-content :is(a.content-link, a.inline-roll),
+.window-app.dialog > .window-content :is(a.content-link, a.inline-roll),
+.t20pf2e-arton-window > .window-content :is(a.content-link, a.inline-roll),
+.tormenta20.sheet.actor.pf2e-style .window-content :is(a.content-link, a.inline-roll) {
+  background: #efe6d5;
+  color: #7a1c1c;
+  border: 1px solid #c9b99d;
+}
+
+.application.dialog > .window-content :is(a.content-link, a.inline-roll) i,
+.window-app.dialog > .window-content :is(a.content-link, a.inline-roll) i,
+.t20pf2e-arton-window > .window-content :is(a.content-link, a.inline-roll) i,
+.tormenta20.sheet.actor.pf2e-style .window-content :is(a.content-link, a.inline-roll) i {
+  color: #7a1c1c;
+}
+
+
