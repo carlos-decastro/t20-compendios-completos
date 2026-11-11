@@ -1,0 +1,17 @@
+# LevelDB lockfiles generated while Foundry VTT is running
+packs/*/LOCK
+**/LOCK
+
+# Release build artifacts
+dist/
+
+# Editor / OS / backup files
+*.bak
+*.tmp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Optional local tooling caches
+node_modules/
+.vscode/

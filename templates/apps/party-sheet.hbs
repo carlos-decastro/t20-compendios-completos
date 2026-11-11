@@ -1,0 +1,137 @@
+<div class="t20pf2e-party-root">
+  <header class="t20pf2e-party-header">
+    <div class="t20pf2e-party-title">
+      <div class="t20pf2e-party-tabs">
+        <button type="button" class="t20pf2e-ptab {{#if isOverview}}active{{/if}}" data-action="switchTab" data-tab="overview">
+          <i class="fa-solid fa-users"></i> Visão Geral ({{members.length}})
+        </button>
+        <button type="button" class="t20pf2e-ptab {{#if isSkills}}active{{/if}}" data-action="switchTab" data-tab="skills">
+          <i class="fa-solid fa-table-cells"></i> Matriz de Perícias
+        </button>
+      </div>
+      <div class="t20pf2e-party-scope">
+        <button type="button" class="t20pf2e-scope-btn" data-action="toggleScope" title="Alternar entre PJs de Jogadores e Todos os Personagens">
+          <i class="fa-solid fa-filter"></i> {{scopeLabel}}
+        </button>
+      </div>
+    </div>
+
+    <div class="t20pf2e-party-summary">
+      <div class="t20pf2e-sum-pill">
+        <span class="lbl">Riqueza Total</span>
+        <strong>{{wealthSummary}}</strong>
+      </div>
+      <div class="t20pf2e-gm-actions">
+        <button type="button" class="t20pf2e-gm-btn" data-action="openLoot" title="Abrir Baú de Tesouro & Mercador">
+          <i class="fa-solid fa-sack-dollar"></i> Baú / Loja
+        </button>
+        {{#if isGM}}
+        <button type="button" class="t20pf2e-gm-btn" data-action="promptCheck" title="Enviar pedido de teste no Chat">
+          <i class="fa-solid fa-dice-d20"></i> Pedir Teste
+        </button>
+        <button type="button" class="t20pf2e-gm-btn" data-action="distributeWealth" title="Distribuir moedas para o grupo">
+          <i class="fa-solid fa-coins"></i> Distribuir T$
+        </button>
+        <button type="button" class="t20pf2e-gm-btn primary" data-action="groupRest" title="Aplicar descanso em todo o grupo">
+          <i class="fa-solid fa-campground"></i> Descanso do Grupo
+        </button>
+        {{/if}}
+      </div>
+    </div>
+  </header>
+
+  {{#unless members.length}}
+  <div class="t20pf2e-party-empty">
+    <i class="fa-solid fa-user-slash"></i>
+    <p>Nenhum personagem encontrado neste filtro. Crie personagens do tipo Heroi/PJ ou clique em "{{scopeLabel}}" acima para alternar.</p>
+  </div>
+  {{else}}
+    {{#if isOverview}}
+    <section class="t20pf2e-party-grid">
+      {{#each members}}
+      <article class="t20pf2e-member-card" data-actor-id="{{this.id}}">
+        <div class="t20pf2e-mc-top">
+          <img src="{{this.img}}" alt="{{this.name}}" class="t20pf2e-mc-img" data-action="openActor" data-actor-id="{{this.id}}" />
+          <div class="t20pf2e-mc-id">
+            <a class="t20pf2e-mc-name" data-action="openActor" data-actor-id="{{this.id}}">{{this.name}}</a>
+            <span class="t20pf2e-mc-sub">{{this.subtitle}}</span>
+          </div>
+          <div class="t20pf2e-mc-def" title="Defesa">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>{{this.defesa}}</span>
+          </div>
+        </div>
+
+        <div class="t20pf2e-mc-bars">
+          <div class="t20pf2e-bar hp">
+            <div class="t20pf2e-bar-fill" style="width: {{this.pvPct}}%;"></div>
+            <span class="t20pf2e-bar-text">PV {{this.pvValue}} / {{this.pvMax}}</span>
+          </div>
+          <div class="t20pf2e-bar mp">
+            <div class="t20pf2e-bar-fill" style="width: {{this.pmPct}}%;"></div>
+            <span class="t20pf2e-bar-text">PM {{this.pmValue}} / {{this.pmMax}}</span>
+          </div>
+        </div>
+
+        <div class="t20pf2e-mc-stats">
+          <button type="button" class="t20pf2e-stat-chip" data-action="rollSkill" data-actor-id="{{this.id}}" data-skill="fort" title="Rolar Fortitude">
+            <span>Fort</span><strong>{{this.fort}}</strong>
+          </button>
+          <button type="button" class="t20pf2e-stat-chip" data-action="rollSkill" data-actor-id="{{this.id}}" data-skill="refl" title="Rolar Reflexos">
+            <span>Refl</span><strong>{{this.refl}}</strong>
+          </button>
+          <button type="button" class="t20pf2e-stat-chip" data-action="rollSkill" data-actor-id="{{this.id}}" data-skill="vont" title="Rolar Vontade">
+            <span>Vont</span><strong>{{this.vont}}</strong>
+          </button>
+          <button type="button" class="t20pf2e-stat-chip" data-action="rollSkill" data-actor-id="{{this.id}}" data-skill="perc" title="Rolar Percepção">
+            <span>Perc</span><strong>{{this.perc}}</strong>
+          </button>
+          <button type="button" class="t20pf2e-stat-chip" data-action="rollSkill" data-actor-id="{{this.id}}" data-skill="inic" title="Rolar Iniciativa">
+            <span>Inic</span><strong>{{this.inic}}</strong>
+          </button>
+        </div>
+
+        <div class="t20pf2e-mc-footer">
+          <span class="t20pf2e-mc-coins"><i class="fa-solid fa-coins"></i> {{this.coinsText}}</span>
+          <span class="t20pf2e-mc-speed"><i class="fa-solid fa-person-running"></i> {{this.deslocamento}}m</span>
+        </div>
+      </article>
+      {{/each}}
+    </section>
+    {{/if}}
+
+    {{#if isSkills}}
+    <section class="t20pf2e-matrix-wrap">
+      <table class="t20pf2e-skill-matrix">
+        <thead>
+          <tr>
+            <th class="sticky-col">Perícia</th>
+            {{#each members}}
+            <th class="actor-col">
+              <a data-action="openActor" data-actor-id="{{this.id}}">{{this.shortName}}</a>
+            </th>
+            {{/each}}
+          </tr>
+        </thead>
+        <tbody>
+          {{#each skillRows}}
+          <tr>
+            <td class="sticky-col skill-label">{{this.label}}</td>
+            {{#each this.cells}}
+            <td class="skill-cell {{#if this.isBest}}is-best{{/if}} {{#if this.trained}}is-trained{{/if}}">
+              <button type="button" class="t20pf2e-matrix-btn" data-action="rollSkill" data-actor-id="{{this.actorId}}" data-skill="{{../key}}" title="Rolar {{../label}}">
+                {{#if this.trained}}<i class="fa-solid fa-circle t20pf2e-tr-dot" title="Treinado"></i>{{/if}}
+                <span>{{this.modText}}</span>
+                {{#if this.isBest}}<i class="fa-solid fa-star t20pf2e-best-star" title="Melhor do Grupo"></i>{{/if}}
+              </button>
+            </td>
+            {{/each}}
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </section>
+    {{/if}}
+  {{/unless}}
+</div>
+

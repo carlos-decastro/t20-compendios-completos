@@ -1,0 +1,13 @@
+2026/11/11-08:35:41.824 6460 Recovering log #16
+2026/11/11-08:35:41.828 6460 Delete type=0 #16
+2026/11/11-08:35:41.828 6460 Delete type=3 #15
+2026/11/11-14:07:03.689 fac Level-0 table #20: started
+2026/11/11-14:07:03.689 fac Level-0 table #20: 0 bytes OK
+2026/11/11-14:07:03.691 fac Delete type=0 #18
+2026/11/11-14:07:03.700 fac Manual compaction at level-0 from '!folders!jzbAOUEz84rU3FRm' @ 72057594037927935 : 1 .. '!items.effects!rntcrujiIc63hKOp.kPfjycPCqxtkDP7h' @ 0 : 0; will stop at '!items.effects!rntcrujiIc63hKOp.kPfjycPCqxtkDP7h' @ 54 : 1
+2026/11/11-14:07:03.701 fac Compacting 1@0 + 0@1 files
+2026/11/11-14:07:03.703 fac Generated table #21@0: 60 keys, 23336 bytes
+2026/11/11-14:07:03.703 fac Compacted 1@0 + 0@1 files => 23336 bytes
+2026/11/11-14:07:03.705 fac compacted to: files[ 0 1 0 0 0 0 0 ]
+2026/11/11-14:07:03.705 fac Delete type=2 #5
+2026/11/11-14:07:03.722 fac Manual compaction at level-0 from '!items.effects!rntcrujiIc63hKOp.kPfjycPCqxtkDP7h' @ 54 : 1 .. '!items.effects!rntcrujiIc63hKOp.kPfjycPCqxtkDP7h' @ 0 : 0; will stop at (end)

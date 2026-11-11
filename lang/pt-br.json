@@ -1,0 +1,70 @@
+{
+  "T20COMP": {
+    "SheetLabel": "Tormenta20 — Ficha Moderna (Estilo PF2e)",
+    "BrowserTitle": "Navegador de Compêndios de Arton",
+    "Settings": {
+      "MakeDefaultName": "Usar Ficha Moderna (PF2e) como padrão",
+      "MakeDefaultHint": "Define automaticamente a Ficha Moderna para personagens ao abrir o mundo.",
+      "ShowVitalsHudName": "Exibir HUD Rápida de PV e PM nos Tokens",
+      "ShowVitalsHudHint": "Mostra um painel compacto na tela para somar/remover PV, PM, aplicar dano e curar o token selecionado.",
+      "AutoTokenBarsName": "Configurar Barras de PV e PM Automaticamente",
+      "AutoTokenBarsHint": "Define PV (barra 1) e PM (barra 2) sempre visíveis em novos atores/tokens e sincroniza tokens da cena.",
+      "StackBarsOnTopName": "Empilhar Barras de PV e PM no Topo do Token",
+      "StackBarsOnTopHint": "Posiciona a barra de PV (vermelho/verde) e PM (azul) empilhadas acima do token.",
+      "AutoApplyConsumablesName": "Aplicar Consumíveis de Cura/Mana Automaticamente",
+      "AutoApplyConsumablesHint": "Ao usar consumíveis/poções que restauram PV ou PM (como Bálsamo ou Essência de Mana), aplica a recuperação automaticamente.",
+      "AutoApplyTargetDamageName": "Aplicar Dano em Alvos Marcados Automaticamente",
+      "AutoApplyTargetDamageHint": "Opcional: quando houver tokens marcados como alvo (Targets) ao rolar dano, aplica o dano automaticamente.",
+      "AutoSpendManaName": "Descontar Mana Automaticamente ao Usar Magias/Efeitos",
+      "AutoSpendManaHint": "Ao lançar magias ou usar poderes, ataques e perícias com custo em PM, desconta os pontos de mana automaticamente e exibe opção de desfazer no chat.",
+      "BlockInsufficientManaName": "Bloquear Uso Sem PM Suficiente",
+      "BlockInsufficientManaHint": "Opcional (desativado por padrão): impede conjurar ou usar habilidades sem PM suficientes. Desativado, permite usar e avisa em vermelho no chat.",
+      "TokenQuickActionsScopeName": "Menu Rápido ao Clicar no Token",
+      "TokenQuickActionsScopeHint": "Exibe ao selecionar um token um painel compacto com ataques, magias, habilidades e defesas/salvaguardas.",
+      "EnhanceNpcSheetName": "Melhorar Botões e Ações na Ficha de NPC",
+      "EnhanceNpcSheetHint": "Destaca ataques, perícias, salvaguardas e magias como botões clicáveis na ficha de NPC e adiciona painel de combate no topo.",
+      "AutoSyncVisionName": "Sincronizar Visão Automática (T20 v14)",
+      "AutoSyncVisionHint": "Sincroniza automaticamente alcance de visão e modos de detecção dos tokens com base nos sentidos da ficha, poderes e efeitos ativos, usando a engine nativa do Foundry v14.",
+      "DarkvisionMonochromeName": "Visão no Escuro Monocromática",
+      "DarkvisionMonochromeHint": "Exibe tokens com Visão no Escuro usando o modo monocromático nativo (sem escurecer tokens que não possuem visão no escuro).",
+      "DefaultNormalSightRangeName": "Alcance Padrão de Visão Normal (m)",
+      "DefaultNormalSightRangeHint": "Alcance mínimo da visão normal em metros (0 = ilimitado sob iluminação; valores maiores limitam a distância de visão)."
+    },
+    "Tabs": {
+      "Character": "Personagem",
+      "Combat": "Combate",
+      "Skills": "Perícias",
+      "Powers": "Poderes",
+      "Spells": "Magias",
+      "Inventory": "Inventário",
+      "Effects": "Efeitos",
+      "Journal": "Diário"
+    },
+    "Slots": {
+      "Race": "Raça",
+      "Origin": "Origem",
+      "Class": "Classe",
+      "Deity": "Divindade",
+      "PickRace": "Selecionar Raça",
+      "PickOrigin": "Selecionar Origem",
+      "PickClass": "Selecionar / Subir Classe",
+      "PickDeity": "Selecionar Divindade",
+      "Atheist": "Sem Divindade"
+    },
+    "Browser": {
+      "Classes": "Classes",
+      "Races": "Raças",
+      "Origins": "Origens",
+      "Deities": "Divindades",
+      "Powers": "Poderes",
+      "Spells": "Magias",
+      "Equipment": "Equipamentos",
+      "SearchPlaceholder": "Buscar por nome...",
+      "AllSources": "Todas as Fontes",
+      "ApplyToActor": "Aplicar ao Personagem",
+      "AddToActor": "Adicionar à Ficha",
+      "DragHint": "Arraste qualquer item para a ficha ou clique em Adicionar"
+    }
+  }
+}
+

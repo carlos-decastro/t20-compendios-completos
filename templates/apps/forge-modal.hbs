@@ -1,0 +1,100 @@
+<div class="t20pf2e-forge-root">
+  {{#unless hasItems}}
+    <div class="t20pf2e-party-empty">
+      <i class="fa-solid fa-hammer"></i>
+      <p><strong>{{actor.name}}</strong> não possui armas ou equipamentos/armaduras no inventário para forjar.</p>
+    </div>
+  {{else}}
+    <header class="t20pf2e-forge-header">
+      <div class="t20pf2e-forge-item-pick">
+        <img src="{{selectedItem.img}}" alt="{{selectedItem.name}}" class="t20pf2e-forge-img" />
+        <div class="t20pf2e-forge-pick-col">
+          <label>Item a Forjar / Customizar</label>
+          <select name="itemId" class="t20pf2e-forge-select">
+            {{#each forgeableItems}}
+              <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+            {{/each}}
+          </select>
+        </div>
+      </div>
+
+      <div class="t20pf2e-forge-summary">
+        <div class="t20pf2e-sum-pill"><span class="lbl">Melhorias:</span> <strong>{{slotCount}} / 4</strong></div>
+        <div class="t20pf2e-sum-pill"><span class="lbl">Encantos:</span> <strong>{{enchantCount}} / 3</strong></div>
+        <div class="t20pf2e-sum-pill"><span class="lbl">Valor Adicional:</span> <strong>T$ {{addedCostText}}</strong></div>
+        <div class="t20pf2e-sum-pill"><span class="lbl">Novo Preço:</span> <strong>T$ {{totalPriceText}}</strong></div>
+      </div>
+    </header>
+
+    <div class="t20pf2e-forge-columns">
+      {{!-- Column 1: Melhorias & Material Especial --}}
+      <section class="t20pf2e-forge-col">
+        <h3 class="t20pf2e-forge-h3"><i class="fa-solid fa-wrench"></i> Melhorias (até 4 espaços totais)</h3>
+        <div class="t20pf2e-forge-box">
+          <label class="t20pf2e-forge-mat-lbl">Material Especial (ocupa 1 espaço de melhoria):</label>
+          <select name="materialId" class="t20pf2e-forge-mat-select">
+            <option value="">— Nenhum Material Especial —</option>
+            {{#each materiais}}
+              <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.nome}} ({{this.costText}}) — {{this.tag}}</option>
+            {{/each}}
+          </select>
+        </div>
+
+        <div class="t20pf2e-forge-scroll">
+          {{#each melhorias}}
+            <label class="t20pf2e-forge-opt {{#if this.checked}}checked{{/if}}" title="{{this.descricao}}">
+              <input type="checkbox" class="t20pf2e-forge-mel" value="{{this.id}}" {{#if this.checked}}checked{{/if}} />
+              <div>
+                <strong>{{this.nome}}</strong>
+                <small>{{this.tag}}</small>
+              </div>
+            </label>
+          {{/each}}
+        </div>
+      </section>
+
+      {{!-- Column 2: Encantos Mágicos --}}
+      <section class="t20pf2e-forge-col">
+        <h3 class="t20pf2e-forge-h3"><i class="fa-solid fa-wand-magic-sparkles"></i> Encantos Mágicos ({{enchantScopeLabel}})</h3>
+        {{#unless encantos.length}}
+          <p class="t20pf2e-tab-hint">Encantos de forja estão disponíveis para Armas, Armaduras e Escudos.</p>
+        {{else}}
+          <div class="t20pf2e-forge-scroll">
+            {{#each encantos}}
+              <label class="t20pf2e-forge-opt {{#if this.checked}}checked{{/if}}" title="{{this.descricao}}">
+                <input type="checkbox" class="t20pf2e-forge-enc" value="{{this.id}}" {{#if this.checked}}checked{{/if}} />
+                <div>
+                  <strong>{{this.nome}}</strong>
+                  <small>{{this.resumo}}</small>
+                </div>
+              </label>
+            {{/each}}
+          </div>
+        {{/unless}}
+      </section>
+    </div>
+
+    <footer class="t20pf2e-forge-footer">
+      <div class="t20pf2e-forge-deltas">
+        <span><strong>Prévia Mecânica:</strong> {{previewDeltasText}}</span>
+        <span class="t20pf2e-forge-funds">Seus Tibares: <strong>~{{actorTotalTP}} T$</strong></span>
+      </div>
+
+      <div class="t20pf2e-forge-actions">
+        <label class="t20pf2e-checkbox-inline">
+          <input type="checkbox" class="t20pf2e-forge-charge" {{#if chargePlayer}}checked{{/if}} />
+          Cobrar diferença de T$ ({{deltaChargeText}} T$)
+        </label>
+        <div class="t20pf2e-forge-btns">
+          <button type="button" class="t20pf2e-gm-btn" data-action="resetForge" title="Restaurar item original antes da forja">
+            <i class="fa-solid fa-rotate-left"></i> Restaurar Base
+          </button>
+          <button type="button" class="t20pf2e-gm-btn primary" data-action="applyForge">
+            <i class="fa-solid fa-hammer"></i> Aplicar Forja
+          </button>
+        </div>
+      </div>
+    </footer>
+  {{/unless}}
+</div>
+

@@ -1,0 +1,296 @@
+<div class="t20pf2e-browser-shell">
+  {{!-- Top Category Tabs --}}
+  <nav class="t20pf2e-browser-tabs" role="tablist">
+    {{#each tabs as |tab|}}
+      <button type="button"
+              class="t20pf2e-browser-tab {{#if tab.active}}active{{/if}}"
+              data-action="switchTab"
+              data-category="{{tab.id}}">
+        <i class="{{tab.icon}}"></i>
+        <span>{{tab.label}}</span>
+        <span class="t20pf2e-badge">{{tab.count}}</span>
+      </button>
+    {{/each}}
+  </nav>
+
+  {{!-- Actor Context Banner --}}
+  <div class="t20pf2e-browser-banner {{#if slotContext}}is-slot-mode{{/if}}">
+    <div class="t20pf2e-banner-target">
+      <i class="fa-solid fa-user-shield"></i>
+      {{#if slotContext}}
+        <span class="t20pf2e-slot-context-badge">
+          <i class="fa-solid fa-puzzle-piece"></i>
+          Preenchendo Espaço: <strong>Poder de {{slotContext.className}} (Nível {{slotContext.slotLevel}})</strong>
+        </span>
+      {{else if spellContext}}
+        <span class="t20pf2e-slot-context-badge">
+          <i class="fa-solid fa-wand-sparkles"></i>
+          Aprendendo Magia (<strong>{{spellContext.tradicaoLabel}}</strong>, até <strong>{{spellContext.maxCirculo}}º Círculo</strong>)
+        </span>
+      {{else if targetActor}}
+        <span>Personagem alvo: <strong>{{targetActor.name}}</strong></span>
+      {{else}}
+        <span>Modo consulta (selecione um token ou abra pela ficha para adicionar em 1 clique)</span>
+      {{/if}}
+    </div>
+    <div class="t20pf2e-banner-hint">
+      {{#if slotContext}}
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Clique em "+" ou "Preencher Espaço" para vincular ao nível {{slotContext.slotLevel}}
+      {{else}}
+        <i class="fa-solid fa-hand-pointer"></i> Arraste qualquer item para a ficha ou use o botão Adicionar
+      {{/if}}
+    </div>
+  </div>
+
+  {{!-- 3-Column Browser Grid --}}
+  <div class="t20pf2e-browser-grid">
+    {{!-- Left Filters --}}
+    <aside class="t20pf2e-browser-filters">
+      <div class="t20pf2e-filter-group">
+        <label>Buscar</label>
+        <input type="search"
+               class="t20pf2e-filter-input"
+               data-filter="query"
+               value="{{filters.query}}"
+               placeholder="Nome ou palavra-chave..." />
+      </div>
+
+      <div class="t20pf2e-filter-group">
+        <label>Fonte / Módulo</label>
+        <select class="t20pf2e-filter-select" data-filter="source">
+          <option value="">Todas as Fontes</option>
+          {{#each filterOptions.sources as |src|}}
+            <option value="{{src}}" {{#if (eq ../filters.source src)}}selected{{/if}}>{{src}}</option>
+          {{/each}}
+        </select>
+      </div>
+
+      {{#if (eq activeCategory "magias")}}
+        <div class="t20pf2e-filter-group">
+          <label>Círculo</label>
+          <select class="t20pf2e-filter-select" data-filter="circulo">
+            <option value="">Todos os Círculos</option>
+            <option value="1" {{#if (eq filters.circulo "1")}}selected{{/if}}>1º Círculo</option>
+            <option value="2" {{#if (eq filters.circulo "2")}}selected{{/if}}>2º Círculo</option>
+            <option value="3" {{#if (eq filters.circulo "3")}}selected{{/if}}>3º Círculo</option>
+            <option value="4" {{#if (eq filters.circulo "4")}}selected{{/if}}>4º Círculo</option>
+            <option value="5" {{#if (eq filters.circulo "5")}}selected{{/if}}>5º Círculo</option>
+          </select>
+        </div>
+
+        <div class="t20pf2e-filter-group">
+          <label>Limite Máximo</label>
+          <select class="t20pf2e-filter-select" data-filter="maxCirculo">
+            <option value="">Sem limite</option>
+            <option value="1" {{#if (eq filters.maxCirculo "1")}}selected{{/if}}>Até 1º Círculo</option>
+            <option value="2" {{#if (eq filters.maxCirculo "2")}}selected{{/if}}>Até 2º Círculo</option>
+            <option value="3" {{#if (eq filters.maxCirculo "3")}}selected{{/if}}>Até 3º Círculo</option>
+            <option value="4" {{#if (eq filters.maxCirculo "4")}}selected{{/if}}>Até 4º Círculo</option>
+            <option value="5" {{#if (eq filters.maxCirculo "5")}}selected{{/if}}>Até 5º Círculo</option>
+          </select>
+        </div>
+
+        <div class="t20pf2e-filter-group">
+          <label>Tradição / Tipo</label>
+          <select class="t20pf2e-filter-select" data-filter="spellTipo">
+            <option value="">Todas</option>
+            <option value="arc" {{#if (eq filters.spellTipo "arc")}}selected{{/if}}>Arcana</option>
+            <option value="div" {{#if (eq filters.spellTipo "div")}}selected{{/if}}>Divina</option>
+            <option value="uni" {{#if (eq filters.spellTipo "uni")}}selected{{/if}}>Universal</option>
+            <option value="eng" {{#if (eq filters.spellTipo "eng")}}selected{{/if}}>Engenhoca</option>
+          </select>
+        </div>
+
+        <div class="t20pf2e-filter-group">
+          <label>Escola</label>
+          <select class="t20pf2e-filter-select" data-filter="escola">
+            <option value="">Todas</option>
+            {{#each filterOptions.schools as |esc|}}
+              <option value="{{esc.key}}" {{#if (eq ../filters.escola esc.key)}}selected{{/if}}>{{esc.label}}</option>
+            {{/each}}
+          </select>
+        </div>
+      {{/if}}
+
+      {{#if (eq activeCategory "poderes")}}
+        <div class="t20pf2e-filter-group">
+          <label>Tipo de Poder</label>
+          <select class="t20pf2e-filter-select" data-filter="powerTipo">
+            <option value="">Todos os Tipos</option>
+            {{#each filterOptions.powerTypes as |pt|}}
+              <option value="{{pt.key}}" {{#if (eq ../filters.powerTipo pt.key)}}selected{{/if}}>{{pt.label}}</option>
+            {{/each}}
+          </select>
+        </div>
+
+        <div class="t20pf2e-filter-group">
+          <label>Subtipo / Classe</label>
+          <select class="t20pf2e-filter-select" data-filter="subtipo">
+            <option value="">Todas as Classes / Subtipos</option>
+            {{#each filterOptions.subtypes as |st|}}
+              <option value="{{st.key}}" {{#if (eq ../filters.subtipo st.key)}}selected{{/if}}>{{st.label}}</option>
+            {{/each}}
+          </select>
+        </div>
+
+        {{#if slotContext}}
+          <label class="t20pf2e-filter-check" title="Exibir poderes da classe {{slotContext.className}} e Poderes Gerais (incluindo Aumento de Atributo)">
+            <input type="checkbox" data-filter="slotClassFilter" {{#if filters.slotClassFilter}}checked{{/if}} />
+            <span>Apenas {{slotContext.className}} + Gerais</span>
+          </label>
+        {{/if}}
+
+        {{#if targetActor}}
+          <label class="t20pf2e-filter-check" title="Ocultar poderes cujos pré-requisitos conhecidos ainda não foram cumpridos por {{targetActor.name}}">
+            <input type="checkbox" data-filter="onlyEligible" {{#if filters.onlyEligible}}checked{{/if}} />
+            <span>Ocultar indisponíveis</span>
+          </label>
+        {{/if}}
+      {{/if}}
+
+      {{#if (eq activeCategory "equipamentos")}}
+        <div class="t20pf2e-filter-group">
+          <label>Categoria</label>
+          <select class="t20pf2e-filter-select" data-filter="itemType">
+            <option value="">Todas</option>
+            <option value="arma" {{#if (eq filters.itemType "arma")}}selected{{/if}}>Armas</option>
+            <option value="equipamento" {{#if (eq filters.itemType "equipamento")}}selected{{/if}}>Equipamentos & Armaduras</option>
+            <option value="consumivel" {{#if (eq filters.itemType "consumivel")}}selected{{/if}}>Consumíveis</option>
+            <option value="tesouro" {{#if (eq filters.itemType "tesouro")}}selected{{/if}}>Tesouros</option>
+          </select>
+        </div>
+      {{/if}}
+
+      {{#if (eq activeCategory "ameacas")}}
+        <div class="t20pf2e-filter-group">
+          <label>Faixa de ND</label>
+          <select class="t20pf2e-filter-select" data-filter="ndBucket">
+            <option value="">Todos os NDs</option>
+            <option value="0-1" {{#if (eq filters.ndBucket "0-1")}}selected{{/if}}>ND 1/4 a 1</option>
+            <option value="2-4" {{#if (eq filters.ndBucket "2-4")}}selected{{/if}}>ND 2 a 4</option>
+            <option value="5-8" {{#if (eq filters.ndBucket "5-8")}}selected{{/if}}>ND 5 a 8</option>
+            <option value="9-12" {{#if (eq filters.ndBucket "9-12")}}selected{{/if}}>ND 9 a 12</option>
+            <option value="13-16" {{#if (eq filters.ndBucket "13-16")}}selected{{/if}}>ND 13 a 16</option>
+            <option value="17+" {{#if (eq filters.ndBucket "17+")}}selected{{/if}}>ND 17+ / S</option>
+          </select>
+        </div>
+
+        <div class="t20pf2e-filter-group">
+          <label>Tipo de Criatura</label>
+          <select class="t20pf2e-filter-select" data-filter="creatureType">
+            <option value="">Todos os Tipos</option>
+            {{#each filterOptions.creatureTypes as |ct|}}
+              <option value="{{ct.key}}" {{#if (eq ../filters.creatureType ct.key)}}selected{{/if}}>{{ct.label}}</option>
+            {{/each}}
+          </select>
+        </div>
+
+        <div class="t20pf2e-filter-group">
+          <label>Tamanho</label>
+          <select class="t20pf2e-filter-select" data-filter="size">
+            <option value="">Todos</option>
+            {{#each filterOptions.sizes as |sz|}}
+              <option value="{{sz.key}}" {{#if (eq ../filters.size sz.key)}}selected{{/if}}>{{sz.label}}</option>
+            {{/each}}
+          </select>
+        </div>
+      {{/if}}
+
+      {{#if (eq activeCategory "efeitos")}}
+        <div class="t20pf2e-filter-group">
+          <label>Categoria</label>
+          <select class="t20pf2e-filter-select" data-filter="fxGroup">
+            <option value="">Todas</option>
+            <option value="situacao" {{#if (eq filters.fxGroup "situacao")}}selected{{/if}}>Situações & Tabela 5-3</option>
+            <option value="manobra" {{#if (eq filters.fxGroup "manobra")}}selected{{/if}}>Manobras de Combate</option>
+            <option value="buff" {{#if (eq filters.fxGroup "buff")}}selected{{/if}}>Buffs & Magias Clássicas</option>
+          </select>
+        </div>
+      {{/if}}
+
+      <button type="button" class="t20pf2e-clear-filters" data-action="clearFilters">
+        <i class="fa-solid fa-rotate-left"></i> Limpar Filtros
+      </button>
+
+      <div class="t20pf2e-filter-stats">
+        Exibindo <strong class="t20pf2e-visible-count">{{entries.length}}</strong> resultados
+      </div>
+    </aside>
+
+    {{!-- Center Results List --}}
+    <section class="t20pf2e-browser-list-wrap">
+      <ul class="t20pf2e-browser-list">
+        {{#each entries as |item|}}
+          <li class="t20pf2e-browser-row {{#if (eq ../selectedUuid item.uuid)}}selected{{/if}}"
+              draggable="true"
+              data-uuid="{{item.uuid}}"
+              data-doc-type="{{item.docType}}"
+              data-name-norm="{{item.nameNorm}}"
+              data-source="{{item.sourceGroup}}"
+              data-circulo="{{item.system.circulo}}"
+              data-spell-tipo="{{item.system.tipo}}"
+              data-escola="{{item.system.escola}}"
+              data-power-tipo="{{item.system.tipo}}"
+              data-subtipo-norm="{{item.subtipoNorm}}"
+              data-item-type="{{item.itemType}}"
+              data-nd-bucket="{{item.ndBucket}}"
+              data-creature-type="{{item.creatureType}}"
+              data-size="{{item.size}}"
+              data-fx-group="{{item.fxGroup}}"
+              data-prereq-state="{{item.prereqState}}">
+            <img class="t20pf2e-row-icon" src="{{item.img}}" alt="{{item.name}}" loading="lazy" />
+            <div class="t20pf2e-row-main" data-action="selectEntry" data-uuid="{{item.uuid}}">
+              <div class="t20pf2e-row-title">{{item.name}}</div>
+              <div class="t20pf2e-row-sub">{{item.subtitle}}</div>
+            </div>
+            <div class="t20pf2e-row-actions">
+              {{#if item.hasPrereq}}
+                <span class="t20pf2e-prereq-pill is-{{item.prereqState}}" title="{{item.prereqTooltip}}">
+                  {{#if item.prereqIcon}}<i class="{{item.prereqIcon}}"></i>{{/if}}
+                  <span>{{item.prereqLabel}}</span>
+                </span>
+              {{/if}}
+              <button type="button"
+                      class="t20pf2e-row-add"
+                      data-action="applyEntry"
+                      data-uuid="{{item.uuid}}"
+                      title="Adicionar / Aplicar à Ficha">
+                <i class="fa-solid fa-plus"></i>
+              </button>
+            </div>
+          </li>
+        {{/each}}
+      </ul>
+    </section>
+
+    {{!-- Right Detail Preview --}}
+    <section class="t20pf2e-browser-preview">
+      {{#if preview}}
+        <div class="t20pf2e-preview-header">
+          <img src="{{preview.img}}" alt="{{preview.name}}" />
+          <div>
+            <h2>{{preview.name}}</h2>
+            <div class="t20pf2e-preview-meta">{{preview.subtitle}} · <em>{{preview.packLabel}}</em></div>
+          </div>
+        </div>
+        <div class="t20pf2e-preview-body">
+          {{{preview.html}}}
+        </div>
+        <div class="t20pf2e-preview-footer">
+          <button type="button" class="t20pf2e-btn-secondary" data-action="openSheet" data-uuid="{{preview.uuid}}">
+            <i class="fa-solid fa-up-right-from-square"></i> Abrir Documento
+          </button>
+          <button type="button" class="t20pf2e-btn-primary" data-action="applyEntry" data-uuid="{{preview.uuid}}">
+            <i class="fa-solid fa-check"></i> {{applyLabel}}
+          </button>
+        </div>
+      {{else}}
+        <div class="t20pf2e-preview-empty">
+          <i class="fa-solid fa-book-open-reader"></i>
+          <p>Selecione um item na lista para ler os detalhes completos, ou arraste-o diretamente para a ficha.</p>
+        </div>
+      {{/if}}
+    </section>
+  </div>
+</div>
+

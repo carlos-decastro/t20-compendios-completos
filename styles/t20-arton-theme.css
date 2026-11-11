@@ -1,0 +1,876 @@
+/* ==========================================================================
+   Arton Parchment Ledger — Unified System Theme, Modals & PF2e Roll Cards
+   Tokens:
+     Canvas #f4efe6 | Surface #fbf8f2 | Inset #efe6d5 | Header/Bar #eadfcd
+     Crimson #7a1c1c (Hover #962525, Border #591111) | Gold #b8860b
+     Warm Border #c9b99d | Ink #1f1916 | Muted #5b4c41
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Chat Cards & PF2e Roll Identifiers / Breakdown Pills
+   -------------------------------------------------------------------------- */
+
+#chat-log .chat-message,
+#chat-notifications .chat-message,
+.chat-popout .chat-message,
+li.chat-message.t20pf2e-chat-card {
+  background: linear-gradient(180deg, #faf4e8 0%, #f1e6d2 100%) !important;
+  background-image: linear-gradient(180deg, #faf4e8 0%, #f1e6d2 100%) !important;
+  color: #1f1916 !important;
+  border: 2px solid #7d1b1b !important;
+  border-radius: 8px !important;
+  padding: 0 !important;
+  margin: 5px 4px !important;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(24, 15, 10, 0.24) !important;
+}
+
+#chat-log .chat-message.whisper,
+#chat-notifications .chat-message.whisper,
+.chat-popout .chat-message.whisper,
+li.chat-message.t20pf2e-chat-card.whisper {
+  background: linear-gradient(180deg, #f4effa 0%, #e9e0f4 100%) !important;
+  border-color: #4f3a6b !important;
+}
+
+#chat-log .chat-message.whisper > .message-header,
+li.chat-message.t20pf2e-chat-card.whisper > .message-header {
+  background: linear-gradient(90deg, #3c2856 0%, #583c7a 100%) !important;
+}
+
+#chat-log .chat-message.blind,
+#chat-notifications .chat-message.blind,
+.chat-popout .chat-message.blind,
+li.chat-message.t20pf2e-chat-card.blind {
+  background: linear-gradient(180deg, #f2ede5 0%, #e6ddd0 100%) !important;
+  border-color: #5b4c41 !important;
+}
+
+#chat-log .chat-message.blind > .message-header,
+li.chat-message.t20pf2e-chat-card.blind > .message-header {
+  background: linear-gradient(90deg, #43372f 0%, #615044 100%) !important;
+}
+
+#chat-log .chat-message > .message-header,
+#chat-notifications .chat-message > .message-header,
+.chat-popout .chat-message > .message-header,
+li.chat-message.t20pf2e-chat-card > .message-header {
+  background: linear-gradient(90deg, #5c1111 0%, #7d1b1b 100%) !important;
+  border-bottom: 1.5px solid #c89b3c !important;
+  color: #fff6e6 !important;
+  padding: 5px 9px !important;
+  margin: 0 !important;
+  align-items: center;
+  gap: 6px;
+}
+
+.t20pf2e-chat-avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #c89b3c;
+  object-fit: cover;
+  background: #3a0b0b;
+  flex: 0 0 20px;
+}
+
+#chat-log .chat-message > .message-header .message-sender,
+.chat-popout .chat-message > .message-header .message-sender,
+li.chat-message.t20pf2e-chat-card > .message-header .message-sender {
+  color: #fff6e6 !important;
+  font-weight: 700;
+  font-size: 12.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
+}
+
+#chat-log .chat-message > .message-header .message-metadata,
+.chat-popout .chat-message > .message-header .message-metadata,
+li.chat-message.t20pf2e-chat-card > .message-header .message-metadata {
+  color: rgba(255, 246, 230, 0.86) !important;
+  font-size: 11px;
+}
+
+#chat-log .chat-message > .message-header .message-metadata a,
+li.chat-message.t20pf2e-chat-card > .message-header .message-metadata a {
+  color: #fff6e6 !important;
+}
+
+#chat-log .chat-message > .message-header .message-metadata a:hover,
+li.chat-message.t20pf2e-chat-card > .message-header .message-metadata a:hover {
+  color: #f0c46c !important;
+}
+
+#chat-log .chat-message > .message-header .flavor-text,
+.chat-popout .chat-message > .message-header .flavor-text,
+li.chat-message.t20pf2e-chat-card > .message-header .flavor-text {
+  color: #f6e7cb !important;
+  font-size: 11.5px;
+  flex: 1 0 100%;
+  margin-top: 2px;
+}
+
+#chat-log .chat-message > .message-content,
+#chat-notifications .chat-message > .message-content,
+.chat-popout .chat-message > .message-content,
+li.chat-message.t20pf2e-chat-card > .message-content {
+  padding: 8px 9px 9px !important;
+  color: #1f1916;
+  font-family: "Signika", system-ui, -apple-system, sans-serif;
+}
+
+.tormenta20.chat-card.item-card {
+  background: transparent;
+  color: #1f1916;
+  font-family: "Signika", system-ui, -apple-system, sans-serif;
+}
+
+.tormenta20.chat-card.item-card .card-header {
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.56);
+  border: 1px solid #decdae;
+  border-radius: 6px;
+  padding: 5px 8px;
+  margin-bottom: 6px;
+}
+
+.tormenta20.chat-card.item-card .card-header img {
+  border: 1.5px solid #c89b3c;
+  border-radius: 5px;
+  background: #fbf8f2;
+  object-fit: cover;
+}
+
+.tormenta20.chat-card.item-card .card-header .item-name {
+  color: #7d1b1b;
+  font-weight: 700;
+  font-size: 14.5px;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.tormenta20.chat-card.item-card .chat-spend-mana {
+  height: auto !important;
+  min-height: 24px;
+  max-width: none !important;
+  padding: 2px 8px !important;
+  line-height: 1.2 !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  border-radius: 5px !important;
+  background: #efe6d5 !important;
+  border: 1px solid #c89b3c !important;
+  color: #5c1111 !important;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+
+.tormenta20.chat-card.item-card .chat-spend-mana:hover:not(:disabled) {
+  background: #7d1b1b !important;
+  border-color: #5c1111 !important;
+  color: #fff6e6 !important;
+}
+
+.tormenta20.chat-card.item-card .chat-spend-mana.is-paid {
+  background: rgba(29, 78, 216, 0.12) !important;
+  border-color: rgba(29, 78, 216, 0.45) !important;
+  color: #1e3a8a !important;
+}
+
+.tormenta20.chat-card.item-card .card-item-header {
+  background: rgba(255, 255, 255, 0.56);
+  border: 1px solid #decdae;
+  border-radius: 6px;
+  padding: 5px 8px;
+  margin: 4px 0 6px;
+  font-size: 12px;
+  color: #3d332c;
+}
+
+.tormenta20.chat-card.item-card .card-item-header h4 {
+  margin: 0 0 2px;
+  color: #7d1b1b;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.tormenta20.chat-card.item-card .card-item-header p {
+  margin: 0;
+  line-height: 1.35;
+}
+
+.tormenta20.chat-card.item-card .card-content {
+  color: #2c231e;
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+
+.tormenta20.chat-card.item-card .card-upgrades {
+  background: rgba(255, 255, 255, 0.56);
+  border: 1px solid #decdae;
+  border-left: 3px solid #7d1b1b;
+  border-radius: 6px;
+  padding: 5px 8px;
+  margin: 6px 0;
+  font-size: 11.5px;
+}
+
+.tormenta20.chat-card.item-card .card-upgrades ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tormenta20.chat-card.item-card .card-upgrades li + li {
+  margin-top: 3px;
+  padding-top: 3px;
+  border-top: 1px dashed #d3c4aa;
+}
+
+/* Trait Badges Row */
+.t20pf2e-chat-traits {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 3px;
+  margin: 4px 0 6px;
+}
+
+.t20pf2e-chat-traits.is-card-header {
+  padding-bottom: 5px;
+  border-bottom: 1px solid #decdae;
+}
+
+.t20pf2e-chat-traits.is-subroll {
+  margin: 1px 0 4px;
+  padding-bottom: 3px;
+  border-bottom: 1px dashed #decdae;
+}
+
+.t20pf2e-trait {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: #675244;
+  border: 1px solid #4c3b30;
+  color: #fbf8f2;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.t20pf2e-trait.is-primary {
+  background: #7d1b1b;
+  border-color: #5c1111;
+  color: #ffffff;
+}
+
+.t20pf2e-trait-sep {
+  color: #9b886f;
+  font-weight: 700;
+  font-size: 11px;
+  padding: 0 2px;
+  user-select: none;
+}
+
+/* Modifier Breakdown Pills */
+.t20pf2e-chat-modifiers {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin: 2px 0 5px;
+}
+
+.t20pf2e-mod-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 7px;
+  border-radius: 10px;
+  background: #efe6d5;
+  border: 1px solid #c9b99d;
+  color: #3d332c;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.t20pf2e-mod-pill strong {
+  color: #1f1916;
+  font-weight: 700;
+}
+
+.t20pf2e-mod-pill.is-attribute,
+.t20pf2e-mod-pill.is-dice {
+  background: #fbf8f2;
+  border-color: #c89b3c;
+}
+
+.t20pf2e-mod-pill.is-trained {
+  background: #e5f1e7;
+  border-color: #88b88f;
+  color: #1e5626;
+}
+
+.t20pf2e-mod-pill.is-trained strong {
+  color: #16441d;
+}
+
+.t20pf2e-mod-pill.is-untrained {
+  background: #f2ece1;
+  border-color: #cbbba2;
+  color: #6b5c4f;
+}
+
+.t20pf2e-mod-pill.is-penalty {
+  background: #fae8e8;
+  border-color: #cfa0a0;
+  color: #7f1d1d;
+}
+
+.t20pf2e-mod-pill.is-penalty strong {
+  color: #7f1d1d;
+}
+
+/* Clean Dice Formula & Total Inner Section */
+.chat-message.t20pf2e-chat-card .dice-roll,
+#chat-log .chat-message .dice-roll,
+.chat-popout .chat-message .dice-roll {
+  background: rgba(255, 255, 255, 0.56);
+  border: 1px solid #decdae;
+  border-radius: 6px;
+  padding: 6px 7px;
+  margin: 5px 0;
+}
+
+.chat-message.t20pf2e-chat-card .dice-roll .dice-formula,
+#chat-log .chat-message .dice-roll .dice-formula,
+.chat-popout .chat-message .dice-roll .dice-formula {
+  background: #fbf8f2 !important;
+  border: 1px solid #d5c5ab !important;
+  border-radius: 5px !important;
+  color: #2b221d !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  line-height: 22px !important;
+  box-shadow: none !important;
+  margin-bottom: 4px;
+}
+
+.chat-message.t20pf2e-chat-card .dice-roll .dice-total,
+#chat-log .chat-message .dice-roll .dice-total,
+.chat-popout .chat-message .dice-roll .dice-total {
+  background: #eadfcd !important;
+  border: 1.5px solid #c89b3c !important;
+  border-radius: 5px !important;
+  color: #1f1916 !important;
+  font-size: 19px !important;
+  font-weight: 700 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+}
+
+.chat-message.t20pf2e-chat-card .dice-roll .dice-total.critical,
+#chat-log .chat-message .dice-roll .dice-total.critical,
+.chat-popout .chat-message .dice-roll .dice-total.critical {
+  background: #e2f2e4 !important;
+  border-color: #2f855a !important;
+  color: #155724 !important;
+}
+
+.chat-message.t20pf2e-chat-card .dice-roll .dice-total.fumble,
+#chat-log .chat-message .dice-roll .dice-total.fumble,
+.chat-popout .chat-message .dice-roll .dice-total.fumble {
+  background: #f9dede !important;
+  border-color: #9b2c2c !important;
+  color: #7f1d1d !important;
+}
+
+.chat-message.t20pf2e-chat-card .t20pf2e-chat-mana-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 5px 7px;
+  background: rgba(255, 255, 255, 0.56);
+  border: 1px solid #decdae;
+  border-radius: 6px;
+}
+
+.chat-message.t20pf2e-chat-card .t20pf2e-chat-mana-bar.is-insufficient {
+  background: #fdf2f2;
+  border: 1px solid rgba(153, 27, 27, 0.35);
+}
+
+.chat-message.t20pf2e-chat-card .t20pf2e-chat-mana-bar button {
+  background: #fbf8f2;
+  border: 1px solid #b5a184;
+  border-radius: 5px;
+  color: #1f1916;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+}
+
+.chat-message.t20pf2e-chat-card .t20pf2e-chat-mana-bar button:hover {
+  background: #7d1b1b;
+  border-color: #5c1111;
+  color: #fff6e6;
+}
+
+#chat-form textarea,
+.chat-input textarea,
+form.chat-form prose-mirror#chat-message,
+.chat-form .chat-input {
+  background: #faf4e8 !important;
+  color: #1f1916 !important;
+  border: 1.5px solid #c89b3c !important;
+  border-radius: 6px !important;
+  font-family: "Signika", system-ui, -apple-system, sans-serif;
+  overflow: hidden;
+}
+
+form.chat-form prose-mirror#chat-message menu,
+form.chat-form prose-mirror#chat-message .editor-menu {
+  background: #eadfcd !important;
+  color: #1f1916 !important;
+  border-bottom: 1px solid #decdae !important;
+}
+
+form.chat-form prose-mirror#chat-message menu button,
+form.chat-form prose-mirror#chat-message .editor-menu button {
+  color: #3d332c !important;
+}
+
+form.chat-form prose-mirror#chat-message menu button:hover,
+form.chat-form prose-mirror#chat-message .editor-menu button:hover {
+  color: #7d1b1b !important;
+  background: rgba(125, 27, 27, 0.1) !important;
+}
+
+form.chat-form prose-mirror#chat-message .editor-container,
+form.chat-form prose-mirror#chat-message .editor-content,
+form.chat-form prose-mirror#chat-message .ProseMirror {
+  background: transparent !important;
+  background-color: transparent !important;
+  color: #1f1916 !important;
+}
+
+#chat-form textarea::placeholder,
+.chat-input textarea::placeholder,
+form.chat-form prose-mirror#chat-message .ProseMirror .is-empty::before,
+form.chat-form prose-mirror#chat-message .ProseMirror [data-placeholder]::before,
+form.chat-form prose-mirror#chat-message .editor-content::before {
+  color: #7b6a5b !important;
+}
+
+#chat-form textarea:focus,
+.chat-input textarea:focus,
+form.chat-form prose-mirror#chat-message:focus-within {
+  outline: none;
+  border-color: #7d1b1b !important;
+  box-shadow: 0 0 0 2px rgba(125, 27, 27, 0.22) !important;
+}
+
+.tormenta20.chat-card.item-card > button,
+.tormenta20.chat-card.item-card .card-item-effects button,
+.tormenta20.chat-card.item-card .card-item-template button {
+  background: #efe6d5 !important;
+  border: 1px solid #c89b3c !important;
+  border-radius: 5px !important;
+  color: #1f1916 !important;
+  font-weight: 700;
+}
+
+.tormenta20.chat-card.item-card > button:hover,
+.tormenta20.chat-card.item-card .card-item-effects button:hover,
+.tormenta20.chat-card.item-card .card-item-template button:hover {
+  background: #7d1b1b !important;
+  border-color: #5c1111 !important;
+  color: #fff6e6 !important;
+}
+
+/* --------------------------------------------------------------------------
+   2. AbilityUseDialog Modal Overhaul ("Configuração de uso...")
+   -------------------------------------------------------------------------- */
+
+.app.window-app.t20pf2e-ability-dialog {
+  max-height: 86vh !important;
+  min-width: 520px;
+}
+
+.app.window-app.t20pf2e-ability-dialog .window-content {
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  max-height: calc(86vh - 34px) !important;
+  padding: 10px 12px 12px !important;
+  gap: 8px;
+}
+
+.app.window-app.t20pf2e-ability-dialog .dialog-content {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding-right: 4px;
+}
+
+.t20pf2e-ability-hero {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  background: #fbf8f2;
+  border: 1px solid #c9b99d;
+  border-left: 4px solid #7a1c1c;
+  border-radius: 6px;
+}
+
+.t20pf2e-ability-hero-img {
+  width: 38px;
+  height: 38px;
+  border-radius: 5px;
+  border: 1.5px solid #b8860b;
+  object-fit: cover;
+  flex: 0 0 38px;
+  background: #eadfcd;
+}
+
+.t20pf2e-ability-hero-img.is-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7a1c1c;
+  font-size: 16px;
+}
+
+.t20pf2e-ability-hero-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.t20pf2e-ability-hero-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #7a1c1c;
+  line-height: 1.15;
+}
+
+.t20pf2e-ability-hero-sub {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 2px;
+  font-size: 11.5px;
+  color: #5b4c41;
+}
+
+.t20pf2e-ability-form .form-group {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  align-items: center;
+  gap: 8px;
+  margin: 5px 0;
+}
+
+.t20pf2e-ability-form .form-group:has(.aprimoramentos-list) {
+  display: block;
+  margin: 8px 0;
+}
+
+.t20pf2e-ability-form .form-group > label {
+  font-weight: 700;
+  color: #3d332c;
+  font-size: 12px;
+}
+
+.t20pf2e-ability-form .aprimoramentos-list {
+  max-height: 35vh !important;
+  overflow-y: auto !important;
+  border: 1px solid #c9b99d;
+  border-radius: 6px;
+  background: #fbf8f2;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.t20pf2e-ability-form .aprimoramentos-list .items-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #eadfcd !important;
+  border-bottom: 1.5px solid #b8860b !important;
+  padding: 5px 8px !important;
+}
+
+.t20pf2e-ability-form .aprimoramentos-list .items-header h3 {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #7a1c1c;
+  border: none;
+}
+
+.t20pf2e-ability-form .aprimoramentos-list li.item:not(.items-header) {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 9px;
+  border-bottom: 1px solid #e4dac7;
+  transition: background 0.12s ease;
+}
+
+.t20pf2e-ability-form .aprimoramentos-list li.item:not(.items-header):last-child {
+  border-bottom: none;
+}
+
+.t20pf2e-ability-form .aprimoramentos-list li.item.is-active {
+  background: rgba(122, 28, 28, 0.08);
+  box-shadow: inset 3px 0 0 #7a1c1c;
+}
+
+.t20pf2e-ability-form .aprimoramentos-list .item-cost {
+  flex: 0 0 auto;
+  min-width: 96px;
+  align-items: center;
+  gap: 4px;
+}
+
+.t20pf2e-ability-form .aprimoramentos-list .item-cost .numCtrl {
+  width: 22px;
+  height: 22px;
+  min-height: 22px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: #efe6d5;
+  border: 1px solid #b8860b;
+  color: #7a1c1c;
+}
+
+.t20pf2e-ability-form .aprimoramentos-list .item-cost .numCtrl:hover {
+  background: #7a1c1c;
+  color: #fbf8f2;
+}
+
+.t20pf2e-ability-form .aprimoramentos-list .item-cost .numInp {
+  max-width: 28px !important;
+  height: 22px !important;
+  text-align: center;
+  font-weight: 700;
+  padding: 0 2px;
+}
+
+.t20pf2e-ability-form .aprimoramentos-list .item-cost label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #7a1c1c;
+  white-space: nowrap;
+}
+
+.t20pf2e-ability-form .aprimoramentos-list .item-name {
+  font-size: 12px;
+  line-height: 1.42;
+  color: #2a211c;
+}
+
+.t20pf2e-ability-form .aprimoramentos-list .item-name p {
+  margin: 0;
+}
+
+.t20pf2e-apr-prefix {
+  display: inline-block;
+  margin-right: 5px;
+  padding: 0 5px;
+  border-radius: 3px;
+  background: #eadfcd;
+  border: 1px solid #c9b99d;
+  color: #7a1c1c;
+  font-weight: 700;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.app.window-app.t20pf2e-ability-dialog .dialog-buttons {
+  flex: 0 0 auto !important;
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  padding-top: 8px;
+  margin: 0 !important;
+  border-top: 1px solid #d5c5ab;
+}
+
+.app.window-app.t20pf2e-ability-dialog .dialog-buttons button {
+  flex: 1 1 0;
+  min-height: 32px;
+  padding: 5px 12px;
+  font-weight: 700;
+  font-size: 13px;
+  border-radius: 5px;
+}
+
+/* --------------------------------------------------------------------------
+   3. Unified System Windows, Dialogs & Sheets (Arton Parchment Ledger)
+   -------------------------------------------------------------------------- */
+
+.app.window-app.t20pf2e-arton-window,
+.app.window-app.dialog,
+.app.window-app.tormenta20,
+.application.t20pf2e-arton-window,
+.application.dialog {
+  border: 1.5px solid #7a1c1c;
+  border-radius: 7px;
+  box-shadow: 0 8px 26px rgba(15, 10, 8, 0.45);
+  overflow: hidden;
+  background: #f4efe6;
+}
+
+.app.window-app.t20pf2e-arton-window > .window-header,
+.app.window-app.dialog > .window-header,
+.app.window-app.tormenta20 > .window-header,
+.application.t20pf2e-arton-window > .window-header,
+.application.dialog > .window-header {
+  background: linear-gradient(180deg, #862121 0%, #6e1818 100%) !important;
+  color: #fbf8f2 !important;
+  border-bottom: 2px solid #b8860b !important;
+  padding: 3px 8px;
+}
+
+.app.window-app.t20pf2e-arton-window > .window-header .window-title,
+.app.window-app.dialog > .window-header .window-title,
+.app.window-app.tormenta20 > .window-header .window-title,
+.application.t20pf2e-arton-window > .window-header .window-title,
+.application.dialog > .window-header .window-title {
+  color: #fbf8f2 !important;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.app.window-app.t20pf2e-arton-window > .window-header a,
+.app.window-app.dialog > .window-header a,
+.app.window-app.tormenta20 > .window-header a,
+.application.t20pf2e-arton-window > .window-header button,
+.application.dialog > .window-header button {
+  color: #fbf8f2 !important;
+}
+
+.app.window-app.t20pf2e-arton-window > .window-content,
+.app.window-app.dialog > .window-content,
+.app.window-app.tormenta20 > .window-content,
+.application.t20pf2e-arton-window > .window-content,
+.application.dialog > .window-content {
+  background: #f4efe6 !important;
+  background-image: none !important;
+  color: #1f1916 !important;
+  font-family: "Signika", system-ui, -apple-system, sans-serif;
+}
+
+.t20pf2e-arton-window input[type="text"],
+.t20pf2e-arton-window input[type="number"],
+.t20pf2e-arton-window select,
+.t20pf2e-arton-window textarea,
+.window-app.dialog input[type="text"],
+.window-app.dialog input[type="number"],
+.window-app.dialog select,
+.window-app.dialog textarea,
+.application.dialog input[type="text"],
+.application.dialog input[type="number"],
+.application.dialog select,
+.application.dialog textarea {
+  background: #fbf8f2 !important;
+  color: #1f1916 !important;
+  border: 1px solid #c9b99d !important;
+  border-radius: 4px;
+}
+
+.t20pf2e-arton-window input:focus,
+.t20pf2e-arton-window select:focus,
+.t20pf2e-arton-window textarea:focus,
+.window-app.dialog input:focus,
+.window-app.dialog select:focus {
+  outline: none;
+  border-color: #7a1c1c !important;
+  box-shadow: 0 0 0 2px rgba(122, 28, 28, 0.18) !important;
+}
+
+.t20pf2e-arton-window input[disabled],
+.window-app.dialog input[disabled] {
+  background: #eadfcd !important;
+  color: #4b3d33 !important;
+  font-weight: 700;
+}
+
+/* Unified Buttons inside Dialogs & T20 Windows */
+.window-app.dialog .dialog-buttons button,
+.application.dialog .form-footer button {
+  background: #eadfcd;
+  color: #1f1916;
+  border: 1px solid #c9b99d;
+  border-radius: 5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.window-app.dialog .dialog-buttons button:hover,
+.application.dialog .form-footer button:hover {
+  background: #dfd0b8;
+  border-color: #b8860b;
+}
+
+.window-app.dialog .dialog-buttons button.default,
+.window-app.dialog .dialog-buttons button[data-button="use"],
+.window-app.dialog .dialog-buttons button[data-button="yes"],
+.window-app.dialog .dialog-buttons button[data-button="ok"],
+.application.dialog .form-footer button[type="submit"],
+.application.dialog .form-footer button.default {
+  background: #7a1c1c !important;
+  color: #fbf8f2 !important;
+  border: 1px solid #591111 !important;
+}
+
+.window-app.dialog .dialog-buttons button.default:hover,
+.window-app.dialog .dialog-buttons button[data-button="use"]:hover,
+.window-app.dialog .dialog-buttons button[data-button="yes"]:hover,
+.window-app.dialog .dialog-buttons button[data-button="ok"]:hover,
+.application.dialog .form-footer button[type="submit"]:hover {
+  background: #962525 !important;
+}
+
+/* Item Sheets & Legacy T20 Sheets Nav Tabs */
+.tormenta20.sheet.item .sheet-tabs.tabs,
+.tormenta20.sheet.actor:not(.pf2e-style) .sheet-tabs.tabs {
+  background: #eadfcd;
+  border-top: 1px solid #c9b99d;
+  border-bottom: 2px solid #b8860b;
+  padding: 2px 6px;
+}
+
+.tormenta20.sheet.item .sheet-tabs.tabs .item,
+.tormenta20.sheet.actor:not(.pf2e-style) .sheet-tabs.tabs .item {
+  color: #4b3d33;
+  font-weight: 600;
+}
+
+.tormenta20.sheet.item .sheet-tabs.tabs .item.active,
+.tormenta20.sheet.actor:not(.pf2e-style) .sheet-tabs.tabs .item.active {
+  color: #7a1c1c;
+  font-weight: 700;
+  text-shadow: none;
+  border-bottom: 2px solid #7a1c1c;
+}
+

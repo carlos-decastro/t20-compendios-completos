@@ -1,0 +1,91 @@
+{{#if visible}}
+  <aside class="t20pf2e-vitals-hud {{#if collapsed}}is-collapsed{{/if}}" aria-label="Controle Rápido de PV e PM">
+    <header class="t20pf2e-vitals-header" data-drag-handle title="Arraste para mover">
+      {{#if img}}
+        <img class="t20pf2e-vitals-avatar" src="{{img}}" alt="{{name}}" />
+      {{/if}}
+      <div class="t20pf2e-vitals-title-wrap">
+        <strong class="t20pf2e-vitals-name">{{name}}</strong>
+        {{#if multiCount}}
+          <span class="t20pf2e-vitals-badge">+{{multiCount}}</span>
+        {{/if}}
+      </div>
+      <div class="t20pf2e-vitals-header-actions">
+        {{#if isGM}}
+          <button type="button" class="t20pf2e-vitals-icon-btn" data-action="sync-bars" title="Sincronizar barras PV/PM em todos os tokens da cena">
+            <i class="fa-solid fa-arrows-rotate"></i>
+          </button>
+        {{/if}}
+        <button type="button" class="t20pf2e-vitals-icon-btn" data-action="toggle-collapse" title="{{#if collapsed}}Expandir painel{{else}}Minimizar painel{{/if}}">
+          <i class="fa-solid {{#if collapsed}}fa-chevron-up{{else}}fa-chevron-down{{/if}}"></i>
+        </button>
+      </div>
+    </header>
+
+    {{#unless collapsed}}
+      <div class="t20pf2e-vitals-body">
+        {{!-- PV (HP) --}}
+        <section class="t20pf2e-vital-group is-pv">
+          <div class="t20pf2e-vital-bar-wrap" title="Pontos de Vida: {{pv.value}} / {{pv.max}}{{#if pv.temp}} (+{{pv.temp}} temp){{/if}}">
+            <div class="t20pf2e-vital-bar-fill is-pv" style="width: {{pv.pct}}%;"></div>
+            <div class="t20pf2e-vital-bar-text">
+              <span><i class="fa-solid fa-heart"></i> PV</span>
+              <span>
+                <strong>{{pv.value}}</strong> / {{pv.max}}
+                {{#if pv.temp}}<em class="t20pf2e-temp-pill">+{{pv.temp}}</em>{{/if}}
+              </span>
+            </div>
+          </div>
+
+          <div class="t20pf2e-vital-controls">
+            <button type="button" class="t20pf2e-vbtn is-neg" data-action="delta-pv" data-delta="-10" title="-10 PV">-10</button>
+            <button type="button" class="t20pf2e-vbtn is-neg" data-action="delta-pv" data-delta="-5" title="-5 PV">-5</button>
+            <button type="button" class="t20pf2e-vbtn is-neg" data-action="delta-pv" data-delta="-1" title="-1 PV">-1</button>
+            <input type="number" class="t20pf2e-vital-input" data-vital-input="pv" value="{{lastPvAmount}}" min="0" step="1" title="Valor para dano, cura ou PV temp" />
+            <button type="button" class="t20pf2e-vbtn is-pos" data-action="delta-pv" data-delta="1" title="+1 PV">+1</button>
+            <button type="button" class="t20pf2e-vbtn is-pos" data-action="delta-pv" data-delta="5" title="+5 PV">+5</button>
+            <button type="button" class="t20pf2e-vbtn is-pos" data-action="delta-pv" data-delta="10" title="+10 PV">+10</button>
+          </div>
+
+          <div class="t20pf2e-vital-semantic">
+            <button type="button" class="t20pf2e-vact is-damage" data-action="apply-damage-rd" title="Aplica o valor digitado como dano reduzido pela RD do personagem">
+              <i class="fa-solid fa-burst"></i> Dano (RD)
+            </button>
+            <button type="button" class="t20pf2e-vact is-damage-raw" data-action="apply-damage-raw" title="Aplica o valor digitado como dano direto (ignora RD)">
+              Direto
+            </button>
+            <button type="button" class="t20pf2e-vact is-heal" data-action="apply-heal" title="Cura o valor digitado em PV">
+              <i class="fa-solid fa-kit-medical"></i> Curar
+            </button>
+            <button type="button" class="t20pf2e-vact is-temp" data-action="add-pv-temp" title="Adiciona PV temporários">+Temp</button>
+          </div>
+        </section>
+
+        {{!-- PM (MP) --}}
+        <section class="t20pf2e-vital-group is-pm">
+          <div class="t20pf2e-vital-bar-wrap" title="Pontos de Mana: {{pm.value}} / {{pm.max}}{{#if pm.temp}} (+{{pm.temp}} temp){{/if}}">
+            <div class="t20pf2e-vital-bar-fill is-pm" style="width: {{pm.pct}}%;"></div>
+            <div class="t20pf2e-vital-bar-text">
+              <span><i class="fa-solid fa-droplet"></i> PM</span>
+              <span>
+                <strong>{{pm.value}}</strong> / {{pm.max}}
+                {{#if pm.temp}}<em class="t20pf2e-temp-pill is-pm">+{{pm.temp}}</em>{{/if}}
+              </span>
+            </div>
+          </div>
+
+          <div class="t20pf2e-vital-controls">
+            <button type="button" class="t20pf2e-vbtn is-neg-pm" data-action="delta-pm" data-delta="-5" title="-5 PM">-5</button>
+            <button type="button" class="t20pf2e-vbtn is-neg-pm" data-action="delta-pm" data-delta="-1" title="-1 PM">-1</button>
+            <input type="number" class="t20pf2e-vital-input" data-vital-input="pm" value="{{lastPmAmount}}" min="0" step="1" title="Valor para gastar, recuperar ou PM temp" />
+            <button type="button" class="t20pf2e-vbtn is-pos-pm" data-action="delta-pm" data-delta="1" title="+1 PM">+1</button>
+            <button type="button" class="t20pf2e-vbtn is-pos-pm" data-action="delta-pm" data-delta="5" title="+5 PM">+5</button>
+            <button type="button" class="t20pf2e-vact is-spend-pm" data-action="spend-pm" title="Gastar PM (consome PM temporário primeiro)">-PM</button>
+            <button type="button" class="t20pf2e-vact is-gain-pm" data-action="recover-pm" title="Recuperar PM">+PM</button>
+          </div>
+        </section>
+      </div>
+    {{/unless}}
+  </aside>
+{{/if}}
+

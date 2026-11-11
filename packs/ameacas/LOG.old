@@ -1,0 +1,13 @@
+2026/11/11-08:35:41.837 8bac Recovering log #42
+2026/11/11-08:35:41.843 8bac Delete type=0 #42
+2026/11/11-08:35:41.843 8bac Delete type=3 #41
+2026/11/11-14:07:03.747 fac Level-0 table #46: started
+2026/11/11-14:07:03.747 fac Level-0 table #46: 0 bytes OK
+2026/11/11-14:07:03.749 fac Delete type=0 #44
+2026/11/11-14:07:03.754 fac Manual compaction at level-0 from '!actors!1sblHr7K3pMafHJK' @ 72057594037927935 : 1 .. '!folders!ofIG5MFrLISOgjFh' @ 0 : 0; will stop at '!folders!ofIG5MFrLISOgjFh' @ 9 : 1
+2026/11/11-14:07:03.754 fac Compacting 1@0 + 0@1 files
+2026/11/11-14:07:03.763 fac Generated table #47@0: 938 keys, 835536 bytes
+2026/11/11-14:07:03.763 fac Compacted 1@0 + 0@1 files => 835536 bytes
+2026/11/11-14:07:03.765 fac compacted to: files[ 0 1 0 0 0 0 0 ]
+2026/11/11-14:07:03.765 fac Delete type=2 #5
+2026/11/11-14:07:03.782 fac Manual compaction at level-0 from '!folders!ofIG5MFrLISOgjFh' @ 9 : 1 .. '!folders!ofIG5MFrLISOgjFh' @ 0 : 0; will stop at (end)

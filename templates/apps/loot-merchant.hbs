@@ -1,0 +1,181 @@
+<div class="t20pf2e-loot-root">
+  <header class="t20pf2e-loot-header">
+    <nav class="t20pf2e-loot-tabs" role="tablist">
+      <button type="button" class="t20pf2e-loot-tab {{#if (eq activeTab 'chest')}}is-active{{/if}}" data-action="switchTab" data-tab="chest">
+        <i class="fa-solid fa-box-open"></i> Baú de Tesouro ({{chestItems.length}})
+      </button>
+      <button type="button" class="t20pf2e-loot-tab {{#if (eq activeTab 'merchant')}}is-active{{/if}}" data-action="switchTab" data-tab="merchant">
+        <i class="fa-solid fa-store"></i> Mercador / Loja ({{merchantItems.length}})
+      </button>
+    </nav>
+
+    <div class="t20pf2e-loot-buyer">
+      <label for="t20pf2e-loot-buyer-select">Personagem:</label>
+      <select id="t20pf2e-loot-buyer-select" data-loot-buyer>
+        {{#if buyerActors.length}}
+          {{#each buyerActors}}
+            <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.name}} ({{this.tpFormatted}})</option>
+          {{/each}}
+        {{else}}
+          <option value="">Nenhum PJ disponível</option>
+        {{/if}}
+      </select>
+    </div>
+  </header>
+
+  {{#if (eq activeTab 'chest')}}
+    {{#if isGM}}
+      <div class="t20pf2e-loot-gm-bar">
+        <div class="t20pf2e-loot-gm-group">
+          <label>Gerador de Tesouro (ND):</label>
+          <select data-nd-select>
+            {{#each ndOptions}}
+              <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+            {{/each}}
+          </select>
+          <button type="button" class="t20pf2e-mini-btn is-primary" data-action="generateTreasure">
+            <i class="fa-solid fa-dice-d20"></i> Gerar Tesouro
+          </button>
+        </div>
+        <div class="t20pf2e-loot-gm-group">
+          <button type="button" class="t20pf2e-mini-btn" data-action="browseToAdd">
+            <i class="fa-solid fa-plus"></i> Abrir Compêndio
+          </button>
+          <button type="button" class="t20pf2e-mini-btn" data-action="clearChest" title="Esvaziar Baú">
+            <i class="fa-solid fa-trash"></i> Limpar Baú
+          </button>
+        </div>
+      </div>
+    {{/if}}
+
+    <div class="t20pf2e-loot-coins-bar">
+      <div class="t20pf2e-loot-coins-display">
+        <span><i class="fa-solid fa-coins"></i> Moedas no Baú:</span>
+        <strong>{{chestCoins.to}} TO</strong>
+        <strong>{{chestCoins.tp}} T$</strong>
+        <strong>{{chestCoins.tc}} TC</strong>
+        <span class="t20pf2e-muted">(≈ {{chestCoins.totalTP}} T$)</span>
+      </div>
+      <div class="t20pf2e-loot-coins-actions">
+        {{#if isGM}}
+          <button type="button" class="t20pf2e-mini-btn" data-action="editCoins">
+            <i class="fa-solid fa-pen"></i> Ajustar Moedas
+          </button>
+          <button type="button" class="t20pf2e-mini-btn is-primary" data-action="splitCoins">
+            <i class="fa-solid fa-hand-holding-dollar"></i> Dividir com Grupo
+          </button>
+        {{/if}}
+        <button type="button" class="t20pf2e-mini-btn" data-action="claimCoins">
+          <i class="fa-solid fa-coins"></i> Pegar Tudo (PJ)
+        </button>
+      </div>
+    </div>
+
+    <div class="t20pf2e-loot-list" data-chest-dropzone>
+      {{#if chestItems.length}}
+        {{#each chestItems}}
+          <div class="t20pf2e-loot-row">
+            <img src="{{this.img}}" alt="{{this.name}}" class="t20pf2e-loot-icon" />
+            <div class="t20pf2e-loot-info">
+              <div class="t20pf2e-loot-name">{{this.name}}</div>
+              <div class="t20pf2e-loot-meta">
+                <span>{{this.typeLabel}}</span>
+                <span>Qtd: {{this.qty}}</span>
+                <span>Valor: {{this.price}} T$</span>
+              </div>
+            </div>
+            <div class="t20pf2e-loot-actions">
+              <button type="button" class="t20pf2e-mini-btn is-primary" data-action="takeItem" data-entry-id="{{this.id}}">
+                <i class="fa-solid fa-hand-sparkles"></i> Pegar 1
+              </button>
+              {{#if ../isGM}}
+                <button type="button" class="t20pf2e-mini-btn" data-action="removeChestItem" data-entry-id="{{this.id}}" title="Remover">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              {{/if}}
+            </div>
+          </div>
+        {{/each}}
+      {{else}}
+        <div class="t20pf2e-loot-empty">
+          <i class="fa-solid fa-box-open"></i>
+          <p>O baú está vazio.</p>
+          {{#if isGM}}
+            <p class="t20pf2e-muted">Use <strong>Gerar Tesouro (ND)</strong> acima ou arraste itens do jogo/compêndio para cá.</p>
+          {{/if}}
+        </div>
+      {{/if}}
+    </div>
+  {{else}}
+    {{#if isGM}}
+      <div class="t20pf2e-loot-gm-bar">
+        <div class="t20pf2e-loot-gm-group">
+          <label>Loja:</label>
+          <select data-preset-select>
+            {{#each presetOptions}}
+              <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+            {{/each}}
+          </select>
+          <label>Preço:</label>
+          <select data-markup-select>
+            {{#each markupOptions}}
+              <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+            {{/each}}
+          </select>
+          <button type="button" class="t20pf2e-mini-btn is-primary" data-action="restockMerchant">
+            <i class="fa-solid fa-arrows-rotate"></i> Reestocar
+          </button>
+        </div>
+      </div>
+    {{/if}}
+
+    <div class="t20pf2e-loot-coins-bar">
+      <div class="t20pf2e-loot-coins-display">
+        <span><i class="fa-solid fa-shop"></i> <strong>{{merchantTitle}}</strong></span>
+        <span class="t20pf2e-muted">Modificador de preço: {{markupPct}}%</span>
+      </div>
+      <div class="t20pf2e-loot-coins-actions">
+        {{#if selectedBuyer}}
+          <span class="t20pf2e-loot-wallet"><i class="fa-solid fa-coins"></i> Carteira de {{selectedBuyer.name}}: <strong>{{selectedBuyer.tpFormatted}}</strong></span>
+        {{/if}}
+      </div>
+    </div>
+
+    <div class="t20pf2e-loot-list">
+      {{#if merchantItems.length}}
+        {{#each merchantItems}}
+          <div class="t20pf2e-loot-row">
+            <img src="{{this.img}}" alt="{{this.name}}" class="t20pf2e-loot-icon" />
+            <div class="t20pf2e-loot-info">
+              <div class="t20pf2e-loot-name">{{this.name}}</div>
+              <div class="t20pf2e-loot-meta">
+                <span>{{this.typeLabel}}</span>
+                <span>Estoque: {{this.qty}}</span>
+                <span>Preço: <strong>{{this.finalPrice}} T$</strong></span>
+              </div>
+            </div>
+            <div class="t20pf2e-loot-actions">
+              <button type="button" class="t20pf2e-mini-btn is-primary" data-action="buyItem" data-entry-id="{{this.id}}" {{#unless this.canAfford}}disabled{{/unless}}>
+                <i class="fa-solid fa-cart-shopping"></i> Comprar
+              </button>
+              {{#if ../isGM}}
+                <button type="button" class="t20pf2e-mini-btn" data-action="removeMerchantItem" data-entry-id="{{this.id}}" title="Remover">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              {{/if}}
+            </div>
+          </div>
+        {{/each}}
+      {{else}}
+        <div class="t20pf2e-loot-empty">
+          <i class="fa-solid fa-store-slash"></i>
+          <p>A loja está sem estoque no momento.</p>
+          {{#if isGM}}
+            <p class="t20pf2e-muted">Escolha um perfil de loja e clique em <strong>Reestocar</strong>.</p>
+          {{/if}}
+        </div>
+      {{/if}}
+    </div>
+  {{/if}}
+</div>
+

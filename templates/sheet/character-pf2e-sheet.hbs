@@ -1,0 +1,555 @@
+<form class="tormenta20 pf2e-sheet" autocomplete="off">
+  {{!-- PERSISTENT LEFT SIDEBAR (PF2e Style) --}}
+  <aside class="pf2e-sidebar">
+    {{!-- Portrait --}}
+    <div class="pf2e-portrait-wrap">
+      <img class="profile pf2e-portrait" src="{{actor.img}}" title="{{actor.name}}" data-edit="img" />
+      <div class="pf2e-level-badge" title="Nível Total">
+        <span class="pf2e-lvl-label">NÍVEL</span>
+        <span class="pf2e-lvl-num">{{system.attributes.nivel.value}}</span>
+      </div>
+    </div>
+
+    {{!-- HP & MP Vitals --}}
+    <section class="pf2e-side-card pf2e-vitals">
+      <div class="pf2e-side-head">
+        <h3><i class="fa-solid fa-heart-pulse"></i> Pontos Vitais</h3>
+        <div class="pf2e-side-tools">
+          <a class="config-button" data-action="resources" title="Configurar Recursos / Nível">
+            <i class="fa-solid fa-sliders"></i>
+          </a>
+          <a class="config-button" data-action="rest" title="{{localize 'T20.Rest'}}">
+            <i class="fa-solid fa-bed"></i>
+          </a>
+        </div>
+      </div>
+
+      {{!-- PV --}}
+      <div class="pf2e-resource-block hp">
+        <div class="pf2e-res-label">
+          <span>{{localize 'T20.HitPoints'}} (PV)</span>
+          <span class="pf2e-res-temp">Temp <input type="number" data-dtype="Number" name="system.attributes.pv.temp" value="{{system.attributes.pv.temp}}" placeholder="0" /></span>
+        </div>
+        <div class="pf2e-res-bar">
+          <span class="pf2e-res-fill hp" style="width: {{pf2eMeta.hpPct}}%"></span>
+        </div>
+        <div class="pf2e-res-inputs">
+          <input type="number" data-dtype="Number" name="system.attributes.pv.value" value="{{system.attributes.pv.value}}" max="{{system.attributes.pv.max}}" />
+          <span class="sep">/</span>
+          <input type="number" name="system.attributes.pv.max" value="{{system.attributes.pv.max}}" {{disabled autoCalcResources}} data-tooltip="{{fieldBonuses 'system.attributes.pv'}}" />
+        </div>
+      </div>
+
+      {{!-- PM --}}
+      <div class="pf2e-resource-block mp">
+        <div class="pf2e-res-label">
+          <span>{{localize 'T20.ManaPoints'}} (PM)</span>
+          <span class="pf2e-res-temp">Temp <input type="number" data-dtype="Number" name="system.attributes.pm.temp" value="{{system.attributes.pm.temp}}" placeholder="0" /></span>
+        </div>
+        <div class="pf2e-res-bar">
+          <span class="pf2e-res-fill mp" style="width: {{pf2eMeta.mpPct}}%"></span>
+        </div>
+        <div class="pf2e-res-inputs">
+          <input type="number" data-dtype="Number" name="system.attributes.pm.value" value="{{system.attributes.pm.value}}" max="{{system.attributes.pm.max}}" />
+          <span class="sep">/</span>
+          <input type="number" name="system.attributes.pm.max" value="{{system.attributes.pm.max}}" {{disabled autoCalcResources}} data-tooltip="{{fieldBonuses 'system.attributes.pm'}}" />
+        </div>
+      </div>
+    </section>
+
+    {{!-- Defense & Movement --}}
+    <section class="pf2e-side-card pf2e-defense-box">
+      <div class="pf2e-def-main" data-tooltip="{{fieldBonuses 'system.attributes.defesa.bonus'}}">
+        <div class="pf2e-shield-badge">
+          <i class="fa-solid fa-shield"></i>
+          <span>{{system.attributes.defesa.value}}</span>
+        </div>
+        <div class="pf2e-def-meta">
+          <div class="pf2e-def-title">{{localize "T20.Defense"}}</div>
+          <div class="pf2e-def-controls">
+            <select name="system.attributes.defesa.atributo" title="{{localize 'T20.AbilityBonus'}}">
+              {{selectOptions config.atributosAbr selected=system.attributes.defesa.atributo blank=''}}
+            </select>
+            <input type="number" data-dtype="Number" name="system.attributes.defesa.outros" value="{{system.attributes.defesa.outros}}" placeholder="0" title="Outros bônus" />
+          </div>
+        </div>
+      </div>
+      <div class="pf2e-speed-row">
+        <a class="config-button" data-action="movement" data-target="system.attributes.movement" title="Editar Deslocamento">
+          <i class="fa-solid fa-shoe-prints"></i> Deslocamento
+        </a>
+        <div class="pf2e-speed-tags">
+          {{#each movement as |move key|}}
+            <span>{{localize move}}</span>
+          {{/each}}
+        </div>
+      </div>
+    </section>
+
+    {{!-- Quick Saving Throws & Initiative / Perception --}}
+    <section class="pf2e-side-card pf2e-saves">
+      <div class="pf2e-side-head">
+        <h3><i class="fa-solid fa-dice-d20"></i> Salvaguardas & Sentidos</h3>
+      </div>
+      <div class="pf2e-save-grid">
+        {{#each pf2eMeta.quickSkills as |qsk|}}
+          <div class="pf2e-save-chip skill" data-item-id="{{qsk.key}}">
+            <span class="rollable pericia-rollable" title="Rolar {{qsk.label}}">
+              <span class="pf2e-save-name">{{qsk.shortLabel}}</span>
+              <span class="pf2e-save-val">{{numberFormat qsk.value sign=true}}</span>
+            </span>
+          </div>
+        {{/each}}
+      </div>
+    </section>
+
+    {{!-- 6 Core Attributes --}}
+    <section class="pf2e-side-card pf2e-abilities">
+      <div class="pf2e-side-head">
+        <h3>Atributos</h3>
+      </div>
+      <div class="pf2e-abl-grid">
+        {{#each system.atributos as |atr key|}}
+          <div class="pf2e-abl-card ability" data-item-id="{{key}}">
+            <span class="pf2e-abl-label rollable atributo-rollable" title="Rolar {{key}}">
+              {{localize (lookup ../config.atributosAbr key)}}
+            </span>
+            <span class="pf2e-abl-val rollable atributo-rollable">
+              {{numberFormat atr.value decimals=0 sign=true}}
+            </span>
+            <div class="pf2e-abl-edit">
+              <input type="number" name="system.atributos.{{key}}.base" value="{{atr.base}}" title="Base" />
+              {{#if @root.mostrarAtributoRacial}}
+                <input type="number" name="system.atributos.{{key}}.racial" value="{{atr.racial}}" title="Racial" />
+              {{/if}}
+              {{#if @root.mostrarAtributoTemp}}
+                <input type="number" name="system.atributos.{{key}}.bonus" value="{{atr.bonus}}" title="Bônus" />
+              {{/if}}
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </section>
+  </aside>
+
+  {{!-- RIGHT MAIN WORKSPACE --}}
+  <div class="pf2e-main-col">
+    {{!-- TOP HEADER: Name, XP + Clickable ABC+D Builder Banner --}}
+    <header class="pf2e-top-header">
+      <div class="pf2e-name-bar">
+        <h1 class="pf2e-charname">
+          <input name="name" type="text" value="{{actor.name}}" placeholder="Nome do Personagem" />
+        </h1>
+        {{#unless disableExperience}}
+          <div class="pf2e-xp-box">
+            <div class="pf2e-xp-nums">
+              <span>XP</span>
+              <input type="text" placeholder="0" data-dtype="Number" name="system.attributes.nivel.xp.value" value="{{system.attributes.nivel.xp.value}}" />
+              <span class="sep">/</span>
+              <span>{{system.attributes.nivel.xp.proximo}}</span>
+            </div>
+            <div class="xpbar"><span class="bar" style="width: {{system.attributes.nivel.xp.pct}}%"></span></div>
+          </div>
+        {{/unless}}
+        <button type="button" class="pf2e-open-browser-btn" data-pf2e-browse="magias" title="Abrir Navegador de Compêndios de Arton">
+          <i class="fa-solid fa-book-atlas"></i> Compêndios
+        </button>
+      </div>
+
+      {{!-- ABC + Divindade Cards (Click to browse & auto-fill!) --}}
+      <div class="pf2e-abcd-grid">
+        {{!-- Raça --}}
+        <div class="pf2e-abcd-card {{#unless actor.race}}empty{{/unless}}">
+          <div class="pf2e-abcd-top">
+            <span class="pf2e-abcd-tag">Raça</span>
+            <button type="button" class="pf2e-pick-btn" data-pf2e-browse="racas" title="Escolher / Trocar Raça">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+          </div>
+          <div class="pf2e-abcd-value">
+            {{#if actor.race}}
+              <span class="item" data-item-id="{{actor.race._id}}">
+                <a class="item-control" title="Abrir Raça">{{actor.race.name}}</a>
+              </span>
+            {{else}}
+              <a class="pf2e-placeholder-link" data-pf2e-browse="racas">+ Selecionar Raça</a>
+            {{/if}}
+          </div>
+        </div>
+
+        {{!-- Origem --}}
+        <div class="pf2e-abcd-card {{#unless system.detalhes.origem}}empty{{/unless}}">
+          <div class="pf2e-abcd-top">
+            <span class="pf2e-abcd-tag">Origem</span>
+            <button type="button" class="pf2e-pick-btn" data-pf2e-browse="origens" title="Escolher / Trocar Origem">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+          </div>
+          <div class="pf2e-abcd-value">
+            {{#if system.detalhes.origem}}
+              <a class="pf2e-open-origem" title="Abrir Origem no Compêndio">{{system.detalhes.origem}}</a>
+            {{else}}
+              <a class="pf2e-placeholder-link" data-pf2e-browse="origens">+ Selecionar Origem</a>
+            {{/if}}
+          </div>
+        </div>
+
+        {{!-- Classe(s) --}}
+        <div class="pf2e-abcd-card pf2e-abcd-class {{#unless actor.classes.length}}empty{{/unless}}">
+          <div class="pf2e-abcd-top">
+            <span class="pf2e-abcd-tag">Classe</span>
+            <button type="button" class="pf2e-pick-btn" data-pf2e-browse="classes" title="Adicionar Classe (Multiclasse)">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+          <div class="pf2e-abcd-value pf2e-class-pills">
+            {{#if actor.classes.length}}
+              {{#each actor.classes as |cls|}}
+                <span class="item pf2e-class-pill" data-item-id="{{cls._id}}">
+                  <a class="item-control" title="Abrir ficha da classe {{cls.name}}">{{cls.name}} {{cls.system.niveis}}</a>
+                  {{#unless (eq cls.system.niveis 1)}}
+                    <button type="button" class="pf2e-lvl-down-btn" data-pf2e-leveldown="{{cls._id}}" title="Reduzir -1 Nível em {{cls.name}}">
+                      <i class="fa-solid fa-arrow-down"></i>
+                    </button>
+                  {{/unless}}
+                  <button type="button" class="pf2e-lvl-up-btn" data-pf2e-levelup="{{cls._id}}" title="Subir +1 Nível em {{cls.name}}">
+                    <i class="fa-solid fa-arrow-up"></i>
+                  </button>
+                </span>
+              {{/each}}
+            {{else}}
+              <a class="pf2e-placeholder-link" data-pf2e-browse="classes">+ Selecionar Classe</a>
+            {{/if}}
+          </div>
+        </div>
+
+        {{!-- Divindade --}}
+        <div class="pf2e-abcd-card {{#unless system.detalhes.divindade}}empty{{/unless}}">
+          <div class="pf2e-abcd-top">
+            <span class="pf2e-abcd-tag">Divindade</span>
+            <button type="button" class="pf2e-pick-btn" data-pf2e-browse="divindades" title="Escolher Divindade">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+          </div>
+          <div class="pf2e-abcd-value">
+            {{#if system.detalhes.divindade}}
+              <a class="pf2e-open-divindade" title="Abrir Divindade no Compêndio">{{system.detalhes.divindade}}</a>
+            {{else}}
+              <a class="pf2e-placeholder-link" data-pf2e-browse="divindades">+ Escolher Divindade</a>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    </header>
+
+    {{!-- TAB NAVIGATION (PF2e Icon + Text Bar) --}}
+    <nav class="sheet-tabs tabs pf2e-nav" data-group="primary">
+      <a class="item" data-tab="attributes"><i class="fa-solid fa-address-card"></i> Personagem</a>
+      <a class="item" data-tab="combat"><i class="fa-solid fa-swords"></i> Combate</a>
+      <a class="item" data-tab="skills"><i class="fa-solid fa-list-check"></i> Perícias</a>
+      <a class="item" data-tab="powers"><i class="fa-solid fa-star"></i> Poderes</a>
+      <a class="item" data-tab="spells"><i class="fa-solid fa-wand-sparkles"></i> Magias</a>
+      <a class="item" data-tab="inventory"><i class="fa-solid fa-backpack"></i> Inventário</a>
+      <a class="item" data-tab="effects"><i class="fa-solid fa-bolt"></i> Efeitos</a>
+      <a class="item" data-tab="journal"><i class="fa-solid fa-book-open"></i> Diário</a>
+    </nav>
+
+    {{!-- SHEET BODY --}}
+    <section class="sheet-body pf2e-body">
+      {{!-- TAB 1: PERSONAGEM (Build Summary, Proficiencies, Traits, Modifiers) --}}
+      <div class="tab attributes" data-group="primary" data-tab="attributes">
+        <div class="pf2e-two-col">
+          <div class="pf2e-panel">
+            <h3 class="pf2e-panel-title"><i class="fa-solid fa-compass-drafting"></i> Construção de Personagem</h3>
+            <div class="pf2e-build-rows">
+              <div class="pf2e-build-item">
+                <label>Raça:</label>
+                <span>{{ifThen actor.race actor.race.name "Não definida"}}</span>
+                <button type="button" class="pf2e-small-btn" data-pf2e-browse="racas">Escolher</button>
+              </div>
+              <div class="pf2e-build-item">
+                <label>Origem:</label>
+                <input type="text" name="system.detalhes.origem" value="{{system.detalhes.origem}}" placeholder="Origem..." />
+                <button type="button" class="pf2e-small-btn" data-pf2e-browse="origens">Escolher</button>
+              </div>
+              <div class="pf2e-build-item">
+                <label>Divindade:</label>
+                <input type="text" name="system.detalhes.divindade" value="{{system.detalhes.divindade}}" placeholder="Sem divindade..." />
+                <button type="button" class="pf2e-small-btn" data-pf2e-browse="divindades">Escolher</button>
+              </div>
+              {{#if pf2eMeta.progression.classesCount}}
+                <div class="pf2e-build-item pf2e-prog-sync-row">
+                  <label>Progressão:</label>
+                  <span>
+                    {{pf2eMeta.progression.filledSlots}}/{{pf2eMeta.progression.totalSlots}} espaços
+                    {{#if pf2eMeta.progression.missingSyncCount}}
+                      · <strong class="pf2e-sync-warn">{{pf2eMeta.progression.missingSyncCount}} pendente(s)</strong>
+                    {{/if}}
+                  </span>
+                  <button type="button" class="pf2e-small-btn" data-pf2e-sync-progression="1" title="Importar habilidades passivas faltantes, atualizar escalonamentos e vincular poderes aos espaços">
+                    <i class="fa-solid fa-rotate"></i> Sincronizar
+                  </button>
+                </div>
+              {{/if}}
+            </div>
+
+            <div class="pf2e-traits-wrap">
+              {{> "tormenta20.traits"}}
+            </div>
+          </div>
+
+          <div class="pf2e-panel">
+            <h3 class="pf2e-panel-title"><i class="fa-solid fa-star-of-life"></i> Favoritos & Anotações</h3>
+            {{> "tormenta20.list-favorites"}}
+            <div class="pf2e-notes-box">
+              <label>Anotações Rápidas</label>
+              <textarea name="system.detalhes.info" rows="8">{{system.detalhes.info}}</textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {{!-- TAB 2: COMBATE & AÇÕES --}}
+      <div class="tab combat" data-group="primary" data-tab="combat">
+        <div class="pf2e-tab-toolbar">
+          <span class="pf2e-tab-hint">Clique no ícone da arma, magia ou poder favorito para rolar diretamente no chat.</span>
+          <div class="pf2e-toolbar-btns" style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button type="button" class="pf2e-browse-cta" data-pf2e-browse="efeitos">
+              <i class="fa-solid fa-bolt"></i> Ações &amp; Buffs
+            </button>
+            <button type="button" class="pf2e-browse-cta" data-pf2e-browse="equipamentos" data-item-type="arma">
+              <i class="fa-solid fa-plus"></i> Buscar Armas no Compêndio
+            </button>
+          </div>
+        </div>
+        <div class="pf2e-two-col">
+          <div class="pf2e-panel">
+            <h3 class="pf2e-panel-title"><i class="fa-solid fa-dagger"></i> Armas & Ataques</h3>
+            {{> "tormenta20.list-weapon"}}
+          </div>
+          <div class="pf2e-panel">
+            <h3 class="pf2e-panel-title"><i class="fa-solid fa-sparkles"></i> Ações & Favoritos</h3>
+            {{> "tormenta20.list-favorites"}}
+            {{#if system.resources.shadow}}
+              <div class="resource">{{> "tormenta20.resources-extra"}}</div>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+
+      {{!-- TAB 3: PERÍCIAS --}}
+      <div class="tab skills" data-group="primary" data-tab="skills">
+        <div class="pf2e-tab-toolbar">
+          <div class="pf2e-skill-search-wrap">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="search" class="pf2e-skill-filter" placeholder="Filtrar perícias pelo nome..." />
+          </div>
+          <div class="pf2e-skill-toggles">
+            <button type="button" class="pf2e-filter-pill" data-skill-only="trained">
+              <i class="fa-solid fa-check"></i> Somente Treinadas
+            </button>
+          </div>
+        </div>
+        <div class="pf2e-skills-container">
+          {{> "tormenta20.list-skills"}}
+        </div>
+      </div>
+
+      {{!-- TAB 4: PODERES & HABILIDADES --}}
+      <div class="tab powers" data-group="primary" data-tab="powers">
+        <div class="pf2e-tab-toolbar">
+          <span class="pf2e-tab-hint">Arraste poderes do navegador ou preencha os espaços liberados por cada nível de classe.</span>
+          <div style="display:flex; gap:6px; align-items:center;">
+            {{#if pf2eMeta.progression.missingSyncCount}}
+              <button type="button" class="pf2e-small-btn" data-pf2e-sync-progression="1" title="Importar habilidades de nível e atualizar escalonamentos">
+                <i class="fa-solid fa-rotate"></i> Sincronizar ({{pf2eMeta.progression.missingSyncCount}})
+              </button>
+            {{/if}}
+            <button type="button" class="pf2e-browse-cta" data-pf2e-browse="poderes">
+              <i class="fa-solid fa-magnifying-glass-plus"></i> Explorar Poderes
+            </button>
+          </div>
+        </div>
+
+        {{#if pf2eMeta.progression.slotsByClass.length}}
+          <section class="pf2e-slots-panel">
+            <div class="pf2e-slots-header">
+              <h3><i class="fa-solid fa-layer-group"></i> Espaços de Progressão (Poderes)</h3>
+              <div class="pf2e-slots-summary">
+                <span class="pf2e-slot-counter">{{pf2eMeta.progression.filledSlots}}/{{pf2eMeta.progression.totalSlots}} preenchidos</span>
+                {{#if pf2eMeta.progression.emptySlots}}
+                  <span class="pf2e-slot-open-badge">{{pf2eMeta.progression.emptySlots}} espaço(s) livre(s)</span>
+                {{/if}}
+              </div>
+            </div>
+
+            {{#each pf2eMeta.progression.slotsByClass as |grp|}}
+              <div class="pf2e-slot-group">
+                <div class="pf2e-slot-group-title">
+                  <span>{{grp.className}} (Nível {{grp.level}})</span>
+                  <span class="pf2e-slot-subcount">{{grp.filledCount}}/{{grp.slots.length}} poderes escolhidos</span>
+                </div>
+                {{#if grp.slots.length}}
+                  <div class="pf2e-slot-grid">
+                    {{#each grp.slots as |slot|}}
+                      {{#if slot.filled}}
+                        <div class="pf2e-slot-row is-filled">
+                          <span class="pf2e-slot-lvl" title="Patamar {{slot.tier.label}}">Nv {{slot.level}}</span>
+                          <img class="pf2e-slot-icon" src="{{slot.powerItem.img}}" alt="{{slot.powerItem.name}}" />
+                          <a class="pf2e-slot-name" data-pf2e-open-item="{{slot.powerItem.id}}" title="Abrir ficha de {{slot.powerItem.name}}">{{slot.powerItem.name}}</a>
+                          {{#if slot.powerItem.subtipo}}
+                            <span class="pf2e-slot-tag">{{slot.powerItem.subtipo}}</span>
+                          {{/if}}
+                          <div class="pf2e-slot-actions">
+                            <button type="button" class="pf2e-slot-btn"
+                                    data-pf2e-pick-slot="1"
+                                    data-slot-id="{{slot.slotId}}"
+                                    data-slot-level="{{slot.level}}"
+                                    data-class-key="{{slot.classKey}}"
+                                    data-class-name="{{slot.className}}"
+                                    data-power-subtype="{{slot.powerSubtype}}"
+                                    title="Substituir poder neste espaço">
+                              <i class="fa-solid fa-arrows-rotate"></i>
+                            </button>
+                            <button type="button" class="pf2e-slot-btn is-danger"
+                                    data-pf2e-unlink-slot="{{slot.powerItem.id}}"
+                                    title="Remover poder e reabrir este espaço">
+                              <i class="fa-solid fa-xmark"></i>
+                            </button>
+                          </div>
+                        </div>
+                      {{else}}
+                        <div class="pf2e-slot-row is-empty">
+                          <span class="pf2e-slot-lvl" title="Patamar {{slot.tier.label}}">Nv {{slot.level}}</span>
+                          <span class="pf2e-slot-placeholder">{{slot.label}} ou Geral ({{slot.tier.label}})</span>
+                          <button type="button" class="pf2e-slot-pick-btn"
+                                  data-pf2e-pick-slot="1"
+                                  data-slot-id="{{slot.slotId}}"
+                                  data-slot-level="{{slot.level}}"
+                                  data-class-key="{{slot.classKey}}"
+                                  data-class-name="{{slot.className}}"
+                                  data-power-subtype="{{slot.powerSubtype}}">
+                            <i class="fa-solid fa-magnifying-glass"></i> Escolher Poder
+                          </button>
+                        </div>
+                      {{/if}}
+                    {{/each}}
+                  </div>
+                {{else}}
+                  <div class="pf2e-slot-empty-note">Nenhum espaço de poder livre no nível 1 — novos espaços abrem a partir do nível 2.</div>
+                {{/if}}
+              </div>
+            {{/each}}
+          </section>
+        {{/if}}
+
+        <div class="pf2e-powers-container">
+          {{> "tormenta20.list-powers-tabbed"}}
+        </div>
+      </div>
+
+      {{!-- TAB 5: MAGIAS (GRIMÓRIO) --}}
+      <div class="tab spells" data-group="primary" data-tab="spells">
+        <div class="pf2e-tab-toolbar pf2e-spells-toolbar">
+          <div class="pf2e-spell-drop-hint">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span>Arraste magias para cá ou abra o Navegador filtrado por Círculo, Arcana/Divina e Escola.</span>
+          </div>
+          <button type="button" class="pf2e-browse-cta" data-pf2e-browse="magias">
+            <i class="fa-solid fa-book-sparkles"></i> Explorar Todas as Magias
+          </button>
+        </div>
+
+        {{#if pf2eMeta.progression.hasCasters}}
+          <section class="pf2e-caster-panel">
+            {{#each pf2eMeta.progression.casters as |caster|}}
+              <div class="pf2e-caster-card">
+                <div class="pf2e-caster-head">
+                  <div class="pf2e-caster-title">
+                    <i class="fa-solid fa-hat-wizard"></i>
+                    <strong>{{caster.className}} Nv {{caster.classLevel}}</strong>
+                    <span class="pf2e-caster-badge">{{caster.tradicaoLabel}}</span>
+                    {{#if caster.pathLabel}}
+                      <span class="pf2e-caster-badge is-gold">{{caster.pathLabel}}</span>
+                    {{/if}}
+                    <span class="pf2e-caster-badge is-subtle">Atributo: {{caster.keyAttr}}</span>
+                  </div>
+                  <div class="pf2e-caster-actions">
+                    {{#if (eq caster.classKey "arcanista")}}
+                      <button type="button" class="pf2e-small-btn" data-pf2e-arcanista-path="1">
+                        {{#if caster.needsArcanistaPath}}Escolher Caminho{{else}}Alterar Caminho{{/if}}
+                      </button>
+                    {{/if}}
+                    <button type="button" class="pf2e-slot-pick-btn"
+                            data-pf2e-learn-spell="1"
+                            data-tradicao="{{caster.tradicao}}"
+                            data-tradicao-label="{{caster.tradicaoLabel}}"
+                            data-max-circulo="{{caster.unlockedCircle}}">
+                      <i class="fa-solid fa-plus"></i> Aprender Magia (até {{caster.unlockedCircle}}º)
+                    </button>
+                  </div>
+                </div>
+                <div class="pf2e-caster-metrics">
+                  <span><strong>Círculo Máximo:</strong> {{caster.unlockedCircle}}º Círculo{{#if caster.nextCircleLevel}} <em>(próximo no Nv {{caster.nextCircleLevel}})</em>{{/if}}</span>
+                  <span>
+                    <strong>Magias Conhecidas:</strong> {{caster.knownCount}} / {{caster.totalQuota}}
+                    {{#if caster.remainingQuota}}
+                      <em class="pf2e-quota-open">({{caster.remainingQuota}} vaga(s) na cota)</em>
+                    {{else if caster.overQuota}}
+                      <em class="pf2e-quota-over">(acima da cota base / bônus do Mestre)</em>
+                    {{/if}}
+                  </span>
+                  {{#if caster.schoolRestrictedCount}}
+                    <span class="pf2e-caster-note"><em>Regra T20: restrito a {{caster.schoolRestrictedCount}} escolas escolhidas.</em></span>
+                  {{/if}}
+                </div>
+              </div>
+            {{/each}}
+          </section>
+        {{/if}}
+
+        <div class="pf2e-spells-container">
+          {{> "tormenta20.list-spells"}}
+        </div>
+      </div>
+
+      {{!-- TAB 6: INVENTÁRIO --}}
+      <div class="tab inventory" data-group="primary" data-tab="inventory">
+        <div class="pf2e-tab-toolbar">
+          <span class="pf2e-tab-hint">Armas, armaduras, escudos, consumíveis, carga e tibares (T$).</span>
+          <div class="pf2e-toolbar-btns" style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button type="button" class="pf2e-browse-cta" data-pf2e-open-forge="1">
+              <i class="fa-solid fa-hammer"></i> Forjar / Melhorar
+            </button>
+            <button type="button" class="pf2e-browse-cta" data-pf2e-browse="equipamentos">
+              <i class="fa-solid fa-cart-plus"></i> Explorar Equipamentos
+            </button>
+          </div>
+        </div>
+        <div class="pf2e-inventory-container">
+          {{> "tormenta20.list-inventory"}}
+        </div>
+      </div>
+
+      {{!-- TAB 7: EFEITOS & MODIFICADORES --}}
+      <div class="tab effects" data-group="primary" data-tab="effects">
+        <div class="pf2e-effects-layout">
+          <div class="pf2e-panel pf2e-effects-panel">
+            <h3 class="pf2e-panel-title"><i class="fa-solid fa-bolt"></i> Efeitos Ativos</h3>
+            {{> "tormenta20.active-effects"}}
+          </div>
+          <div class="pf2e-panel pf2e-modifiers-panel">
+            <h3 class="pf2e-panel-title"><i class="fa-solid fa-sliders"></i> Modificadores Globais</h3>
+            {{> "tormenta20.modifiers"}}
+          </div>
+        </div>
+      </div>
+
+      {{!-- TAB 8: DIÁRIO & BIOGRAFIA --}}
+      <div class="tab journal" data-group="primary" data-tab="journal">
+        {{> "tormenta20.journal"}}
+      </div>
+    </section>
+  </div>
+</form>
+

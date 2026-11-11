@@ -1,0 +1,133 @@
+{{#if visible}}
+  <aside class="t20pf2e-quick-actions {{#if collapsed}}is-collapsed{{/if}}" aria-label="Menu Rápido de Combate do Token">
+    <header class="t20pf2e-qa-header" data-qa-drag title="Arraste para mover o Menu Rápido">
+      {{#if img}}
+        <img class="t20pf2e-qa-avatar" src="{{img}}" alt="{{name}}" />
+      {{/if}}
+      <div class="t20pf2e-qa-title-wrap">
+        <strong class="t20pf2e-qa-name">{{name}}</strong>
+        {{#if badgeText}}
+          <span class="t20pf2e-qa-badge">{{badgeText}}</span>
+        {{/if}}
+      </div>
+      <div class="t20pf2e-qa-header-actions">
+        <button type="button" class="t20pf2e-qa-icon-btn" data-qa-action="open-sheet" title="Abrir Ficha Completa">
+          <i class="fa-solid fa-id-card"></i>
+        </button>
+        <button type="button" class="t20pf2e-qa-icon-btn" data-qa-action="toggle-collapse" title="{{#if collapsed}}Expandir Menu Rápido{{else}}Minimizar Menu Rápido{{/if}}">
+          <i class="fa-solid {{#if collapsed}}fa-chevron-down{{else}}fa-chevron-up{{/if}}"></i>
+        </button>
+      </div>
+    </header>
+
+    {{#unless collapsed}}
+      <div class="t20pf2e-qa-body">
+        {{!-- Defesas, Resistências & Salvaguardas --}}
+        <section class="t20pf2e-qa-section is-defenses">
+          <div class="t20pf2e-qa-defense-strip">
+            <span class="t20pf2e-qa-def-pill" title="{{defenseTooltip}}">
+              <i class="fa-solid fa-shield-halved"></i> Def <strong>{{defense}}</strong>
+            </span>
+            {{#if rdSummary}}
+              <span class="t20pf2e-qa-rd-pill" title="{{defenseTooltip}}">{{rdSummary}}</span>
+            {{/if}}
+            {{#if moveSummary}}
+              <span class="t20pf2e-qa-move-pill" title="Deslocamento"><i class="fa-solid fa-person-running"></i> {{moveSummary}}</span>
+            {{/if}}
+          </div>
+
+          <div class="t20pf2e-qa-saves-row">
+            {{#each coreSkills as |sk|}}
+              <button type="button" class="t20pf2e-qa-chip is-skill" data-qa-skill="{{sk.key}}" title="Rolar {{sk.label}} (Shift+clique para modificadores)">
+                <span class="t20pf2e-qa-chip-label">{{sk.abbr}}</span>
+                <strong class="t20pf2e-qa-chip-val">{{sk.signed}}</strong>
+              </button>
+            {{/each}}
+          </div>
+        </section>
+
+        {{!-- Ataques --}}
+        {{#if attacks.length}}
+          <section class="t20pf2e-qa-section">
+            <div class="t20pf2e-qa-sec-title">
+              <span><i class="fa-solid fa-dice-d20"></i> Ataques</span>
+              <span class="t20pf2e-qa-sec-hint">1 clique rola</span>
+            </div>
+            <div class="t20pf2e-qa-grid">
+              {{#each attacks as |atk|}}
+                <button type="button" class="t20pf2e-qa-attack-btn" data-qa-item="{{atk.id}}" data-qa-grip="{{atk.grip}}" title="{{atk.tooltip}}">
+                  <span class="t20pf2e-qa-atk-main">
+                    <i class="fa-solid {{atk.icon}}"></i>
+                    <span class="t20pf2e-qa-atk-name">{{atk.name}}</span>
+                    {{#if atk.multi}}<em class="t20pf2e-qa-multi">{{atk.multi}}x</em>{{/if}}
+                  </span>
+                  <span class="t20pf2e-qa-atk-meta">
+                    {{#if atk.toHit}}<strong class="t20pf2e-qa-hit">{{atk.toHit}}</strong>{{/if}}
+                    {{#if atk.damage}}<span class="t20pf2e-qa-dmg">{{atk.damage}}</span>{{/if}}
+                  </span>
+                </button>
+              {{/each}}
+            </div>
+          </section>
+        {{/if}}
+
+        {{!-- Magias (somente se possuir) --}}
+        {{#if spells.length}}
+          <section class="t20pf2e-qa-section">
+            <div class="t20pf2e-qa-sec-title">
+              <span><i class="fa-solid fa-wand-sparkles"></i> Magias</span>
+              {{#if spellDC}}<span class="t20pf2e-qa-sec-dc">CD {{spellDC}}</span>{{/if}}
+            </div>
+            <div class="t20pf2e-qa-chips-wrap">
+              {{#each spells as |sp|}}
+                <button type="button" class="t20pf2e-qa-chip is-spell" data-qa-item="{{sp.id}}" title="{{sp.tooltip}}">
+                  <i class="fa-solid fa-wand-magic-sparkles"></i>
+                  <span>{{sp.name}}</span>
+                  {{#if sp.cost}}<em class="t20pf2e-qa-pm">{{sp.cost}}</em>{{/if}}
+                </button>
+              {{/each}}
+            </div>
+          </section>
+        {{/if}}
+
+        {{!-- Poderes / Habilidades Especiais (somente se possuir) --}}
+        {{#if powers.length}}
+          <section class="t20pf2e-qa-section">
+            <div class="t20pf2e-qa-sec-title">
+              <span><i class="fa-solid fa-bolt"></i> Habilidades</span>
+              <span class="t20pf2e-qa-sec-hint">{{powers.length}}</span>
+            </div>
+            <div class="t20pf2e-qa-chips-wrap">
+              {{#each powers as |pw|}}
+                <button type="button" class="t20pf2e-qa-chip is-power" data-qa-item="{{pw.id}}" title="{{pw.tooltip}}">
+                  <span>{{pw.name}}</span>
+                  {{#if pw.cost}}<em class="t20pf2e-qa-pm">{{pw.cost}}</em>{{/if}}
+                </button>
+              {{/each}}
+            </div>
+          </section>
+        {{/if}}
+
+        {{!-- Perícias Extras (treinadas/relevantes, se possuir) --}}
+        {{#if extraSkills.length}}
+          <section class="t20pf2e-qa-section is-extra-skills">
+            <button type="button" class="t20pf2e-qa-toggle-skills" data-qa-action="toggle-skills">
+              <span><i class="fa-solid fa-list-check"></i> Outras Perícias ({{extraSkills.length}})</span>
+              <i class="fa-solid {{#if showExtraSkills}}fa-chevron-up{{else}}fa-chevron-down{{/if}}"></i>
+            </button>
+            {{#if showExtraSkills}}
+              <div class="t20pf2e-qa-chips-wrap is-spaced">
+                {{#each extraSkills as |sk|}}
+                  <button type="button" class="t20pf2e-qa-chip is-extra-skill" data-qa-skill="{{sk.key}}" title="Rolar {{sk.label}}">
+                    <span>{{sk.label}}</span>
+                    <strong>{{sk.signed}}</strong>
+                  </button>
+                {{/each}}
+              </div>
+            {{/if}}
+          </section>
+        {{/if}}
+      </div>
+    {{/unless}}
+  </aside>
+{{/if}}

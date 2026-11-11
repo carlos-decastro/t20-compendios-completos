@@ -1,0 +1,210 @@
+{
+  "id": "t20-compendios-completos",
+  "title": "Tormenta20 — Compêndios Completos (Estilo PF2e)",
+  "description": "Compêndios completos, organizados, interligados por @UUID e enriquecidos com o Livro Básico e Suplementos para Tormenta20 no Foundry VTT v14.",
+  "version": "0.3.0",
+  "compatibility": {
+    "minimum": "14",
+    "verified": "14",
+    "maximum": "14"
+  },
+  "authors": [
+    {
+      "name": "Carlos"
+    }
+  ],
+  "esmodules": [
+    "scripts/main.js"
+  ],
+  "socket": true,
+  "styles": [
+    "styles/t20-pf2e-sheet.css",
+    "styles/t20-browser.css",
+    "styles/t20-tier1-features.css",
+    "styles/t20-tier2-3-features.css",
+    "styles/t20-arton-theme.css"
+  ],
+  "languages": [
+    {
+      "lang": "pt-BR",
+      "name": "Português (Brasil)",
+      "path": "lang/pt-br.json"
+    }
+  ],
+  "relationships": {
+    "systems": [
+      {
+        "id": "tormenta20",
+        "type": "system",
+        "compatibility": {
+          "minimum": "1.6.0",
+          "verified": "1.6.6"
+        }
+      }
+    ]
+  },
+  "packs": [
+    {
+      "name": "classes",
+      "label": "Classes (Livro Básico Completo)",
+      "path": "packs/classes",
+      "type": "Item",
+      "system": "tormenta20",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "racas",
+      "label": "Raças (Livro Básico Completo)",
+      "path": "packs/racas",
+      "type": "Item",
+      "system": "tormenta20",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "poderes",
+      "label": "Poderes & Habilidades (Completo)",
+      "path": "packs/poderes",
+      "type": "Item",
+      "system": "tormenta20",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "magias",
+      "label": "Magias (Livro Básico Completo)",
+      "path": "packs/magias",
+      "type": "Item",
+      "system": "tormenta20",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "equipamentos",
+      "label": "Equipamentos & Serviços (Completo)",
+      "path": "packs/equipamentos",
+      "type": "Item",
+      "system": "tormenta20",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "itens-magicos",
+      "label": "Itens Mágicos, Poções & Artefatos",
+      "path": "packs/itens-magicos",
+      "type": "Item",
+      "system": "tormenta20",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "parceiros",
+      "label": "Parceiros & Montarias (Completo)",
+      "path": "packs/parceiros",
+      "type": "Item",
+      "system": "tormenta20",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "ameacas",
+      "label": "Ameaças (Livro Básico + Lore)",
+      "path": "packs/ameacas",
+      "type": "Actor",
+      "system": "tormenta20",
+      "ownership": {
+        "PLAYER": "LIMITED",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "divindades",
+      "label": "Divindades (Panteão de Arton)",
+      "path": "packs/divindades",
+      "type": "JournalEntry",
+      "system": "tormenta20",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "origens",
+      "label": "Origens (Livro Básico Completo)",
+      "path": "packs/origens",
+      "type": "JournalEntry",
+      "system": "tormenta20",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "guias-basico",
+      "label": "Guias & Regras (Livro Básico)",
+      "path": "packs/guias-basico",
+      "type": "JournalEntry",
+      "system": "tormenta20",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    }
+  ],
+  "packFolders": [
+    {
+      "name": "Tormenta20 Completo",
+      "sorting": "m",
+      "color": "#8b1e1e",
+      "folders": [
+        {
+          "name": "Criação de Personagem",
+          "sorting": "m",
+          "color": "#4b1d1d",
+          "packs": [
+            "classes",
+            "racas",
+            "origens",
+            "poderes",
+            "parceiros",
+            "divindades"
+          ]
+        },
+        {
+          "name": "Magias & Equipamentos",
+          "sorting": "m",
+          "color": "#2f2c58",
+          "packs": [
+            "magias",
+            "equipamentos",
+            "itens-magicos"
+          ]
+        },
+        {
+          "name": "Bestiário & Guias",
+          "sorting": "m",
+          "color": "#2f4f2f",
+          "packs": [
+            "ameacas",
+            "guias-basico"
+          ]
+        }
+      ]
+    }
+  ]
+}

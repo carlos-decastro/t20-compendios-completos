@@ -1,0 +1,44 @@
+{{#if actor}}
+  <div id="t20pf2e-effects-panel" class="t20pf2e-effects-panel" data-actor-id="{{actor.id}}">
+    <div class="t20pf2e-ep-header" title="{{actor.name}}">
+      <span class="t20pf2e-ep-actor">{{actor.name}}</span>
+      <button type="button" class="t20pf2e-ep-add-btn" data-action="togglePicker" title="Aplicar Condição Rápida">
+        <i class="fa-solid fa-plus"></i>
+      </button>
+    </div>
+
+    {{#if showPicker}}
+      <div class="t20pf2e-ep-picker">
+        <input type="search" class="t20pf2e-ep-search" placeholder="Filtrar condição..." value="{{pickerQuery}}" />
+        <div class="t20pf2e-ep-cond-grid">
+          {{#each conditions as |cond|}}
+            <button type="button"
+                    class="t20pf2e-ep-cond-chip {{#if cond.active}}active{{/if}}"
+                    data-action="toggleCondition"
+                    data-status-id="{{cond.id}}"
+                    data-name-norm="{{cond.nameNorm}}"
+                    title="{{cond.name}}">
+              <img src="{{cond.img}}" alt="{{cond.name}}" />
+              <span>{{cond.name}}</span>
+            </button>
+          {{/each}}
+        </div>
+      </div>
+    {{/if}}
+
+    <div class="t20pf2e-ep-list">
+      {{#each effects as |ef|}}
+        <div class="t20pf2e-ep-item"
+             data-effect-id="{{ef.id}}"
+             data-tooltip="{{ef.tooltip}}"
+             data-tooltip-direction="LEFT">
+          <img src="{{ef.img}}" alt="{{ef.name}}" />
+          {{#if ef.badge}}
+            <span class="t20pf2e-ep-badge">{{ef.badge}}</span>
+          {{/if}}
+        </div>
+      {{/each}}
+    </div>
+  </div>
+{{/if}}
+
