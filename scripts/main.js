@@ -14,6 +14,7 @@ import { registerTokenQuickActionsSettings, TokenQuickActionsT20 } from "./featu
 import { registerTokenVisionSettings, TokenVisionT20 } from "./features/token-vision.js";
 import { initSheetUxEnhancers } from "./features/sheet-ux-enhancers.js";
 import { initArtonUiTheme } from "./features/arton-ui-theme.js";
+import { CharacterWizardT20 } from "./wizard/character-wizard.js";
 import { computeActorProgression, syncClassLevelProgression } from "./automation/progression-slots.js";
 import { levelUpClassOnActor } from "./automation/character-builders.js";
 
@@ -43,7 +44,8 @@ Hooks.once("init", () => {
     `modules/${MODULE_ID}/templates/hud/token-quick-actions.hbs`,
     `modules/${MODULE_ID}/templates/apps/party-sheet.hbs`,
     `modules/${MODULE_ID}/templates/apps/forge-modal.hbs`,
-    `modules/${MODULE_ID}/templates/apps/loot-merchant.hbs`
+    `modules/${MODULE_ID}/templates/apps/loot-merchant.hbs`,
+    `modules/${MODULE_ID}/templates/apps/character-wizard.hbs`
   ]);
 });
 
@@ -62,7 +64,6 @@ Hooks.once("setup", () => {
     label: "T20COMP.SheetLabel"
   });
 
-  EffectsPanelT20.init();
   PartySheetT20.init();
   initChatEnhancer();
   initNpcScaler();
@@ -85,10 +86,12 @@ Hooks.once("setup", () => {
       EffectsPanelT20,
       ForgeModalT20,
       LootMerchantAppT20,
+      CharacterWizardT20,
       TokenVitalsHudT20,
       TokenQuickActionsT20,
       TokenVisionT20,
       openBrowser: (opts = {}, actor = null) => CompendiumBrowserT20.open(opts, actor),
+      openCharacterWizard: (actor = null) => CharacterWizardT20.open(actor),
       openPartySheet: (opts = {}) => PartySheetT20.open(opts),
       openCheckPrompt: () => openCheckPromptDialog(),
       openForge: (actor = null, itemId = null) => ForgeModalT20.open(actor || game.user.character, itemId),
@@ -103,6 +106,28 @@ Hooks.once("setup", () => {
   }
 
   console.log(`${MODULE_ID} | Ficha Moderna, Navegador e Recursos Tier 1-3 carregados (padrão=${makeDefault}).`);
+});
+
+Hooks.on("renderActorDirectory", (_app, html) => {
+  if (!game.user?.can?.("ACTOR_CREATE")) return;
+  const root = html instanceof HTMLElement ? html : html?.[0];
+  if (!root || root.querySelector(".t20pf2e-open-wizard-btn")) return;
+
+  const dirHeader = root.querySelector("header.directory-header");
+  if (!dirHeader) return;
+
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "t20pf2e-open-wizard-btn";
+  btn.innerHTML = `<i class="fa-solid fa-scroll"></i> Criar Personagem (Assistente)`;
+  btn.addEventListener("click", (ev) => {
+    ev.preventDefault();
+    CharacterWizardT20.open();
+  });
+
+  const searchEl = dirHeader.querySelector("search");
+  if (searchEl) searchEl.before(btn);
+  else dirHeader.appendChild(btn);
 });
 
 Hooks.on("renderCompendiumDirectory", (_app, html) => {

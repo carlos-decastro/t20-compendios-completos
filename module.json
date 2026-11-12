@@ -2,10 +2,10 @@
   "id": "t20-compendios-completos",
   "title": "Tormenta20 — Compêndios Completos",
   "description": "Compêndios completos, organizados, interligados por @UUID e enriquecidos com o Livro Básico e Suplementos para Tormenta20 no Foundry VTT v14.",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "url": "https://github.com/carlos-decastro/t20-compendios-completos",
   "manifest": "https://github.com/carlos-decastro/t20-compendios-completos/releases/latest/download/module.json",
-  "download": "https://github.com/carlos-decastro/t20-compendios-completos/releases/download/v0.3.1/t20-compendios-completos.zip",
+  "download": "https://github.com/carlos-decastro/t20-compendios-completos/releases/download/v0.4.0/t20-compendios-completos.zip",
   "readme": "https://github.com/carlos-decastro/t20-compendios-completos/blob/main/README.md",
   "changelog": "https://github.com/carlos-decastro/t20-compendios-completos/blob/main/CHANGELOG.md",
   "bugs": "https://github.com/carlos-decastro/t20-compendios-completos/issues",
@@ -28,7 +28,8 @@
     "styles/t20-browser.css",
     "styles/t20-tier1-features.css",
     "styles/t20-tier2-3-features.css",
-    "styles/t20-arton-theme.css"
+    "styles/t20-arton-theme.css",
+    "styles/t20-wizard.css"
   ],
   "languages": [
     {

@@ -1,0 +1,898 @@
+<div class="t20wiz-shell">
+  {{!-- Horizontal 8-Step Stepper --}}
+  <nav class="t20wiz-stepper" aria-label="Etapas da Criação">
+    {{#each steps as |st|}}
+    <button type="button"
+      class="t20wiz-step {{#if st.isCurrent}}is-current{{/if}} {{#if st.isValid}}is-valid{{/if}} {{#unless st.isAccessible}}is-locked{{/unless}}"
+      data-action="goStep" data-step="{{st.num}}" {{#unless st.isAccessible}}disabled{{/unless}}>
+      <span class="t20wiz-step-badge">
+        {{#if st.isDone}}<i class="fa-solid fa-check"></i>{{else}}{{st.num}}{{/if}}
+      </span>
+      <span class="t20wiz-step-label">
+        <i class="{{st.icon}}"></i>
+        <span>{{st.label}}</span>
+      </span>
+    </button>
+    {{/each}}
+  </nav>
+
+  {{!-- Main Body + Persistent Live Summary --}}
+  <div class="t20wiz-body">
+    <main class="t20wiz-main" data-wiz-scroll="main-{{currentStepNum}}">
+      <header class="t20wiz-step-header">
+        <div class="t20wiz-step-kicker">PASSO {{currentStepNum}} DE 8 · NÍVEL 1 (PERSONAGEM INICIAL)</div>
+        <h2><i class="{{stepMeta.icon}}"></i> {{stepMeta.label}}</h2>
+      </header>
+
+      {{!-- STEP 1: IDENTIDADE --}}
+      {{#if (eq currentStepNum 1)}}
+      <section class="t20wiz-panel t20wiz-identity-grid">
+        <div class="t20wiz-portrait-box">
+          <img class="t20wiz-portrait-img" src="{{draft.identity.img}}" alt="Retrato do Personagem" />
+          <button type="button" class="t20wiz-btn t20wiz-btn-secondary" data-action="pickPortrait">
+            <i class="fa-solid fa-image"></i> Escolher Retrato
+          </button>
+        </div>
+        <div class="t20wiz-form-col">
+          <label class="t20wiz-field">
+            <span>Nome do Personagem <strong class="t20wiz-req">*</strong></span>
+            <input type="text" class="t20wiz-input" data-wiz-input="identityName" value="{{draft.identity.name}}"
+              placeholder="Ex.: Valéria, Thorin Martelo-de-Ferro..." autofocus />
+          </label>
+          <label class="t20wiz-field">
+            <span>Conceito / Breve História (Opcional)</span>
+            <textarea class="t20wiz-textarea" rows="5" data-wiz-input="identityNotes"
+              placeholder="De onde veio, o que busca em Arton, traços marcantes...">{{draft.identity.notes}}</textarea>
+          </label>
+          <div class="t20wiz-callout">
+            <i class="fa-solid fa-compass-drafting"></i>
+            <div>
+              <strong>Modo Estrito Ativo:</strong> Cada passo valida as regras oficiais de 1º nível antes de avançar. No
+              final, toda a ficha será criada de uma única vez sem popups extras.
+            </div>
+          </div>
+        </div>
+      </section>
+      {{/if}}
+
+      {{!-- STEP 2: ATRIBUTOS --}}
+      {{#if (eq currentStepNum 2)}}
+      <section class="t20wiz-panel">
+        <div class="t20wiz-mode-bar">
+          <div class="t20wiz-segmented">
+            <button type="button" class="t20wiz-seg-btn {{#if step2.isPointBuy}}active{{/if}}" data-action="setAttrMode"
+              data-mode="pointbuy">
+              <i class="fa-solid fa-coins"></i> Compra por Pontos (10 pts)
+            </button>
+            <button type="button" class="t20wiz-seg-btn {{#if step2.isRoll}}active{{/if}}" data-action="setAttrMode"
+              data-mode="roll">
+              <i class="fa-solid fa-dice"></i> Rolagem (4d6)
+            </button>
+            <button type="button" class="t20wiz-seg-btn {{#if step2.isManual}}active{{/if}}" data-action="setAttrMode"
+              data-mode="manual">
+              <i class="fa-solid fa-pen-to-square"></i> Entrada Manual
+            </button>
+          </div>
+
+          {{#if step2.isPointBuy}}
+          <div class="t20wiz-budget-pill {{#if step2.pointBuy.valid}}is-complete{{/if}}">
+            Pontos restantes: <strong>{{step2.pointBuy.remaining}} / {{step2.pointBuy.budget}}</strong>
+          </div>
+          <button type="button" class="t20wiz-btn t20wiz-btn-ghost" data-action="resetPointBuy">
+            <i class="fa-solid fa-rotate-left"></i> Zerar
+          </button>
+          {{/if}}
+        </div>
+
+        {{#if step2.isRoll}}
+        <div class="t20wiz-roll-tray">
+          <div class="t20wiz-roll-toolbar">
+            <button type="button" class="t20wiz-btn t20wiz-btn-primary" data-action="rollAbilities">
+              <i class="fa-solid fa-dice-d20"></i> Rolar 6 Atributos (4d6 descarta menor)
+            </button>
+            <button type="button" class="t20wiz-btn t20wiz-btn-secondary" data-action="autoAssignRolls">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Preencher em Ordem
+            </button>
+            {{#if step2.belowRecommended}}
+            <span class="t20wiz-warn-chip">
+              <i class="fa-solid fa-triangle-exclamation"></i> Soma {{step2.rolledTotalMod}} (&lt; +6). Regra JdA
+              permite rerolar!
+            </span>
+            {{/if}}
+          </div>
+          <p class="t20wiz-hint">
+            Clique em um valor rolado abaixo e depois clique no atributo desejado para atribuir:
+          </p>
+          <div class="t20wiz-roll-chips">
+            {{#each step2.rollChips as |chip|}}
+            <button type="button"
+              class="t20wiz-roll-chip {{#if chip.isActive}}is-active{{/if}} {{#if chip.isAssigned}}is-used{{/if}}"
+              data-action="selectRollChip" data-roll-idx="{{chip.idx}}"
+              title="Dados: {{chip.diceText}} (soma {{chip.sum}})">
+              <strong>{{chip.modText}}</strong>
+              <small>soma {{chip.sum}}</small>
+            </button>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+
+        <div class="t20wiz-attr-grid">
+          {{#each step2.attrCards as |card|}}
+          <div class="t20wiz-attr-card {{#if ../step2.activeRollSelected}}is-targetable{{/if}}" {{#if
+            ../step2.isRoll}}data-action="assignRollToAttr" data-attr="{{card.key}}" {{/if}}>
+            <div class="t20wiz-attr-top">
+              <span class="t20wiz-attr-abbr">{{card.abbr}}</span>
+              <span class="t20wiz-attr-name">{{card.label}}</span>
+            </div>
+
+            {{#if ../step2.isPointBuy}}
+            <div class="t20wiz-attr-controls">
+              <button type="button" class="t20wiz-adj-btn" data-action="adjAttr" data-attr="{{card.key}}"
+                data-delta="-1" {{#unless card.canDec}}disabled{{/unless}}>
+                <i class="fa-solid fa-minus"></i>
+              </button>
+              <span class="t20wiz-attr-val">{{card.baseText}}</span>
+              <button type="button" class="t20wiz-adj-btn" data-action="adjAttr" data-attr="{{card.key}}" data-delta="1"
+                {{#unless card.canInc}}disabled{{/unless}}>
+                <i class="fa-solid fa-plus"></i>
+              </button>
+            </div>
+            <div class="t20wiz-attr-foot">{{card.costText}}</div>
+            {{else if ../step2.isRoll}}
+            <div class="t20wiz-attr-controls">
+              <span class="t20wiz-attr-val">
+                {{#if card.hasAssignedRoll}}{{card.baseText}}{{else}}—{{/if}}
+              </span>
+            </div>
+            <div class="t20wiz-attr-foot">
+              {{#if card.hasAssignedRoll}}Clique para limpar/trocar{{else}}Aguardando valor{{/if}}
+            </div>
+            {{else}}
+            <div class="t20wiz-attr-controls">
+              <input type="number" class="t20wiz-attr-num-input" data-wiz-manual-attr="{{card.key}}"
+                value="{{card.baseVal}}" min="-5" max="15" />
+            </div>
+            <div class="t20wiz-attr-foot">Base livre</div>
+            {{/if}}
+
+            {{#if card.racialVal}}
+            <div class="t20wiz-attr-racial">Raça {{card.racialText}} → <strong>{{card.finalText}}</strong></div>
+            {{/if}}
+          </div>
+          {{/each}}
+        </div>
+      </section>
+      {{/if}}
+
+      {{!-- STEP 3: RAÇA --}}
+      {{#if (eq currentStepNum 3)}}
+      <div class="t20wiz-split">
+        <div class="t20wiz-list-col">
+          <input type="search" class="t20wiz-search" data-wiz-search="race" placeholder="Buscar raça..." />
+          <div class="t20wiz-list" data-wiz-list="race" data-wiz-scroll="list-3">
+            {{#each step3.races as |r|}}
+            <button type="button" class="t20wiz-list-row {{#if r.selected}}is-selected{{/if}}" data-action="selectRace"
+              data-uuid="{{r.uuid}}" data-name-norm="{{r.nameNorm}}">
+              <img src="{{r.img}}" alt="{{r.name}}" />
+              <div>
+                <strong>{{r.name}}</strong>
+                <small>{{r.subtitle}}</small>
+              </div>
+            </button>
+            {{/each}}
+          </div>
+        </div>
+
+        <div class="t20wiz-detail-col" data-wiz-scroll="detail-3">
+          {{#if step3.selectedRace}}
+          <div class="t20wiz-detail-head">
+            <img src="{{step3.selectedRace.img}}" alt="{{step3.selectedRace.name}}" />
+            <div>
+              <h3>{{step3.selectedRace.name}}</h3>
+              <p class="t20wiz-hint">Configure os bônus e opções raciais abaixo:</p>
+            </div>
+          </div>
+
+          {{#if step3.hasDynamic}}
+          <div class="t20wiz-card-box">
+            <div class="t20wiz-box-head">
+              <strong>Atributos Dinâmicos (+{{step3.selectedRace.dynamicBonus}} em cada)</strong>
+              <span class="t20wiz-counter">{{step3.dynamicPickedCount}} / {{step3.selectedRace.dynamicCount}}</span>
+            </div>
+            <div class="t20wiz-pill-grid">
+              {{#each step3.dynamicOptions as |opt|}}
+              <button type="button" class="t20wiz-choice-pill {{#if opt.picked}}is-picked{{/if}}"
+                data-action="toggleDynamicAttr" data-attr="{{opt.key}}" {{#if opt.disabled}}disabled{{/if}}>
+                <strong>{{opt.abbr}}</strong> (+1)
+              </button>
+              {{/each}}
+            </div>
+          </div>
+          {{/if}}
+
+          {{#each step3.grantBlocks as |gb|}}
+          {{#if gb.isSingleChoice}}
+          <div class="t20wiz-card-box">
+            <div class="t20wiz-box-head">
+              <strong>{{gb.title}} (Escolha 1)</strong>
+            </div>
+            <div class="t20wiz-pill-grid">
+              {{#each gb.choices as |ch|}}
+              <button type="button" class="t20wiz-choice-pill {{#if ch.selected}}is-picked{{/if}}"
+                data-action="pickRaceGrantChoice" data-grant-idx="{{gb.idx}}" data-uuid="{{ch.uuid}}">
+                {{ch.name}}
+              </button>
+              {{/each}}
+            </div>
+          </div>
+          {{/if}}
+          {{/each}}
+
+          {{#if step3.isVersatil}}
+          <div class="t20wiz-card-box">
+            <div class="t20wiz-box-head">
+              <strong>Versátil (Humano)</strong>
+            </div>
+            <div class="t20wiz-pill-grid">
+              <button type="button" class="t20wiz-choice-pill {{#if (eq step3.raceChoiceGrant.mode 'two_skills')}}is-picked{{/if}}"
+                data-action="setRaceSpecialMode"
+                data-grant-idx="{{step3.raceChoiceGrant.grantIdx}}" data-mode="two_skills">
+                2 Perícias à escolha
+              </button>
+              <button type="button" class="t20wiz-choice-pill {{#if (eq step3.raceChoiceGrant.mode 'skill_and_power')}}is-picked{{/if}}"
+                data-action="setRaceSpecialMode"
+                data-grant-idx="{{step3.raceChoiceGrant.grantIdx}}" data-mode="skill_and_power">
+                1 Perícia + 1 Poder Geral (Passo 7)
+              </button>
+            </div>
+          </div>
+          {{/if}}
+
+          {{#if step3.isMemoria}}
+          <div class="t20wiz-card-box">
+            <div class="t20wiz-box-head">
+              <strong>Memória Póstuma (Osteon)</strong>
+            </div>
+            <div class="t20wiz-pill-grid">
+              <button type="button" class="t20wiz-choice-pill {{#if (eq step3.raceChoiceGrant.mode 'one_skill')}}is-picked{{/if}}"
+                data-action="setRaceSpecialMode"
+                data-grant-idx="{{step3.raceChoiceGrant.grantIdx}}" data-mode="one_skill">
+                1 Perícia à escolha
+              </button>
+              <button type="button" class="t20wiz-choice-pill {{#if (eq step3.raceChoiceGrant.mode 'one_power')}}is-picked{{/if}}"
+                data-action="setRaceSpecialMode"
+                data-grant-idx="{{step3.raceChoiceGrant.grantIdx}}" data-mode="one_power">
+                1 Poder Geral (Passo 7)
+              </button>
+            </div>
+          </div>
+          {{/if}}
+
+          {{#if step3.raceExtraSkillCount}}
+          <div class="t20wiz-card-box">
+            <div class="t20wiz-box-head">
+              <strong>Perícias Concedidas pela Raça</strong>
+              <span class="t20wiz-counter">{{step3.extraSkillPickedCount}} / {{step3.raceExtraSkillCount}}</span>
+            </div>
+            <div class="t20wiz-check-grid">
+              {{#each step3.extraSkillOptions as |sk|}}
+              <button type="button" class="t20wiz-skill-btn {{#if sk.picked}}is-picked{{/if}}"
+                data-action="pickRaceExtraSkill" data-skill="{{sk.key}}" {{#if sk.disabled}}disabled{{/if}}>
+                {{sk.label}}
+              </button>
+              {{/each}}
+            </div>
+          </div>
+          {{/if}}
+
+          <div class="t20wiz-rich-desc">{{{step3.raceDescHtml}}}</div>
+          {{else}}
+          <div class="t20wiz-empty-state">
+            <i class="fa-solid fa-masks-theater"></i>
+            <p>Selecione uma raça na coluna ao lado para visualizar atributos e habilidades.</p>
+          </div>
+          {{/if}}
+        </div>
+      </div>
+      {{/if}}
+
+      {{!-- STEP 4: ORIGEM --}}
+      {{#if (eq currentStepNum 4)}}
+      <div class="t20wiz-split">
+        <div class="t20wiz-list-col">
+          <input type="search" class="t20wiz-search" data-wiz-search="origin" placeholder="Buscar origem..." />
+          <div class="t20wiz-list" data-wiz-list="origin" data-wiz-scroll="list-4">
+            {{#each step4.origins as |o|}}
+            <button type="button" class="t20wiz-list-row {{#if o.selected}}is-selected{{/if}}"
+              data-action="selectOrigin" data-uuid="{{o.uuid}}" data-name-norm="{{o.nameNorm}}">
+              <img src="{{o.img}}" alt="{{o.name}}" />
+              <div>
+                <strong>{{o.name}}</strong>
+                <small>{{o.subtitle}}</small>
+              </div>
+            </button>
+            {{/each}}
+          </div>
+        </div>
+
+        <div class="t20wiz-detail-col" data-wiz-scroll="detail-4">
+          {{#if step4.selectedOrigin}}
+          <div class="t20wiz-detail-head">
+            <img src="{{step4.selectedOrigin.img}}" alt="{{step4.selectedOrigin.name}}" />
+            <div>
+              <h3>{{step4.selectedOrigin.name}}</h3>
+              <p class="t20wiz-hint">{{step4.selectedOrigin.beneficiosTexto}}</p>
+            </div>
+          </div>
+
+          <div class="t20wiz-card-box">
+            <div class="t20wiz-box-head">
+              <strong>Escolha {{step4.requiredCount}} Benefício(s) (Perícias ou Poderes)</strong>
+              <span class="t20wiz-counter">{{step4.pickedCount}} / {{step4.requiredCount}}</span>
+            </div>
+            <div class="t20wiz-check-grid">
+              {{#each step4.skillOptions as |sk|}}
+              <button type="button"
+                class="t20wiz-skill-btn {{#if sk.picked}}is-picked{{/if}} {{#if sk.alreadyRace}}is-owned{{/if}}"
+                data-action="toggleOriginSkill" data-skill="{{sk.key}}" {{#if sk.disabled}}disabled{{/if}}>
+                <strong>Perícia:</strong> {{sk.label}}{{#if sk.alreadyRace}} <em>(Raça)</em>{{/if}}
+              </button>
+              {{/each}}
+              {{#each step4.poderOptions as |pw|}}
+              <button type="button" class="t20wiz-skill-btn {{#if pw.picked}}is-picked{{/if}}"
+                data-action="toggleOriginPower" data-power-idx="{{pw.idx}}" {{#if pw.disabled}}disabled{{/if}}>
+                <strong>Poder:</strong> {{pw.name}}{{#if pw.isWildcard}} <em>(escolher no Passo 7)</em>{{/if}}
+              </button>
+              {{/each}}
+            </div>
+          </div>
+
+          <div class="t20wiz-card-box">
+            <div class="t20wiz-box-head">
+              <strong>Itens Iniciais da Origem</strong>
+              <label class="t20wiz-inline-toggle">
+                <input type="checkbox" {{#if step4.selectedOrigin.includeOriginItems}}checked{{/if}}
+                  data-action="toggleOriginItems" />
+                <span>Receber ao criar ficha</span>
+              </label>
+            </div>
+            <p class="t20wiz-hint">{{step4.selectedOrigin.itensIniciaisTexto}}</p>
+            {{#if step4.selectedOrigin.includeOriginItems}}
+            {{#if step4.originItemOptions.length}}
+            <div class="t20wiz-pill-grid">
+              {{#each step4.originItemOptions as |oi|}}
+              <button type="button" class="t20wiz-choice-pill {{#if oi.picked}}is-picked{{/if}}"
+                data-action="toggleOriginSingleItem" data-uuid="{{oi.uuid}}">
+                {{oi.name}}
+              </button>
+              {{/each}}
+            </div>
+            {{#if step4.hasOriginItemChoiceHint}}
+            <p class="t20wiz-hint"><em>Se a origem oferecer opções ("ou"), marque apenas o item desejado.</em></p>
+            {{/if}}
+            {{/if}}
+            {{/if}}
+          </div>
+          {{else}}
+          <div class="t20wiz-empty-state">
+            <i class="fa-solid fa-compass"></i>
+            <p>Selecione uma origem para escolher seus 2 benefícios iniciais.</p>
+          </div>
+          {{/if}}
+        </div>
+      </div>
+      {{/if}}
+
+      {{!-- STEP 5: CLASSE --}}
+      {{#if (eq currentStepNum 5)}}
+      <div class="t20wiz-split">
+        <div class="t20wiz-list-col">
+          <input type="search" class="t20wiz-search" data-wiz-search="class" placeholder="Buscar classe..." />
+          <div class="t20wiz-list" data-wiz-list="class" data-wiz-scroll="list-5">
+            {{#each step5.classes as |c|}}
+            <button type="button" class="t20wiz-list-row {{#if c.selected}}is-selected{{/if}}" data-action="selectClass"
+              data-uuid="{{c.uuid}}" data-name-norm="{{c.nameNorm}}">
+              <img src="{{c.img}}" alt="{{c.name}}" />
+              <div>
+                <strong>{{c.name}}</strong>
+                <small>{{c.subtitle}}</small>
+              </div>
+            </button>
+            {{/each}}
+          </div>
+        </div>
+
+        <div class="t20wiz-detail-col" data-wiz-scroll="detail-5">
+          {{#if step5.selectedClass}}
+          <div class="t20wiz-detail-head">
+            <img src="{{step5.selectedClass.img}}" alt="{{step5.selectedClass.name}}" />
+            <div>
+              <h3>{{step5.selectedClass.name}} (Nível 1)</h3>
+              <div class="t20wiz-tags-row">
+                <span class="t20wiz-tag">PV/nv: {{step5.selectedClass.pvPorNivel}}</span>
+                <span class="t20wiz-tag">PM/nv: {{step5.selectedClass.pmPorNivel}}</span>
+                {{#each step5.profLabels as |pl|}}
+                <span class="t20wiz-tag">{{pl}}</span>
+                {{/each}}
+              </div>
+            </div>
+          </div>
+
+          {{#if step5.isArcanista}}
+          <div class="t20wiz-card-box">
+            <div class="t20wiz-box-head">
+              <strong>Caminho do Arcanista</strong>
+            </div>
+            <div class="t20wiz-pill-grid">
+              {{#each step5.arcanistaPaths as |ap|}}
+              <button type="button" class="t20wiz-choice-pill {{#if ap.selected}}is-picked{{/if}}"
+                data-action="setArcanistaPath" data-path="{{ap.key}}">
+                <strong>{{ap.label}}</strong> ({{ap.attr}} · {{ap.baseSpells}} magias)
+              </button>
+              {{/each}}
+            </div>
+          </div>
+          {{/if}}
+
+          {{#if step5.fixedSkills.length}}
+          <div class="t20wiz-card-box">
+            <div class="t20wiz-box-head"><strong>Perícias Inatas da Classe</strong></div>
+            <div class="t20wiz-pill-grid">
+              {{#each step5.fixedSkills as |fsk|}}
+              <span class="t20wiz-static-pill"><i class="fa-solid fa-check"></i> {{fsk.label}}</span>
+              {{/each}}
+            </div>
+          </div>
+          {{/if}}
+
+          {{#each step5.orGroups as |og|}}
+          <div class="t20wiz-card-box">
+            <div class="t20wiz-box-head"><strong>Escolha Obrigatória da Classe</strong></div>
+            <div class="t20wiz-pill-grid">
+              {{#each og.options as |opt|}}
+              <button type="button" class="t20wiz-choice-pill {{#if opt.selected}}is-picked{{/if}}"
+                data-action="pickOrSkill" data-group-idx="{{og.idx}}" data-skill="{{opt.key}}">
+                {{opt.label}}
+              </button>
+              {{/each}}
+            </div>
+          </div>
+          {{/each}}
+
+          {{#if step5.reqPool}}
+          <div class="t20wiz-card-box">
+            <div class="t20wiz-box-head">
+              <strong>Perícias de Classe à Escolha</strong>
+              <span class="t20wiz-counter">{{step5.pickedPoolCount}} / {{step5.reqPool}}</span>
+            </div>
+            <div class="t20wiz-check-grid">
+              {{#each step5.poolSkills as |psk|}}
+              <button type="button"
+                class="t20wiz-skill-btn {{#if psk.picked}}is-picked{{/if}} {{#if psk.already}}is-owned{{/if}}"
+                data-action="toggleClassPoolSkill" data-skill="{{psk.key}}" {{#if psk.disabled}}disabled{{/if}}>
+                {{psk.label}}{{#if psk.already}} <em>({{psk.alreadySource}})</em>{{/if}}
+              </button>
+              {{/each}}
+            </div>
+          </div>
+          {{/if}}
+
+          {{#if step5.intBonus}}
+          <div class="t20wiz-card-box">
+            <div class="t20wiz-box-head">
+              <strong>Perícias Bônus por Inteligência (INT +{{step5.intBonus}})</strong>
+              <span class="t20wiz-counter">{{step5.pickedIntCount}} / {{step5.reqInt}}</span>
+            </div>
+            <div class="t20wiz-check-grid">
+              {{#each step5.intSkills as |isk|}}
+              <button type="button"
+                class="t20wiz-skill-btn {{#if isk.picked}}is-picked{{/if}} {{#if isk.already}}is-owned{{/if}}"
+                data-action="toggleIntSkill" data-skill="{{isk.key}}" {{#if isk.disabled}}disabled{{/if}}>
+                {{isk.label}}{{#if isk.already}} <em>({{isk.alreadySource}})</em>{{/if}}
+              </button>
+              {{/each}}
+            </div>
+          </div>
+          {{/if}}
+          {{else}}
+          <div class="t20wiz-empty-state">
+            <i class="fa-solid fa-shield-halved"></i>
+            <p>Selecione a classe inicial do personagem para configurar perícias e habilidades de 1º nível.</p>
+          </div>
+          {{/if}}
+        </div>
+      </div>
+      {{/if}}
+
+      {{!-- STEP 6: DIVINDADE --}}
+      {{#if (eq currentStepNum 6)}}
+      <div class="t20wiz-split">
+        <div class="t20wiz-list-col">
+          <input type="search" class="t20wiz-search" data-wiz-search="deity" placeholder="Buscar divindade..." />
+          <div class="t20wiz-list" data-wiz-list="deity" data-wiz-scroll="list-6">
+            {{#unless step6.policy.isMandatory}}
+            <button type="button" class="t20wiz-list-row {{#if step6.isAtheist}}is-selected{{/if}}"
+              data-action="clearDeity">
+              <i class="fa-solid fa-ban" style="font-size: 20px; width: 32px; text-align: center;"></i>
+              <div>
+                <strong>Sem Divindade (Não-Devoto)</strong>
+                <small>Opcional para esta classe</small>
+              </div>
+            </button>
+            {{/unless}}
+
+            {{#each step6.deities as |d|}}
+            <button type="button" class="t20wiz-list-row {{#if d.selected}}is-selected{{/if}}" data-action="selectDeity"
+              data-uuid="{{d.uuid}}" data-name-norm="{{d.nameNorm}}">
+              <img src="{{d.img}}" alt="{{d.name}}" />
+              <div>
+                <strong>{{d.name}}</strong>
+                <small class="{{#if d.compatible}}t20wiz-ok-txt{{else}}t20wiz-warn-txt{{/if}}">{{d.compatNote}}</small>
+              </div>
+            </button>
+            {{/each}}
+          </div>
+        </div>
+
+        <div class="t20wiz-detail-col" data-wiz-scroll="detail-6">
+          {{#if step6.selectedDeity}}
+          <div class="t20wiz-detail-head">
+            <img src="{{step6.selectedDeity.img}}" alt="{{step6.selectedDeity.name}}" />
+            <div>
+              <h3>{{step6.selectedDeity.name}}</h3>
+              <p class="t20wiz-hint"><strong>Devotos:</strong> {{step6.selectedDeity.devotos}}</p>
+            </div>
+          </div>
+
+          {{#if step6.selectedDeity.obrigacoes}}
+          <div class="t20wiz-card-box">
+            <div class="t20wiz-box-head"><strong>Obrigações &amp; Restrições</strong></div>
+            <p class="t20wiz-scroll-note">{{step6.selectedDeity.obrigacoes}}</p>
+          </div>
+          {{/if}}
+
+          <div class="t20wiz-card-box">
+            <div class="t20wiz-box-head">
+              <strong>{{step6.policy.recommendedPowersLabel}}</strong>
+              {{#if step6.policy.isMandatory}}
+              <button type="button" class="t20wiz-mini-btn" data-action="selectAllDeityPowers">Marcar/Desmarcar
+                Todos</button>
+              {{/if}}
+            </div>
+            <div class="t20wiz-check-grid">
+              {{#each step6.grantedPowers as |gp|}}
+              <button type="button" class="t20wiz-skill-btn {{#if gp.picked}}is-picked{{/if}}"
+                data-action="toggleDeityPower" data-uuid="{{gp.uuid}}" {{#if gp.disabled}}disabled{{/if}}>
+                {{gp.name}}
+              </button>
+              {{/each}}
+            </div>
+          </div>
+          {{else}}
+          <div class="t20wiz-empty-state">
+            <i class="fa-solid fa-sun"></i>
+            {{#if step6.policy.isMandatory}}
+            <p><strong>{{draft.class.name}}</strong> precisa escolher uma divindade devotada para continuar.</p>
+            {{else}}
+            <p>Nenhuma divindade selecionada. Você pode seguir sem devoção ou escolher um panteão ao lado.</p>
+            {{/if}}
+          </div>
+          {{/if}}
+        </div>
+      </div>
+      {{/if}}
+
+      {{!-- STEP 7: PODERES & MAGIAS --}}
+      {{#if (eq currentStepNum 7)}}
+      {{#if step7.nothingRequired}}
+      <div class="t20wiz-empty-state is-card">
+        <i class="fa-solid fa-circle-check"></i>
+        <h3>Nenhum Poder livre ou Magia inicial pendente</h3>
+        <p>As habilidades fixas da sua classe ({{draft.class.name}}) e benefícios de origem/raça já foram preparados.
+          Prossiga para o Passo 8!</p>
+      </div>
+      {{else}}
+      <div class="t20wiz-step7-stack">
+        {{#if step7.hasFreePowers}}
+        <section class="t20wiz-card-box">
+          <div class="t20wiz-box-head">
+            <strong>Poderes Livres Pendentes (Raça / Origem)</strong>
+            <span class="t20wiz-counter">{{step7.selectedFreePowers.length}} / {{step7.freePowerSlots.length}}</span>
+          </div>
+          <div class="t20wiz-picked-strip">
+            {{#each step7.selectedFreePowers as |sp|}}
+            <span class="t20wiz-picked-chip">
+              {{sp.name}}
+              <button type="button" data-action="removeFreePower" data-uuid="{{sp.uuid}}" title="Remover">×</button>
+            </span>
+            {{/each}}
+          </div>
+          <div class="t20wiz-filter-row">
+            <input type="search" class="t20wiz-search" data-wiz-search="power" placeholder="Buscar poder..." />
+            <select class="t20wiz-select" data-wiz-filter="powerType">
+              <option value="">Todos os Tipos</option>
+              <option value="combate" {{#if (eq step7.powerTypeFilter "combate" )}}selected{{/if}}>Combate</option>
+              <option value="destino" {{#if (eq step7.powerTypeFilter "destino" )}}selected{{/if}}>Destino</option>
+              <option value="magia" {{#if (eq step7.powerTypeFilter "magia" )}}selected{{/if}}>Magia</option>
+              <option value="tormenta" {{#if (eq step7.powerTypeFilter "tormenta" )}}selected{{/if}}>Tormenta</option>
+            </select>
+          </div>
+          <div class="t20wiz-compact-list" data-wiz-list="power" data-wiz-scroll="power-7">
+            {{#each step7.powerEntries as |pw|}}
+            <div class="t20wiz-catalog-row {{#if pw.picked}}is-picked{{/if}} is-{{pw.prereqState}}"
+              data-name-norm="{{pw.nameNorm}}" title="{{pw.prereqTooltip}}">
+              <img src="{{pw.img}}" alt="{{pw.name}}" />
+              <div class="t20wiz-cat-info">
+                <strong>{{pw.name}}</strong>
+                <small>{{pw.tipoLabel}}{{#if pw.prereqLabel}} · {{pw.prereqLabel}}{{/if}}</small>
+              </div>
+              <button type="button" class="t20wiz-mini-btn t20wiz-action-btn" data-action="pickFreePower" data-uuid="{{pw.uuid}}" {{#if
+                pw.disabled}}disabled{{/if}}>
+                {{#if pw.picked}}Selecionado{{else if (eq pw.prereqState "locked")}}Pré-req.{{else}}+ Escolher{{/if}}
+              </button>
+            </div>
+            {{/each}}
+          </div>
+        </section>
+        {{/if}}
+
+        {{#if step7.hasSpells}}
+        <section class="t20wiz-card-box">
+          <div class="t20wiz-box-head">
+            <div>
+              <strong>Magias Iniciais de 1º Círculo ({{step7.caster.tradicaoLabel}})</strong>
+              {{#if step7.caster.schoolRestrictedCount}}
+              <small class="t20wiz-hint"> · Limite de escolas: {{step7.usedSchoolsCount}} /
+                {{step7.caster.schoolRestrictedCount}}</small>
+              {{/if}}
+            </div>
+            <span class="t20wiz-counter">{{step7.selectedSpells.length}} / {{step7.caster.totalQuota}}</span>
+          </div>
+
+          <div class="t20wiz-picked-strip">
+            {{#each step7.selectedSpells as |ms|}}
+            <button type="button" class="t20wiz-picked-chip" data-action="toggleSpell" data-uuid="{{ms.uuid}}">
+              {{ms.name}} ×
+            </button>
+            {{/each}}
+          </div>
+
+          <div class="t20wiz-filter-row">
+            <input type="search" class="t20wiz-search" data-wiz-search="spell"
+              placeholder="Buscar magia de 1º círculo..." />
+            <select class="t20wiz-select" data-wiz-filter="spellSchool">
+              <option value="">Todas as Escolas</option>
+              {{#each step7.schoolOptions as |esc|}}
+              <option value="{{esc.key}}" {{#if (eq ../step7.spellSchoolFilter esc.key)}}selected{{/if}}>{{esc.label}}
+              </option>
+              {{/each}}
+            </select>
+          </div>
+
+          <div class="t20wiz-compact-list" data-wiz-list="spell" data-wiz-scroll="spell-7">
+            {{#each step7.spellEntries as |sp|}}
+            <div class="t20wiz-catalog-row {{#if sp.picked}}is-picked{{/if}}" data-name-norm="{{sp.nameNorm}}"
+              data-escola="{{sp.escola}}">
+              <img src="{{sp.img}}" alt="{{sp.name}}" />
+              <div class="t20wiz-cat-info">
+                <strong>{{sp.name}}</strong>
+                <small>{{sp.escolaLabel}} · 1º Círculo</small>
+              </div>
+              <button type="button" class="t20wiz-mini-btn t20wiz-action-btn" data-action="toggleSpell" data-uuid="{{sp.uuid}}" {{#if
+                sp.disabled}}disabled{{/if}}>
+                {{#if sp.picked}}Remover{{else if sp.blockedBySchool}}Limite Escolas{{else}}+ Aprender{{/if}}
+              </button>
+            </div>
+            {{/each}}
+          </div>
+        </section>
+        {{/if}}
+      </div>
+      {{/if}}
+      {{/if}}
+
+      {{!-- STEP 8: EQUIPAMENTO & REVISÃO --}}
+      {{#if (eq currentStepNum 8)}}
+      <section class="t20wiz-panel">
+        <div class="t20wiz-mode-bar">
+          <div class="t20wiz-segmented">
+            <button type="button" class="t20wiz-seg-btn {{#if step8.isGoldMode}}active{{/if}}"
+              data-action="setEquipmentMode" data-mode="gold">
+              <i class="fa-solid fa-coins"></i> Dinheiro Inicial (4d6 T$)
+            </button>
+            <button type="button" class="t20wiz-seg-btn {{#if step8.isKitMode}}active{{/if}}"
+              data-action="setEquipmentMode" data-mode="kit">
+              <i class="fa-solid fa-toolbox"></i> Kit Sugerido
+            </button>
+            <button type="button" class="t20wiz-seg-btn {{#if step8.isShopMode}}active{{/if}}"
+              data-action="setEquipmentMode" data-mode="shop">
+              <i class="fa-solid fa-cart-shopping"></i> Compra com Tibares
+            </button>
+          </div>
+        </div>
+
+        {{#if step8.isGoldMode}}
+        <div class="t20wiz-card-box">
+          <div class="t20wiz-box-head">
+            <strong>Saldo Inicial em Tibares (T$)</strong>
+            <button type="button" class="t20wiz-btn t20wiz-btn-secondary" data-action="rerollGold">
+              <i class="fa-solid fa-dice"></i> Rolar 4d6 T$
+            </button>
+          </div>
+          <div class="t20wiz-gold-row">
+            <label class="t20wiz-field" style="max-width: 180px;">
+              <span>Valor em T$ (ou edite manualmente)</span>
+              <input type="number" class="t20wiz-input" data-wiz-input="manualGold"
+                value="{{step8.budget.startingGold}}" min="0" />
+            </label>
+            <div class="t20wiz-hint">Dados rolados: <strong>{{step8.goldDiceText}}</strong></div>
+          </div>
+        </div>
+        {{else if step8.isKitMode}}
+        <div class="t20wiz-card-box">
+          <div class="t20wiz-box-head">
+            <strong>Kit Sugerido de {{draft.class.name}} + Saldo Inicial ({{step8.budget.remainingGold}} T$)</strong>
+          </div>
+          <div class="t20wiz-picked-strip">
+            {{#each step8.kitItems as |ki|}}
+            <span class="t20wiz-static-pill">{{ki.name}}</span>
+            {{/each}}
+          </div>
+        </div>
+        {{else}}
+        <div class="t20wiz-card-box">
+          <div class="t20wiz-box-head">
+            <strong>Loja Rápida · Saldo: {{step8.budget.remainingGold}} / {{step8.budget.startingGold}} T$</strong>
+            <button type="button" class="t20wiz-mini-btn" data-action="rerollGold">Rerolar 4d6 T$</button>
+          </div>
+          <div class="t20wiz-picked-strip">
+            {{#each step8.shopItems as |ci|}}
+            <button type="button" class="t20wiz-picked-chip" data-action="removeShopItem" data-uuid="{{ci.uuid}}">
+              {{ci.name}} ×{{ci.qty}} ({{ci.priceTp}} T$) -1
+            </button>
+            {{/each}}
+          </div>
+          <div class="t20wiz-filter-row">
+            <input type="search" class="t20wiz-search" data-wiz-search="shop"
+              placeholder="Buscar armas, armaduras, equipamentos..." />
+            <select class="t20wiz-select" data-wiz-filter="shopCategory">
+              <option value="">Todos</option>
+              <option value="arma" {{#if (eq step8.shopCategoryFilter "arma" )}}selected{{/if}}>Armas</option>
+              <option value="equipamento" {{#if (eq step8.shopCategoryFilter "equipamento" )}}selected{{/if}}>Armaduras
+                / Equip.</option>
+              <option value="consumivel" {{#if (eq step8.shopCategoryFilter "consumivel" )}}selected{{/if}}>Consumíveis
+              </option>
+            </select>
+          </div>
+          <div class="t20wiz-compact-list" data-wiz-list="shop" data-wiz-scroll="shop-8">
+            {{#each step8.shopCatalog as |eq|}}
+            <div class="t20wiz-catalog-row" data-name-norm="{{eq.nameNorm}}" data-item-type="{{eq.itemType}}">
+              <img src="{{eq.img}}" alt="{{eq.name}}" />
+              <div class="t20wiz-cat-info">
+                <strong>{{eq.name}}</strong>
+                <small>{{eq.priceTp}} T$</small>
+              </div>
+              <button type="button" class="t20wiz-mini-btn t20wiz-action-btn" data-action="addShopItem" data-uuid="{{eq.uuid}}" {{#unless
+                eq.canAfford}}disabled{{/unless}}>
+                + Comprar
+              </button>
+            </div>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+
+        {{#if step8.originItemOptions.length}}
+        <div class="t20wiz-card-box">
+          <div class="t20wiz-box-head">
+            <strong>Itens Gratuitos da Origem ({{draft.origin.name}})</strong>
+            <label class="t20wiz-inline-toggle">
+              <input type="checkbox" {{#if draft.origin.includeOriginItems}}checked{{/if}}
+                data-action="toggleOriginItems" />
+              <span>Receber ao criar ficha</span>
+            </label>
+          </div>
+          {{#if draft.origin.includeOriginItems}}
+          <div class="t20wiz-pill-grid">
+            {{#each step8.originItemOptions as |oi|}}
+            <button type="button" class="t20wiz-choice-pill {{#if oi.picked}}is-picked{{/if}}"
+              data-action="toggleOriginSingleItem" data-uuid="{{oi.uuid}}">
+              {{oi.name}}
+            </button>
+            {{/each}}
+          </div>
+          {{#if step8.hasOriginItemChoiceHint}}
+          <p class="t20wiz-hint"><em>Clique para desmarcar opções alternativas que não deseja receber (ex.: "ou").</em></p>
+          {{/if}}
+          {{/if}}
+        </div>
+        {{/if}}
+
+        <div class="t20wiz-callout is-ready">
+          <i class="fa-solid fa-scroll"></i>
+          <div>
+            <strong>Pronto para Arton?</strong> Ao clicar em <strong>Finalizar e Criar Personagem</strong>, criaremos a
+            ficha completa com PV/PM calculados, habilidades de 1º nível, magias e inventário prontos para rolar.
+          </div>
+        </div>
+      </section>
+      {{/if}}
+    </main>
+
+    {{!-- Persistent Right Live Summary --}}
+    <aside class="t20wiz-summary">
+      <div class="t20wiz-sum-header">
+        <img src="{{draft.identity.img}}" alt="Miniatura" />
+        <div>
+          <div class="t20wiz-sum-name">{{#if draft.identity.name}}{{draft.identity.name}}{{else}}Sem Nome{{/if}}</div>
+          <div class="t20wiz-sum-sub">
+            {{#if draft.race.name}}{{draft.race.name}}{{else}}Raça —{{/if}} ·
+            {{#if draft.class.name}}{{draft.class.name}} 1{{else}}Classe —{{/if}}
+          </div>
+        </div>
+      </div>
+
+      <div class="t20wiz-sum-vitals">
+        <div class="t20wiz-vital-pill is-pv"><span>PV</span><strong>{{preview.pvMax}}</strong></div>
+        <div class="t20wiz-vital-pill is-pm"><span>PM</span><strong>{{preview.pmMax}}</strong></div>
+        <div class="t20wiz-vital-pill is-def"><span>DEF</span><strong>{{preview.defesa}}</strong></div>
+      </div>
+
+      <div class="t20wiz-sum-attrs">
+        {{#each summaryAttrs as |sa|}}
+        <div class="t20wiz-sum-attr">
+          <small>{{sa.abbr}}</small>
+          <strong>{{sa.finalText}}</strong>
+        </div>
+        {{/each}}
+      </div>
+
+      <dl class="t20wiz-sum-facts">
+        <dt>Origem</dt>
+        <dd>{{#if draft.origin.name}}{{draft.origin.name}}{{else}}—{{/if}}</dd>
+        <dt>Divindade</dt>
+        <dd>{{#if draft.deity.name}}{{draft.deity.name}}{{else}}Nenhuma{{/if}}</dd>
+        <dt>Perícias ({{trainedCount}})</dt>
+        <dd class="t20wiz-sum-skills">
+          {{#each trainedSkillsList as |ts|}}
+          <span>{{ts.label}}</span>
+          {{/each}}
+        </dd>
+        <dt>Saldo T$</dt>
+        <dd>{{preview.budget.remainingGold}} T$</dd>
+      </dl>
+
+      {{#if currentErrors.length}}
+      <div class="t20wiz-validation-box">
+        <strong><i class="fa-solid fa-circle-exclamation"></i> Pendências neste passo:</strong>
+        <ul>
+          {{#each currentErrors as |err|}}
+          <li>{{err}}</li>
+          {{/each}}
+        </ul>
+      </div>
+      {{/if}}
+    </aside>
+  </div>
+
+  {{!-- Footer Navigation --}}
+  <footer class="t20wiz-footer">
+    <button type="button" class="t20wiz-btn t20wiz-btn-secondary" data-action="prevStep" {{#if
+      isFirstStep}}disabled{{/if}}>
+      <i class="fa-solid fa-arrow-left"></i> Anterior
+    </button>
+    <span class="t20wiz-footer-status">Passo {{currentStepNum}} de 8</span>
+    {{#if isLastStep}}
+    <button type="button" class="t20wiz-btn t20wiz-btn-primary" data-action="finishWizard" {{#unless
+      canFinish}}disabled{{/unless}}>
+      <i class="fa-solid fa-check-double"></i> Finalizar e Criar Personagem
+    </button>
+    {{else}}
+    <button type="button" class="t20wiz-btn t20wiz-btn-primary" data-action="nextStep" {{#unless
+      canProceed}}disabled{{/unless}}>
+      Próximo <i class="fa-solid fa-arrow-right"></i>
+    </button>
+    {{/if}}
+  </footer>
+</div>

@@ -2,6 +2,28 @@
 
 Todas as alterações notáveis deste módulo serão documentadas neste arquivo.
 
+## [0.4.0] — 2026-11-12
+
+### Adicionado
+- **Assistente de Criação de Personagem em 8 Passos (`CharacterWizardT20`)**:
+  - Fluxo guiado passo a passo para personagens de **1º nível** com validação estrita das regras de *Tormenta20 (JdA)*, barra de resumo lateral ao vivo (PV, PM, Defesa, Atributos, Perícias e Saldo T$) e criação atômica da ficha sem popups extras.
+  - **Passo 1 — Identidade:** nome, conceito/história e seletor de retrato.
+  - **Passo 2 — Atributos:** suporte a **Compra por Pontos (10 pts)**, **Rolagem `4d6` (descarta menor)** e **Entrada Manual**.
+  - **Passo 3 — Raça:** atributos dinâmicos (ex.: Humano/Osteon/Sereia), habilidades concedidas e escolhas especiais como *Versátil* e *Memória Póstuma*.
+  - **Passo 4 — Origem:** seleção dos 2 benefícios (perícias/poderes) e escolha individual de itens gratuitos iniciais (permitindo selecionar apenas a opção desejada em origens com *"ou"*).
+  - **Passo 5 — Classe:** perícias fixas, opções *"ou"*, escolha livre, bônus por Inteligência e seleção do Caminho do Arcanista (*Bruxo*, *Mago* ou *Feiticeiro*).
+  - **Passo 6 — Divindade:** regra estrita para classes devotas (*Clérigo*, *Druida*, *Paladino*), validação de compatibilidade e poderes concedidos.
+  - **Passo 7 — Poderes & Magias:** poderes extras livres com avaliação de pré-requisitos em tempo real e cota inicial de magias de 1º círculo com filtro por escola.
+  - **Passo 8 — Equipamento & Revisão:** escolha entre **Dinheiro Inicial (`4d6` T$)**, **Kit Sugerido da Classe** ou **Compra Rápida com Tibares**, sempre exibindo os itens gratuitos da Origem.
+  - Pontos de entrada no **Diretório de Atores** (*"Assistente de Criação (Nível 1)"*) e no banner de fichas recém-criadas.
+- **Condições & Efeitos integrados ao Painel de PV/PM (`TokenVitalsHudT20`)**:
+  - Unificação do painel de condições rápidas diretamente no HUD de PV/PM, com filtro em tempo real, suporte a múltiplos tokens selecionados e ícones em alto contraste.
+  - **Modal de Detalhes de Condição em Texto Humano (Tema Pergaminho de Arton)**: ao clicar em uma condição ativa, exibe a regra completa de jogo em PT-BR e traduz os modificadores técnicos da ficha (atributos, perícias, deslocamento, Defesa, ataques, dano e PM) para leitura amigável, com botões rápidos para remover ou abrir edição avançada.
+
+### Corrigido
+- **Deduplicação de magias:** eliminada a duplicata entre *Seta Infalível* (sistema base) e *Seta Infalível de Talude* (compêndio enriquecido) no indexador.
+- **UI & Scroll do Assistente:** corrigido alinhamento/altura das listas de Raças, Origens, Classes e Divindades no Foundry v14, preservação de scroll ao selecionar perícias por Inteligência, largura fixa dos botões de ação e destaque visual em *Versátil*/*Memória Póstuma*.
+
 ## [0.3.1] — 2026-11-11
 
 ### Corrigido

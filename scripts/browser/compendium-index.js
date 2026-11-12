@@ -19,6 +19,11 @@ const PACK_BLACKLIST_CATEGORIES = new Set([
 
 const EQUIPMENT_TYPES = new Set(["arma", "equipamento", "consumivel", "tesouro"]);
 
+// Base-system SRD spell names that differ from enriched T20 Completo names for the same spell
+const SPELL_DEDUP_ALIASES = {
+  "seta infalivel": "seta infalivel de talude"
+};
+
 const SOURCE_LABELS = {
   "t20-compendios-completos": "T20 Completo",
   "suplementos-de-arton": "Suplementos de Arton",
@@ -236,9 +241,11 @@ export class T20CompendiumIndex {
         else continue;
 
         // Deduplicate between enriched T20 Completo and Sistema Base only (preserve supplement variants)
+        const baseNormName = this._normKey(entry.name);
+        const canonicalName = cat === "magias" ? (SPELL_DEDUP_ALIASES[baseNormName] || baseNormName) : baseNormName;
         const dedupKey = pkgName === "suplementos-de-arton"
-          ? `${this._normKey(entry.name)}::${pack.metadata.name}::${entry.system?.subtipo || ""}`
-          : `${this._normKey(entry.name)}::${type}::${entry.system?.subtipo || ""}`;
+          ? `${canonicalName}::${pack.metadata.name}::${entry.system?.subtipo || ""}`
+          : `${canonicalName}::${type}::${entry.system?.subtipo || ""}`;
 
         if (seenByCat[cat].has(dedupKey)) continue;
         seenByCat[cat].add(dedupKey);

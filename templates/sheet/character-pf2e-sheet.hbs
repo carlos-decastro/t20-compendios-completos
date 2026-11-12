@@ -240,6 +240,18 @@
           </div>
         </div>
       </div>
+
+      {{#if pf2eMeta.showWizardBanner}}
+        <div class="pf2e-wizard-banner">
+          <span>
+            <i class="fa-solid fa-scroll"></i>
+            <strong>Ficha vazia detectada:</strong> Monte atributos, raça, origem, classe, divindade, magias e equipamento passo a passo.
+          </span>
+          <button type="button" class="pf2e-wizard-banner-btn" data-pf2e-open-wizard>
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Iniciar Assistente de Criação
+          </button>
+        </div>
+      {{/if}}
     </header>
 
     {{!-- TAB NAVIGATION (Icon + Text Bar) --}}

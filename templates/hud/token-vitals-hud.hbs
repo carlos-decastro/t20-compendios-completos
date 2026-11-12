@@ -84,6 +84,53 @@
             <button type="button" class="t20pf2e-vact is-gain-pm" data-action="recover-pm" title="Recuperar PM">+PM</button>
           </div>
         </section>
+
+        {{!-- Condições & Efeitos --}}
+        <section class="t20pf2e-vital-group is-effects">
+          <div class="t20pf2e-veff-head">
+            <span class="t20pf2e-veff-title">
+              <i class="fa-solid fa-sparkles"></i> Condições
+              {{#if effectsCount}}<em class="t20pf2e-veff-count">{{effectsCount}}</em>{{/if}}
+            </span>
+            <button type="button" class="t20pf2e-veff-toggle {{#if showEffectsPicker}}is-open{{/if}}"
+              data-action="toggle-effects-picker" title="Aplicar ou remover condições rápidas">
+              <i class="fa-solid {{#if showEffectsPicker}}fa-chevron-up{{else}}fa-plus{{/if}}"></i>
+              <span>{{#if showEffectsPicker}}Fechar{{else}}Condição{{/if}}</span>
+            </button>
+          </div>
+
+          {{#if effects.length}}
+            <div class="t20pf2e-veff-strip">
+              {{#each effects as |ef|}}
+                <button type="button" class="t20pf2e-veff-item" data-effect-id="{{ef.id}}"
+                  data-tooltip="{{ef.tooltip}}" data-tooltip-direction="LEFT">
+                  <img src="{{ef.img}}" alt="{{ef.name}}" />
+                  {{#if ef.badge}}<span class="t20pf2e-veff-badge">{{ef.badge}}</span>{{/if}}
+                </button>
+              {{/each}}
+            </div>
+          {{/if}}
+
+          {{#if showEffectsPicker}}
+            <div class="t20pf2e-veff-picker">
+              <input type="search" class="t20pf2e-veff-search" data-effects-search
+                placeholder="Filtrar condição..." value="{{effectsQuery}}" />
+              <div class="t20pf2e-veff-cond-grid">
+                {{#each conditions as |cond|}}
+                  <button type="button"
+                    class="t20pf2e-veff-cond-btn {{#if cond.active}}active{{/if}}"
+                    data-action="toggle-condition"
+                    data-status-id="{{cond.id}}"
+                    data-name-norm="{{cond.nameNorm}}"
+                    title="{{cond.tooltip}}">
+                    <span class="t20pf2e-veff-cond-icon"><img src="{{cond.img}}" alt="" /></span>
+                    <span class="t20pf2e-veff-cond-label">{{cond.name}}</span>
+                  </button>
+                {{/each}}
+              </div>
+            </div>
+          {{/if}}
+        </section>
       </div>
     {{/unless}}
   </aside>

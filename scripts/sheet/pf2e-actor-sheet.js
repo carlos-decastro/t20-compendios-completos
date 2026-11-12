@@ -1,4 +1,5 @@
 import { CompendiumBrowserT20 } from "../browser/compendium-browser.js";
+import { CharacterWizardT20 } from "../wizard/character-wizard.js";
 import { normalizeText } from "../automation/skill-parser.js";
 import { ForgeModalT20 } from "../features/forge-modal.js";
 import { getWeaponGripVariants, rollWeaponWithGrip } from "../features/sheet-ux-enhancers.js";
@@ -92,6 +93,7 @@ export function buildPF2eSheetClass() {
         hpPct,
         mpPct,
         quickSkills,
+        showWizardBanner: this.actor.isOwner && !this.actor.itemTypes.race?.length && !this.actor.itemTypes.classe?.length,
         progression: computeActorProgression(this.actor)
       };
       return sheetData;
@@ -142,6 +144,12 @@ export function buildPF2eSheetClass() {
       html.find("[data-pf2e-open-forge]").click((ev) => {
         ev.preventDefault();
         ForgeModalT20.open(this.actor);
+      });
+
+      // Launch Guided Character Creation Wizard for this empty character sheet
+      html.find("[data-pf2e-open-wizard]").click((ev) => {
+        ev.preventDefault();
+        CharacterWizardT20.open(this.actor);
       });
 
       // Open linked Origem / Divindade JournalEntry on click

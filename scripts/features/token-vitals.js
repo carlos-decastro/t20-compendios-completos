@@ -1,4 +1,5 @@
 import { evaluateAttackAgainstTargets } from "./chat-enhancer.js";
+import { normalizeText } from "../automation/skill-parser.js";
 
 const MODULE_ID = "t20-compendios-completos";
 const HUD_ROOT_ID = "t20pf2e-vitals-hud-root";
@@ -13,6 +14,203 @@ function stripHtml(raw) {
     .replace(/<[^>]+>/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+const ATTR_NAMES_PT = {
+  for: "Força",
+  des: "Destreza",
+  con: "Constituição",
+  int: "Inteligência",
+  sab: "Sabedoria",
+  car: "Carisma"
+};
+
+const MOVEMENT_NAMES_PT = {
+  walk: "Deslocamento (Terrestre)",
+  fly: "Deslocamento (Voo)",
+  swim: "Deslocamento (Natação)",
+  climb: "Deslocamento (Escalada)",
+  burrow: "Deslocamento (Escavação)"
+};
+
+const T20_CONDITION_DESCRIPTIONS = {
+  abalado: "O personagem sofre −2 em testes de perícia. Se ficar abalado novamente, em vez disso fica apavorado.",
+  agarrado: "O personagem fica desprevenido e imóvel, sofre −2 em testes de ataque e só pode atacar com armas leves. Ataques à distância contra um alvo envolvido em uma manobra agarrar têm 50% de chance de acertar o alvo errado.",
+  alquebrado: "O custo em pontos de mana das habilidades do personagem aumenta em +1.",
+  apavorado: "O personagem sofre −5 em testes de perícia e não pode se aproximar voluntariamente da fonte do medo.",
+  atordoado: "O personagem fica desprevenido e não pode fazer ações.",
+  caido: "O personagem sofre −5 na Defesa contra ataques corpo a corpo e recebe +5 na Defesa contra ataques à distância (cumulativo com outras condições). Além disso, sofre −5 em ataques corpo a corpo e seu deslocamento é reduzido a 1,5m.",
+  cego: "O personagem fica desprevenido e lento, não pode fazer testes de Percepção para observar e sofre −5 em testes de perícias baseadas em Força ou Destreza. Todos os alvos de seus ataques recebem camuflagem total (50% de chance de falha).",
+  confuso: "O personagem comporta-se de modo aleatório. Role 1d6 no início do turno: 1) Movimenta-se em direção aleatória; 2–3) Não pode fazer ações e fica balbuciando; 4–5) Usa a arma que estiver empunhando para atacar a criatura mais próxima; 6) A condição termina e pode agir normalmente.",
+  debilitado: "O personagem sofre −5 em testes de Força, Destreza e Constituição e de perícias baseadas nesses atributos. Se ficar debilitado novamente, em vez disso fica inconsciente.",
+  desprevenido: "O personagem sofre −5 na Defesa e em Reflexos. Você fica desprevenido contra inimigos que não possa perceber.",
+  doente: "Sob efeito de uma doença. As penalidades específicas variam conforme a enfermidade contraída.",
+  emchamas: "O personagem está pegando fogo. No início de seus turnos, sofre 1d6 pontos de dano de fogo. Pode gastar uma ação padrão para apagar as chamas com as mãos ou rolar no chão (ou mergulhar em água).",
+  enfeiticado: "O personagem se torna prestativo em relação à fonte da condição. Ele não fica sob controle da fonte, mas percebe suas palavras e ações da maneira mais favorável possível.",
+  enjoado: "O personagem só pode realizar uma ação padrão ou de movimento (não ambas) por rodada. Ele pode gastar uma ação padrão para fazer uma investida, mas pode avançar no máximo até o seu deslocamento.",
+  enredado: "O personagem fica lento, vulnerável e sofre −2 em testes de ataque.",
+  envenenado: "O efeito varia de acordo com o veneno. Pode ser perda de vida recorrente (ex.: 1d12 PV/rodada) ou outra penalidade enquanto durar.",
+  esmorecido: "O personagem sofre −5 em testes de Inteligência, Sabedoria e Carisma e de perícias baseadas nesses atributos.",
+  exausto: "O personagem fica debilitado, lento e vulnerável. Se ficar exausto novamente, em vez disso fica inconsciente.",
+  fascinado: "Com a atenção presa em alguma coisa. O personagem sofre −5 em Percepção e não pode fazer ações, exceto observar aquilo que o fascinou. Qualquer ação hostil contra ele anula a condição.",
+  fatigado: "O personagem fica fraco e vulnerável. Se ficar fatigado novamente, em vez disso fica exausto.",
+  fraco: "O personagem sofre −2 em testes de Força, Destreza e Constituição e de perícias baseadas nesses atributos. Se ficar fraco novamente, em vez disso fica debilitado.",
+  frustrado: "O personagem sofre −2 em testes de Inteligência, Sabedoria e Carisma e de perícias baseadas nesses atributos. Se ficar frustrado novamente, em vez disso fica esmorecido.",
+  imovel: "Todas as formas de deslocamento do personagem são reduzidas a 0m.",
+  inconsciente: "O personagem fica indefeso e não pode fazer ações, incluindo reações. Balançar uma criatura para acordá-la gasta uma ação padrão.",
+  indefeso: "O personagem é considerado desprevenido, sofre −10 na Defesa, falha automaticamente em testes de Reflexos e pode sofrer golpes de misericórdia.",
+  invisivel: "O personagem recebe camuflagem total (50% de chance de falha contra ataques) e +10 em testes de Furtividade. Inimigos que não possam vê-lo ficam desprevenidos contra seus ataques.",
+  lento: "Todas as formas de deslocamento do personagem são reduzidas à metade (arredonde para baixo para o primeiro incremento de 1,5m) e ele não pode correr ou fazer investidas.",
+  morto: "O personagem chegou a −10 PV ou −metade de seus PV máximos (o que for menor) e morreu.",
+  ofuscado: "O personagem sofre −2 em testes de ataque e de Percepção.",
+  paralisado: "O personagem fica imóvel e indefeso e só pode realizar ações puramente mentais.",
+  pasmo: "O personagem não pode fazer ações.",
+  petrificado: "O personagem fica inconsciente e recebe redução de dano 8.",
+  sangrando: "No início de seu turno, o personagem deve fazer um teste de Constituição (CD 15). Se falhar, perde 1d6 pontos de vida e continua sangrando. Se passar, remove a condição (também removida por cura mágica ou Cura CD 15).",
+  sobrecarregado: "O personagem sofre penalidade de armadura −5 e seu deslocamento é reduzido em −3m.",
+  surdo: "O personagem não pode fazer testes de Percepção para ouvir e sofre −5 em testes de Iniciativa. Além disso, é considerado em condição ruim para lançar magias.",
+  surpreendido: "O personagem fica desprevenido e não pode fazer ações na primeira rodada do combate.",
+  sustentando: "O personagem está sustentando uma magia ativa (custo de 1 PM no início de cada turno).",
+  vulneravel: "O personagem sofre −2 na Defesa."
+};
+
+function resolveEffectDescriptionHtml(ef) {
+  const direct = String(ef?.description || "").trim();
+  if (direct) return direct;
+  for (const st of ef?.statuses || []) {
+    const statusDesc = CONFIG.statusEffects?.[st]?.description;
+    if (statusDesc) return statusDesc;
+    const keyNorm = normalizeText(st).replace(/[^a-z0-9]/g, "");
+    if (T20_CONDITION_DESCRIPTIONS[keyNorm]) return `<p>${T20_CONDITION_DESCRIPTIONS[keyNorm]}</p>`;
+  }
+  const nameNorm = normalizeText(ef?.name || "").replace(/[^a-z0-9]/g, "");
+  if (T20_CONDITION_DESCRIPTIONS[nameNorm]) return `<p>${T20_CONDITION_DESCRIPTIONS[nameNorm]}</p>`;
+  return "";
+}
+
+function formatChangeTargetLabel(key) {
+  const k = String(key || "").trim();
+  if (/^system\.pericias\.\*\./.test(k) || k.startsWith("system.modificadores.pericias")) {
+    return "Todas as Perícias";
+  }
+  const skillMatch = k.match(/^system\.pericias\.([a-z0-9_]+)\./i);
+  if (skillMatch) {
+    const sk = skillMatch[1];
+    const label = CONFIG.T20?.pericias?.[sk]?.label;
+    return label ? `Perícia: ${game.i18n.localize(label)}` : `Perícia (${sk.toUpperCase()})`;
+  }
+  if (k.startsWith("system.attributes.defesa")) return "Defesa";
+  const moveMatch = k.match(/^system\.attributes\.movement\.([a-z]+)/i);
+  if (moveMatch) return MOVEMENT_NAMES_PT[moveMatch[1]] || `Deslocamento (${moveMatch[1]})`;
+  if (k.includes("deslocamento") || k.startsWith("system.attributes.movement")) return "Deslocamento";
+  const modAttrMatch = k.match(/^system\.modificadores\.atributos\.([a-z]+)/i);
+  if (modAttrMatch) {
+    const a = modAttrMatch[1].toLowerCase();
+    if (a === "geral") return "Testes de Atributos (Geral)";
+    return `Testes de ${ATTR_NAMES_PT[a] || a.toUpperCase()}`;
+  }
+  const attrMatch = k.match(/^system\.atributos\.([a-z]+)\./i);
+  if (attrMatch) return ATTR_NAMES_PT[attrMatch[1]] || attrMatch[1].toUpperCase();
+  if (k.startsWith("system.modificadores.ataque")) return "Testes de Ataque";
+  if (k.startsWith("system.modificadores.dano")) return "Rolagens de Dano";
+  if (k.startsWith("system.modificadores.custoPM")) return "Custo em PM";
+  if (k.startsWith("system.attributes.cd")) return "CD de Habilidades";
+  if (k.startsWith("system.attributes.pv")) return "Pontos de Vida";
+  if (k.startsWith("system.attributes.pm")) return "Pontos de Mana";
+  return k.replace(/^system\./, "");
+}
+
+function describeEffectChanges(ef) {
+  const rawChanges = ef?.changes?.length ? ef.changes : (ef?.system?.changes || []);
+  const modes = CONST.ACTIVE_EFFECT_MODES || {};
+  const seen = new Set();
+  const out = [];
+  for (const ch of rawChanges) {
+    const target = formatChangeTargetLabel(ch.key);
+    const valStr = String(ch.value ?? "").trim();
+    const num = Number(valStr);
+    const formattedVal = Number.isFinite(num) && num > 0 && !valStr.startsWith("+") ? `+${num}` : valStr;
+    let note = "";
+    if (ch.mode === modes.DOWNGRADE) note = " (não acumula com penalidade menor)";
+    else if (ch.mode === modes.UPGRADE) note = " (não acumula com bônus menor)";
+    else if (ch.mode === modes.OVERRIDE) note = " (valor fixo)";
+    const dedup = `${target}::${formattedVal}::${note}`;
+    if (seen.has(dedup)) continue;
+    seen.add(dedup);
+    out.push({ target, value: formattedVal || "—", note });
+  }
+  return out;
+}
+
+async function openEffectDetailsModal(actor, ef) {
+  if (!ef) return;
+  const rawHtml = resolveEffectDescriptionHtml(ef);
+  const descHtml = rawHtml
+    ? await foundry.applications.ux.TextEditor.implementation.enrichHTML(rawHtml, { async: true })
+    : "<p><em>Sem descrição adicional registrada.</em></p>";
+  const changes = describeEffectChanges(ef);
+  const changesHtml = changes.length
+    ? `<ul class="t20pf2e-eff-changes-list">${changes
+        .map((c) => `<li><strong>${escapeHtml(c.target)}:</strong> <span class="t20pf2e-eff-val">${escapeHtml(c.value)}</span>${escapeHtml(c.note)}</li>`)
+        .join("")}</ul>`
+    : `<p class="t20pf2e-eff-empty">Sem modificador numérico direto na ficha (efeito situacional ou indicativo).</p>`;
+
+  const durText = Number.isFinite(ef.duration?.remaining) && ef.duration.remaining > 0
+    ? `${ef.duration.remaining} ${ef.duration.type === "turns" ? "turno(s)" : "rodada(s)"}`
+    : Number.isFinite(ef.duration?.rounds) && ef.duration.rounds > 0
+      ? `${ef.duration.rounds} rodada(s)`
+      : "Duração contínua / cena";
+
+  const buttons = [];
+  if (actor?.isOwner) {
+    buttons.push({
+      action: "remove",
+      label: "Remover",
+      icon: "fa-solid fa-trash",
+      callback: async () => {
+        await ef.delete();
+      }
+    });
+  }
+  buttons.push({
+    action: "edit",
+    label: "Editar Avançado",
+    icon: "fa-solid fa-sliders",
+    callback: () => {
+      if (ef.sheet) ef.sheet.render(true);
+    }
+  });
+  buttons.push({
+    action: "close",
+    label: "Fechar",
+    default: true
+  });
+
+  await foundry.applications.api.DialogV2.wait({
+    classes: ["t20pf2e-dialog-window"],
+    window: { title: ef.name },
+    position: { width: 440 },
+    content: `
+      <div class="t20pf2e-dialog t20pf2e-eff-modal">
+        <div class="t20pf2e-eff-modal-head">
+          <div class="t20pf2e-eff-modal-icon"><img src="${escapeHtml(ef.img || "icons/svg/aura.svg")}" alt="" /></div>
+          <div>
+            <h3>${escapeHtml(ef.name)}</h3>
+            <span class="t20pf2e-eff-dur-tag"><i class="fa-regular fa-clock"></i> ${escapeHtml(durText)}</span>
+          </div>
+        </div>
+        <div class="t20pf2e-section">
+          <strong>Efeito em Jogo:</strong>
+          <div class="t20pf2e-eff-desc-box">${descHtml}</div>
+        </div>
+        <div class="t20pf2e-section">
+          <strong>Modificadores na Ficha:</strong>
+          ${changesHtml}
+        </div>
+      </div>`,
+    buttons,
+    rejectClose: false
+  });
 }
 
 function escapeHtml(str) {
@@ -819,6 +1017,8 @@ export class TokenVitalsHudT20 {
   static _lastPvAmount = 5;
   static _lastPmAmount = 1;
   static _collapsed = localStorage.getItem(STORAGE_COLLAPSE_KEY) === "1";
+  static _showEffectsPicker = false;
+  static _effectsQuery = "";
 
   static init() {
     installTopBarsWrapper();
@@ -863,6 +1063,10 @@ export class TokenVitalsHudT20 {
     Hooks.on("controlToken", () => this.render());
     Hooks.on("updateActor", () => this.render());
     Hooks.on("updateToken", () => this.render());
+    Hooks.on("createActiveEffect", () => this.render());
+    Hooks.on("updateActiveEffect", () => this.render());
+    Hooks.on("deleteActiveEffect", () => this.render());
+    Hooks.on("updateCombat", () => this.render());
     Hooks.on("refreshToken", () => {
       installTopBarsWrapper();
     });
@@ -1358,6 +1562,47 @@ export class TokenVitalsHudT20 {
     const pvMax = Math.max(1, Number(pv.max) || 1);
     const pmMax = Math.max(1, Number(pm.max) || 1);
 
+    const activeStatuses = new Set();
+    const effects = [];
+    for (const ef of primary.actor.effects || []) {
+      if (ef.disabled) continue;
+      for (const st of ef.statuses || []) activeStatuses.add(st);
+
+      let badge = "";
+      if (Number.isFinite(ef.duration?.remaining) && ef.duration.remaining > 0) {
+        badge = `${ef.duration.remaining}${ef.duration.type === "turns" ? "t" : "r"}`;
+      } else if (Number.isFinite(ef.duration?.rounds) && ef.duration.rounds > 0) {
+        badge = `${ef.duration.rounds}r`;
+      }
+
+      const rawDesc = stripHtml(resolveEffectDescriptionHtml(ef));
+      const tooltip = `<strong>${escapeHtml(ef.name)}</strong>${rawDesc ? `<br>${escapeHtml(rawDesc)}` : ""}<br><em>Clique esquerdo: detalhes · Clique direito: remover</em>`;
+      effects.push({
+        id: ef.id,
+        name: ef.name,
+        img: ef.img || "icons/svg/aura.svg",
+        badge,
+        tooltip
+      });
+    }
+
+    const qNorm = normalizeText(this._effectsQuery || "");
+    const conditions = Object.values(CONFIG.statusEffects || {})
+      .filter((s) => s?.id && s?.name)
+      .sort((a, b) => a.name.localeCompare(b.name, "pt-BR"))
+      .map((s) => {
+        const keyNorm = normalizeText(s.id).replace(/[^a-z0-9]/g, "");
+        const descText = stripHtml(s.description || "") || T20_CONDITION_DESCRIPTIONS[keyNorm] || "";
+        return {
+          id: s.id,
+          name: s.name,
+          img: s.img,
+          nameNorm: normalizeText(s.name),
+          active: activeStatuses.has(s.id),
+          tooltip: descText ? `${s.name}: ${descText}` : s.name
+        };
+      });
+
     const html = await foundry.applications.handlebars.renderTemplate(HUD_TEMPLATE, {
       visible: true,
       collapsed: this._collapsed,
@@ -1380,10 +1625,20 @@ export class TokenVitalsHudT20 {
         pct: Number(pm.max ?? 0) > 0
           ? Math.clamp((Number(pm.value ?? 0) / pmMax) * 100, 0, 100).toFixed(1)
           : 0
-      }
+      },
+      effects,
+      effectsCount: effects.length,
+      conditions,
+      showEffectsPicker: this._showEffectsPicker,
+      effectsQuery: this._effectsQuery
     });
 
     root.innerHTML = html;
+    if (qNorm && this._showEffectsPicker) {
+      root.querySelectorAll(".t20pf2e-veff-cond-btn").forEach((chip) => {
+        chip.style.display = (chip.dataset.nameNorm || "").includes(qNorm) ? "" : "none";
+      });
+    }
     this._bindHudEvents(root, targets.map((t) => t.actor));
   }
 
@@ -1445,9 +1700,61 @@ export class TokenVitalsHudT20 {
           for (const actor of actors) {
             await applyPmDelta(actor, action === "spend-pm" ? -amount : amount);
           }
+          return;
+        }
+        if (action === "toggle-effects-picker") {
+          this._showEffectsPicker = !this._showEffectsPicker;
+          await this.render();
+          if (this._showEffectsPicker) {
+            this._root?.querySelector("[data-effects-search]")?.focus();
+          }
+          return;
+        }
+        if (action === "toggle-condition") {
+          const statusId = btn.dataset.statusId;
+          if (!statusId) return;
+          const primaryHas = actors[0]?.effects?.some((e) => e.statuses?.has(statusId));
+          for (const actor of actors) {
+            if (!actor.isOwner) continue;
+            const existing = actor.effects.find((e) => e.statuses?.has(statusId));
+            if (primaryHas) {
+              if (existing) await existing.delete();
+            } else if (!existing) {
+              const ef = await ActiveEffect.fromStatusEffect(statusId);
+              if (ef) await actor.createEmbeddedDocuments("ActiveEffect", [ef.toObject()]);
+            }
+          }
         }
       });
     });
+
+    const effSearch = root.querySelector("[data-effects-search]");
+    if (effSearch) {
+      effSearch.addEventListener("input", (ev) => {
+        this._effectsQuery = ev.currentTarget.value;
+        const q = normalizeText(this._effectsQuery);
+        root.querySelectorAll(".t20pf2e-veff-cond-btn").forEach((chip) => {
+          chip.style.display = !q || (chip.dataset.nameNorm || "").includes(q) ? "" : "none";
+        });
+      });
+    }
+
+    const primaryActor = actors[0];
+    if (primaryActor) {
+      root.querySelectorAll(".t20pf2e-veff-item").forEach((el) => {
+        el.addEventListener("click", async (ev) => {
+          ev.preventDefault();
+          const ef = primaryActor.effects.get(el.dataset.effectId);
+          if (ef) await openEffectDetailsModal(primaryActor, ef);
+        });
+        el.addEventListener("contextmenu", async (ev) => {
+          ev.preventDefault();
+          if (!primaryActor.isOwner) return;
+          const ef = primaryActor.effects.get(el.dataset.effectId);
+          if (ef) await ef.delete();
+        });
+      });
+    }
 
     const dragHandle = root.querySelector("[data-drag-handle]");
     if (dragHandle) {
