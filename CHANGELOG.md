@@ -2,6 +2,11 @@
 
 Todas as alterações notáveis deste módulo serão documentadas neste arquivo.
 
+## [0.4.3] — 2026-11-13
+
+### Corrigido
+- **Ficha Moderna (`CharacterSheetT20`)**: reforçado o alinhamento absoluto centralizado do valor numérico dentro do escudo de **Defesa** (`.pf2e-shield-badge`).
+
 ## [0.4.2] — 2026-11-13
 
 ### Adicionado
