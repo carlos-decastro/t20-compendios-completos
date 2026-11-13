@@ -14,6 +14,7 @@ const SECTION_TOGGLES = {
   attacks: { prop: "_showAttacks", storageKey: "t20pf2e.tokenActionsAttacksOpen", defaultOpen: true },
   spells: { prop: "_showSpells", storageKey: "t20pf2e.tokenActionsSpellsOpen", defaultOpen: true },
   powers: { prop: "_showPowers", storageKey: "t20pf2e.tokenActionsPowersOpen", defaultOpen: true },
+  allSkillsMode: { prop: "_showAllSkills", storageKey: "t20pf2e.tokenActionsAllSkills", defaultOpen: false },
 };
 const FLAG_FAVORITES_KEY = "quickActionFavorites";
 
@@ -266,8 +267,15 @@ function extractActorCombatItems(actor) {
   };
 }
 
+function isTemplateSkillKey(key, sk) {
+  if (key === "_pc0" || key === "ofi0") return true;
+  if (/^(_pc|ofi)\d+$/.test(key) && !String(sk?.label || "").trim()) return true;
+  return false;
+}
+
 function extractActorSkills(actor) {
   const pericias = actor?.system?.pericias || {};
+  const isNpc = actor?.type === "npc";
   const coreSkills = CORE_SKILL_DEFS.map((def) => {
     const val = Number(pericias[def.key]?.value ?? 0);
     return {
@@ -280,16 +288,54 @@ function extractActorSkills(actor) {
 
   const allSkills = [];
   for (const [key, sk] of Object.entries(pericias)) {
-    if (!sk) continue;
+    if (!sk || isTemplateSkillKey(key, sk)) continue;
+    const isTrained = Boolean(sk.treinado);
+    const isRelevant = isNpc
+      ? Boolean(
+          isTrained
+          || Number(sk.outros ?? 0) !== 0
+          || (Array.isArray(sk.bonus) && sk.bonus.length > 0)
+          || key === "luta"
+          || key === "pont"
+          || CORE_SKILL_KEYS.has(key)
+        )
+      : isTrained;
     allSkills.push({
       key,
       label: sk.label || CONFIG?.T20?.pericias?.[key] || key,
       signed: formatSigned(sk.value ?? 0),
-      isTrained: Boolean(sk.treinado)
+      isTrained,
+      isRelevant
     });
   }
   allSkills.sort((a, b) => a.label.localeCompare(b.label, "pt-BR"));
-  return { coreSkills, allSkills };
+  const relevantSkills = allSkills.filter((s) => s.isRelevant);
+  return { coreSkills, allSkills, relevantSkills };
+}
+
+function getNegativeManaLossRoll(item) {
+  const rolls = item?.system?.rolls || [];
+  for (const r of rolls) {
+    if (r?.type !== "dano" || !Array.isArray(r.parts)) continue;
+    const part = r.parts.find(([formula, dmgType]) => {
+      return dmgType === "curapm" && /^-\s*\S+/.test(String(formula ?? "").trim());
+    });
+    if (part) {
+      return {
+        rollDef: r,
+        positiveFormula: String(part[0]).trim().replace(/^-\s*/, "")
+      };
+    }
+  }
+  return null;
+}
+
+function extractSaveHint(item) {
+  const res = item?.system?.resistencia;
+  if (res?.txt) return String(res.txt).trim();
+  const plain = stripHtml(item?.system?.description?.value || "");
+  const match = plain.match(/\(([^)]*\bCD\s*\d+[^)]*)\)/i);
+  return match ? match[1].trim() : "";
 }
 
 async function triggerItemQuickAction(actor, itemId, event, grip = 0) {
@@ -298,6 +344,42 @@ async function triggerItemQuickAction(actor, itemId, event, grip = 0) {
 
   if (grip === 1 || grip === 2) {
     return rollWeaponWithGrip(item, grip, event);
+  }
+
+  const manaLoss = getNegativeManaLossRoll(item);
+  if (manaLoss) {
+    const roll = await new Roll(manaLoss.positiveFormula, actor.getRollData?.() || {}).evaluate();
+    const saveHint = extractSaveHint(item);
+    const rawDesc = item.system?.description?.value || "";
+    const enrichFn = foundry?.applications?.ux?.TextEditor?.implementation?.enrichHTML || TextEditor?.enrichHTML;
+    const enrichedDesc = enrichFn
+      ? await enrichFn(rawDesc, { async: true, relativeTo: item })
+      : rawDesc;
+
+    return ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      rolls: [roll],
+      flags: {
+        [MODULE_ID]: { manaLoss: true }
+      },
+      content: `
+        <div class="tormenta20 chat-card item-card">
+          <header class="card-header flexrow">
+            ${item.img ? `<img src="${escapeHtml(item.img)}" width="36" height="36" style="flex:0" />` : ""}
+            <h3 class="item-name"><div>${escapeHtml(item.name)}</div></h3>
+          </header>
+          <div class="card-content">
+            ${saveHint ? `<p><strong>Resistência:</strong> ${escapeHtml(saveHint)}</p>` : ""}
+            <div class="dice-roll" style="margin: 6px 0;">
+              <div class="dice-result">
+                <div class="dice-formula">Perda de PM (${escapeHtml(manaLoss.positiveFormula)})</div>
+                <h4 class="dice-total" style="color: #1d4ed8;">-${roll.total} PM</h4>
+              </div>
+            </div>
+            ${enrichedDesc}
+          </div>
+        </div>`
+    });
   }
 
   const hasRollsOrCost = Boolean(
@@ -371,6 +453,7 @@ export class TokenQuickActionsT20 {
   static _showAttacks = localStorage.getItem(SECTION_TOGGLES.attacks.storageKey) !== "0";
   static _showSpells = localStorage.getItem(SECTION_TOGGLES.spells.storageKey) !== "0";
   static _showPowers = localStorage.getItem(SECTION_TOGGLES.powers.storageKey) !== "0";
+  static _showAllSkills = localStorage.getItem(SECTION_TOGGLES.allSkillsMode.storageKey) === "1";
 
   static init() {
     this._registerHooks();
@@ -549,9 +632,12 @@ export class TokenQuickActionsT20 {
     }
 
     const actor = token.actor;
+    const isNpc = actor.type === "npc";
     const defenses = extractActorDefenses(actor);
     const { attacks, spells, powers, inventoryItems, totalWeaponsCount, totalSpellsCount, totalPowersCount } = extractActorCombatItems(actor);
-    const { coreSkills, allSkills } = extractActorSkills(actor);
+    const { coreSkills, allSkills, relevantSkills } = extractActorSkills(actor);
+    const hasExtraSkills = relevantSkills.length > 0 && allSkills.length > relevantSkills.length;
+    const displayedSkills = (hasExtraSkills && !this._showAllSkills) ? relevantSkills : allSkills;
 
     const badgeText = actor.type === "npc"
       ? `ND ${actor.system?.attributes?.nd ?? "?"}`
@@ -586,15 +672,20 @@ export class TokenQuickActionsT20 {
 
     const html = await foundry.applications.handlebars.renderTemplate(QA_TEMPLATE, {
       visible: true,
+      isNpc,
       collapsed: this._collapsed,
       showExtraSkills: this._showExtraSkills,
       showPassives: this._showPassives,
       showAttacks: this._showAttacks,
       showSpells: this._showSpells,
       showPowers: this._showPowers,
+      showAllSkills: this._showAllSkills,
+      hasExtraSkills,
+      totalSkillsCount: allSkills.length,
+      relevantSkillsCount: relevantSkills.length,
       powerFilter: currentFilter,
       powerFilters,
-      name: token.name || actor.name,
+      name: token.document?.actorLink ? (actor.name || token.name) : (token.name || actor.name),
       img: token.document?.texture?.src || actor.img,
       badgeText,
       defense: defenses.defense,
@@ -603,6 +694,7 @@ export class TokenQuickActionsT20 {
       defenseTooltip: defenses.defenseTooltip,
       spellDC: Number(actor.system?.attributes?.cd ?? 0) || null,
       coreSkills,
+      skills: displayedSkills,
       allSkills,
       attacks,
       spells,

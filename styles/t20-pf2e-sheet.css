@@ -213,12 +213,23 @@
   align-items: center;
   justify-content: center;
   font-size: 42px;
+  line-height: 1;
   color: #7a1c1c;
+  pointer-events: none;
 }
 
 .pf2e-shield-badge span {
   position: relative;
   z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0 0 2px 0;
+  text-align: center;
+  line-height: 1;
   color: #fbf8f2;
   font-weight: 700;
   font-size: 16px;
@@ -1819,5 +1830,102 @@ nav.pf2e-nav .item.active {
   justify-content: center;
   text-align: center;
   font-weight: 700;
+}
+
+/* ==========================================================================
+   Traits & Proficiencies (Outras Características / Proficiências)
+   ========================================================================== */
+
+.pf2e-traits-wrap {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pf2e-traits-wrap h3 {
+  margin: 6px 0 2px 0;
+  padding-bottom: 3px;
+  border-bottom: 1px solid var(--pf2e-border);
+  font-size: 11.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--pf2e-crimson);
+}
+
+.pf2e-traits-wrap > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 5px 8px;
+  background: var(--pf2e-parchment-2);
+  border: 1px solid var(--pf2e-border);
+  border-radius: 5px;
+}
+
+.pf2e-traits-wrap label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--pf2e-ink-soft);
+  margin: 0;
+}
+
+.pf2e-traits-wrap a.config-button,
+.pf2e-traits-wrap a.trait-selector {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--pf2e-ink-soft);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.pf2e-traits-wrap a.config-button:hover label,
+.pf2e-traits-wrap a.trait-selector:hover label {
+  color: var(--pf2e-crimson);
+  text-decoration: underline;
+}
+
+.pf2e-traits-wrap select.actor-size {
+  height: 24px;
+  padding: 0 6px;
+  border: 1px solid var(--pf2e-border);
+  border-radius: 4px;
+  background: #fffdf8;
+  color: var(--pf2e-ink);
+  font-size: 12px;
+}
+
+.pf2e-traits-wrap ul.trait-list {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.pf2e-traits-wrap ul.trait-list li.tag,
+.pf2e-traits-wrap ul.trait-list li.speedtag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  width: auto !important;
+  max-width: 100%;
+  margin: 0 !important;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--pf2e-border);
+  background: #fffdf8;
+  color: var(--pf2e-ink);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.3;
+  box-shadow: none;
+}
+
+.pf2e-traits-wrap ul.trait-list li:empty {
+  display: none;
 }
 

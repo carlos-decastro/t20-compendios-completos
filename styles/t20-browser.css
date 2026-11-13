@@ -418,6 +418,42 @@
   padding: 2px 0;
 }
 
+.t20pf2e-slot-quick-pills {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.t20pf2e-slot-quick-pills .t20pf2e-slot-pill {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 24px;
+  padding: 0 4px;
+  border: 1px solid #c9b99d;
+  border-radius: 5px;
+  background: #f5ecdc;
+  color: #4b2d18;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+}
+
+.t20pf2e-slot-quick-pills .t20pf2e-slot-pill:hover {
+  background: #ede0c8;
+  border-color: #9e7d47;
+}
+
+.t20pf2e-slot-quick-pills .t20pf2e-slot-pill.is-active {
+  background: #7d1b1b;
+  border-color: #5c1111;
+  color: #fff6e6;
+}
+
 .t20pf2e-row-actions {
   display: flex;
   align-items: center;

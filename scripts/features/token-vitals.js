@@ -923,9 +923,26 @@ function scaleRollForT20Damage(roll, multiplier) {
   };
 }
 
-async function applyDamageRollsToRecipients(editable, damageRolls, multiplier = 1) {
+async function applyDamageRollsToRecipients(editable, damageRolls, multiplier = 1, isManaLoss = false) {
   if (multiplier <= 0) return;
   for (const { actor } of editable) {
+    if (isManaLoss) {
+      const totalLoss = Math.floor(
+        damageRolls.reduce((sum, r) => sum + Number(r.total ?? 0), 0) * multiplier
+      );
+      if (totalLoss <= 0) continue;
+      const pm = actor.system?.attributes?.pm || { value: 0, temp: 0 };
+      const curTemp = Number(pm.temp ?? 0);
+      const curVal = Number(pm.value ?? 0);
+      const fromTemp = Math.min(curTemp, totalLoss);
+      const fromVal = totalLoss - fromTemp;
+      await actor.update({
+        "system.attributes.pm.temp": Math.max(0, curTemp - fromTemp),
+        "system.attributes.pm.value": Math.max(0, curVal - fromVal)
+      });
+      continue;
+    }
+
     for (const roll of damageRolls) {
       if (typeof actor.applyDamageV2 === "function") {
         const preparedRoll = multiplier === 1 ? roll : scaleRollForT20Damage(roll, multiplier);
@@ -1311,13 +1328,15 @@ export class TokenVitalsHudT20 {
       );
       const hasSavePrompt = Boolean(saveReq && damageRolls.length);
       const hasTargetDamage = Boolean(damageRolls.length && (targetUuids.length || hasSavePrompt));
+      const isManaLoss = Boolean(message.flags?.[MODULE_ID]?.manaLoss);
+      const unitLabel = isManaLoss ? "PM" : "dano";
 
       if (!applied && !hasActionableRecovery && !hasTargetDamage) return;
 
       const container = document.createElement("div");
       container.className = "t20pf2e-chat-vitals-bar";
 
-      if (applied?.summary) {
+      if (applied?.summary && !hasSavePrompt) {
         const noteSuffix = applied.notes?.length ? ` (${applied.notes.join(" | ")})` : "";
         container.innerHTML = `
           <span class="t20pf2e-chat-vitals-applied">
@@ -1335,16 +1354,34 @@ export class TokenVitalsHudT20 {
               : recipients;
             const editable = filtered.filter((r) => r.actor.isOwner);
             if (!editable.length) return ui.notifications.warn("Nenhum alvo/token acessível encontrado (mire ou selecione os tokens).");
-            await applyDamageRollsToRecipients(editable, damageRolls, multiplier);
+            await applyDamageRollsToRecipients(editable, damageRolls, multiplier, isManaLoss);
             const shownDmg = Math.floor(totalDmg * multiplier);
             const label = multiplier === 0
-              ? `0 dano (anulado) para ${editable.map((e) => e.label).join(", ")}`
-              : `-${shownDmg} dano aplicado em ${editable.map((e) => e.label).join(", ")}`;
-            await message.setFlag(MODULE_ID, "vitalsApplied", {
-              summary: label,
-              notes: multiplier === 0.5 ? ["½ dano"] : []
-            }).catch(() => {});
-            const prefix = multiplier === 0 ? "Dano anulado" : (multiplier === 0.5 ? "Metade do dano aplicada" : "Dano aplicado");
+              ? `0 ${unitLabel} (anulado) para ${editable.map((e) => e.label).join(", ")}`
+              : `-${shownDmg} ${unitLabel} aplicado em ${editable.map((e) => e.label).join(", ")}`;
+            if (!hasSavePrompt) {
+              await message.setFlag(MODULE_ID, "vitalsApplied", {
+                summary: label,
+                notes: multiplier === 0.5 ? [`½ ${unitLabel}`] : []
+              }).catch(() => {});
+            } else {
+              const existing = Array.isArray(message.getFlag(MODULE_ID, "saveOutcomes"))
+                ? [...message.getFlag(MODULE_ID, "saveOutcomes")]
+                : [];
+              for (const rec of editable) {
+                const entry = {
+                  label: rec.label,
+                  passed: multiplier === 0,
+                  rollDetail: "Aplicação manual",
+                  badge: multiplier === 0 ? `Anulado → 0 ${unitLabel}` : `-${shownDmg} ${unitLabel}`
+                };
+                const idx = existing.findIndex((e) => e.label === rec.label);
+                if (idx >= 0) existing[idx] = entry;
+                else existing.push(entry);
+              }
+              await message.setFlag(MODULE_ID, "saveOutcomes", existing).catch(() => {});
+            }
+            const prefix = multiplier === 0 ? "Efeito anulado" : (multiplier === 0.5 ? `Metade (${unitLabel}) aplicada` : `${isManaLoss ? "Perda de PM" : "Dano"} aplicado`);
             ui.notifications.info(`${prefix} em ${editable.map((e) => e.label).join(", ")}.`);
           };
 
@@ -1362,8 +1399,9 @@ export class TokenVitalsHudT20 {
                 return ui.notifications.warn("Mire (T) ou selecione os tokens afetados para rolar a resistência.");
               }
 
-              const outcomes = [];
-              const summaryParts = [];
+              const existing = Array.isArray(message.getFlag(MODULE_ID, "saveOutcomes"))
+                ? [...message.getFlag(MODULE_ID, "saveOutcomes")]
+                : [];
               for (const rec of editable) {
                 const mod = Number(rec.actor.system?.pericias?.[saveReq.skillKey]?.value ?? 0);
                 const formula = mod >= 0 ? `1d20 + ${mod}` : `1d20 - ${Math.abs(mod)}`;
@@ -1388,31 +1426,27 @@ export class TokenVitalsHudT20 {
                 }
 
                 if (mult > 0) {
-                  await applyDamageRollsToRecipients([rec], damageRolls, mult);
+                  await applyDamageRollsToRecipients([rec], damageRolls, mult, isManaLoss);
                 }
                 const dmgApplied = Math.floor(totalDmg * mult);
                 const badge = mult === 0
-                  ? `${passed ? "Passou" : "Falhou"}${evasionTag} → 0 dano`
+                  ? `${passed ? "Passou" : "Falhou"}${evasionTag} → 0 ${unitLabel}`
                   : mult < 1
-                    ? `${passed ? "Passou" : "Falhou"}${evasionTag} → ${dmgApplied} dano (½)`
-                    : `Falhou → ${dmgApplied} dano`;
+                    ? `${passed ? "Passou" : "Falhou"}${evasionTag} → ${isManaLoss ? `-${dmgApplied} PM` : `${dmgApplied} dano`} (½)`
+                    : `Falhou → ${isManaLoss ? `-${dmgApplied} PM` : `${dmgApplied} dano`}`;
 
-                outcomes.push({
+                const entry = {
                   label: rec.label,
                   passed,
                   rollDetail: `${saveReq.skillLabel} ${total}${saveReq.cd ? ` vs CD ${saveReq.cd}` : ""}`,
                   badge
-                });
-                summaryParts.push(`${rec.label}: ${dmgApplied}`);
+                };
+                const idx = existing.findIndex((e) => e.label === rec.label);
+                if (idx >= 0) existing[idx] = entry;
+                else existing.push(entry);
               }
 
-              await message.update({
-                [`flags.${MODULE_ID}.saveOutcomes`]: outcomes,
-                [`flags.${MODULE_ID}.vitalsApplied`]: {
-                  summary: `Resistência resolvida (${summaryParts.join(", ")})`,
-                  notes: []
-                }
-              }).catch(() => {});
+              await message.setFlag(MODULE_ID, "saveOutcomes", existing).catch(() => {});
             }));
 
             container.appendChild(this._makeChatBtn(`Total (${totalDmg})`, "is-damage", () => applyToTargets(1, true)));
@@ -1607,7 +1641,7 @@ export class TokenVitalsHudT20 {
       visible: true,
       collapsed: this._collapsed,
       isGM: Boolean(game.user?.isGM),
-      name: primary.token?.name || primary.actor.name,
+      name: primary.token?.document?.actorLink ? (primary.actor.name || primary.token.name) : (primary.token?.name || primary.actor.name),
       img: primary.token?.document?.texture?.src || primary.actor.img,
       multiCount: targets.length > 1 ? targets.length - 1 : 0,
       lastPvAmount: this._lastPvAmount,

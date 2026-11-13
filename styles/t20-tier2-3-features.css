@@ -1571,6 +1571,52 @@
   opacity: 0.75;
 }
 
+.t20pf2e-qa-skills-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0 6px 0;
+}
+
+.t20pf2e-qa-skills-toolbar .t20pf2e-qa-skill-search-wrap {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+}
+
+.t20pf2e-qa-skills-toolbar .t20pf2e-qa-skill-search-input {
+  height: 26px !important;
+}
+
+.t20pf2e-quick-actions button.t20pf2e-qa-skills-mode-btn {
+  flex: 0 0 144px;
+  width: 144px;
+  height: 26px !important;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 8px;
+  border: 1px solid #d5c7ab;
+  border-radius: 5px;
+  background: #f5ecdc;
+  color: #594c42;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  box-shadow: none;
+}
+
+.t20pf2e-quick-actions button.t20pf2e-qa-skills-mode-btn:hover {
+  background: #ede0c8;
+  color: #6d1313;
+  border-color: #b79c73;
+}
+
 .t20pf2e-qa-sec-hint {
   font-size: 10px;
   font-weight: 600;
@@ -1855,6 +1901,15 @@
   max-width: calc(100% - 20px);
 }
 
+.t20pf2e-qa-chip-group .t20pf2e-qa-chip.is-power:only-child {
+  max-width: 100%;
+}
+
+.t20pf2e-qa-chip-group .t20pf2e-qa-chip.is-power:hover {
+  background: #b58428;
+  color: #ffffff;
+}
+
 .t20pf2e-qa-chip-group.is-passive {
   border-color: #cbb99e;
   background: #f4ece0;
@@ -2027,6 +2082,12 @@
   border-color: #b58d52;
   font-weight: 700;
   color: #2b1f17;
+}
+
+.t20pf2e-qa-chip.is-extra-skill.is-trained:hover {
+  background: #7d1b1b;
+  border-color: #5c1111;
+  color: #fff6e6;
 }
 
 /* 3 columns per row for Skills with smooth scrolling */

@@ -134,6 +134,11 @@
         </div>
 
         {{#if slotContext}}
+          <div class="t20pf2e-slot-quick-pills">
+            <button type="button" class="t20pf2e-slot-pill {{#unless filters.powerTipo}}is-active{{/unless}}" data-slot-power-tipo="">Todos</button>
+            <button type="button" class="t20pf2e-slot-pill {{#if (eq filters.powerTipo "classe")}}is-active{{/if}}" data-slot-power-tipo="classe">Só Classe</button>
+            <button type="button" class="t20pf2e-slot-pill {{#if (eq filters.powerTipo "geral")}}is-active{{/if}}" data-slot-power-tipo="geral">Só Gerais</button>
+          </div>
           <label class="t20pf2e-filter-check" title="Exibir poderes da classe {{slotContext.className}} e Poderes Gerais (incluindo Aumento de Atributo)">
             <input type="checkbox" data-filter="slotClassFilter" {{#if filters.slotClassFilter}}checked{{/if}} />
             <span>Apenas {{slotContext.className}} + Gerais</span>

@@ -2,6 +2,26 @@
 
 Todas as alterações notáveis deste módulo serão documentadas neste arquivo.
 
+## [0.4.2] — 2026-11-13
+
+### Adicionado
+- **HUD de Ações Rápidas (`TokenQuickActionsT20`)**:
+  - Filtro **Mostrar Relevantes / Mostrar todas** nas perícias para **NPCs** (treinadas/bônus/combate) e **Personagens de Jogadores** (treinadas), alinhado na mesma linha da barra de busca com largura fixa.
+  - Modo tático para NPCs ocultando estrelas de favorito desnecessárias.
+- **Navegador de Compêndios — Arton (`CompendiumBrowserT20`)**:
+  - Ao preencher espaços de progressão de poderes, ordena **Poderes de Classe primeiro** e **Poderes Gerais depois**, com filtro rápido (`Todos` | `Só Classe` | `Só Gerais`) separando corretamente *Aumento de Atributo* (`Classe · Geral`).
+
+### Corrigido
+- **Perícias & Hover no HUD**:
+  - Removidas chaves internas de template (`_pc0`, `ofi0`) da lista de perícias.
+  - Corrigido contraste no `:hover` de habilidades e padronizado o `:hover` em perícias treinadas e não treinadas.
+- **Perda de PM & Resistências em Grupo (`TokenVitalsHudT20`)**:
+  - Habilidades com perda de PM negativa (como *Insanidade da Tormenta*) agora rolam como perda de PM (`-X PM`), descontam PM corretamente e mantêm os botões de resistência disponíveis para que vários jogadores rolem no mesmo card.
+- **Sincronização de Nome nos HUDs**: tokens vinculados (`actorLink`) passam a exibir o nome atualizado da ficha ao renomear o personagem.
+- **Ficha Moderna (`CharacterSheetT20`)**:
+  - Removido o painel redundante de *Favoritos* na aba **Personagem** (ampliando *Anotações Rápidas*).
+  - Estilizado o bloco de **Outras Características & Proficiências** (sem marcadores `•` e sem pílulas vazias) e centralizado o valor numérico dentro do escudo de **Defesa**.
+
 ## [0.4.1] — 2026-11-13
 
 ### Adicionado

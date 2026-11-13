@@ -144,6 +144,20 @@ export class CompendiumBrowserT20 extends HandlebarsApplicationMixin(Application
       return base;
     });
 
+    if (this.activeCategory === "poderes" && this.slotContext) {
+      const rank = (entry) => {
+        const tipo = entry.system?.tipo;
+        const isSharedGeneral = tipo === "classe" && (entry.subtipoNorm || "").split(/[,/]/).map((s) => s.trim()).includes("geral");
+        if (tipo === "classe" && !isSharedGeneral) return 0;
+        if (tipo === "geral" || isSharedGeneral) return 1;
+        return 2;
+      };
+      entries.sort((a, b) => {
+        const diff = rank(a) - rank(b);
+        return diff !== 0 ? diff : a.name.localeCompare(b.name, "pt-BR");
+      });
+    }
+
     const sources = [...new Set(rawEntries.map((e) => e.sourceGroup))].sort((a, b) => a.localeCompare(b, "pt-BR"));
     const schools = Object.entries(CONFIG.T20?.spellSchools || {}).map(([key, label]) => ({
       key,
@@ -306,6 +320,25 @@ export class CompendiumBrowserT20 extends HandlebarsApplicationMixin(Application
       el.addEventListener(eventName, (ev) => {
         const key = ev.currentTarget.dataset.filter;
         this.filters[key] = isCheckbox ? ev.currentTarget.checked : ev.currentTarget.value;
+        if (key === "powerTipo") {
+          root.querySelectorAll("[data-slot-power-tipo]").forEach((btn) => {
+            btn.classList.toggle("is-active", btn.dataset.slotPowerTipo === this.filters.powerTipo);
+          });
+        }
+        this._applyDomFilters();
+      });
+    });
+
+    root.querySelectorAll("[data-slot-power-tipo]").forEach((btn) => {
+      btn.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        const val = ev.currentTarget.dataset.slotPowerTipo ?? "";
+        this.filters.powerTipo = val;
+        const selectEl = root.querySelector('select[data-filter="powerTipo"]');
+        if (selectEl) selectEl.value = val;
+        root.querySelectorAll("[data-slot-power-tipo]").forEach((b) => {
+          b.classList.toggle("is-active", (b.dataset.slotPowerTipo ?? "") === val);
+        });
         this._applyDomFilters();
       });
     });
@@ -347,23 +380,29 @@ export class CompendiumBrowserT20 extends HandlebarsApplicationMixin(Application
         if (show && this.filters.escola && row.dataset.escola !== this.filters.escola) show = false;
       }
       if (show && this.activeCategory === "poderes") {
+        const subParts = (row.dataset.subtipoNorm || "")
+          .split(/[,/]/)
+          .map((s) => s.trim())
+          .filter(Boolean);
+        const pTipo = row.dataset.powerTipo;
+        const isSharedGeneral = pTipo === "classe" && subParts.includes("geral");
+
         if (this.filters.slotClassFilter && this.slotContext) {
           const slotSubNorm = normalizeText(this.slotContext.powerSubtype || this.slotContext.className || "");
-          const subParts = (row.dataset.subtipoNorm || "")
-            .split(/[,/]/)
-            .map((s) => s.trim())
-            .filter(Boolean);
-          const pTipo = row.dataset.powerTipo;
           const isClassPower = pTipo === "classe" && (subParts.includes(slotSubNorm) || subParts.includes("geral"));
           const isGeneralPower = pTipo === "geral";
           if (!isClassPower && !isGeneralPower) show = false;
         }
-        if (show && this.filters.powerTipo && row.dataset.powerTipo !== this.filters.powerTipo) show = false;
+        if (show && this.filters.powerTipo) {
+          if (this.slotContext && this.filters.powerTipo === "classe") {
+            if (pTipo !== "classe" || isSharedGeneral) show = false;
+          } else if (this.slotContext && this.filters.powerTipo === "geral") {
+            if (pTipo !== "geral" && !isSharedGeneral) show = false;
+          } else if (pTipo !== this.filters.powerTipo) {
+            show = false;
+          }
+        }
         if (show && subQ) {
-          const subParts = (row.dataset.subtipoNorm || "")
-            .split(/[,/]/)
-            .map((s) => s.trim())
-            .filter(Boolean);
           if (!subParts.includes(subQ)) show = false;
         }
         if (show && this.filters.onlyEligible && row.dataset.prereqState === "locked") show = false;

@@ -156,10 +156,12 @@
                       <span class="t20pf2e-qa-pw-name">{{pw.name}}</span>
                       {{#if pw.cost}}<em class="t20pf2e-qa-pm">{{pw.cost}}</em>{{/if}}
                     </button>
-                    <button type="button" class="t20pf2e-qa-fav-btn {{#if pw.isFavorite}}is-active{{/if}}"
-                      data-qa-fav-toggle="{{pw.id}}" title="{{#if pw.isFavorite}}Remover dos Favoritos{{else}}Adicionar aos Favoritos{{/if}}">
-                      <i class="fa-{{#if pw.isFavorite}}solid{{else}}regular{{/if}} fa-star"></i>
-                    </button>
+                    {{#unless ../isNpc}}
+                      <button type="button" class="t20pf2e-qa-fav-btn {{#if pw.isFavorite}}is-active{{/if}}"
+                        data-qa-fav-toggle="{{pw.id}}" title="{{#if pw.isFavorite}}Remover dos Favoritos{{else}}Adicionar aos Favoritos{{/if}}">
+                        <i class="fa-{{#if pw.isFavorite}}solid{{else}}regular{{/if}} fa-star"></i>
+                      </button>
+                    {{/unless}}
                   </div>
                 {{/each}}
                 {{#unless activePowers.length}}
@@ -181,10 +183,12 @@
                           <button type="button" class="t20pf2e-qa-chip is-power is-passive" data-qa-item="{{pw.id}}" title="{{pw.tooltip}}">
                             <span class="t20pf2e-qa-pw-name">{{pw.name}}</span>
                           </button>
-                          <button type="button" class="t20pf2e-qa-fav-btn {{#if pw.isFavorite}}is-active{{/if}}"
-                            data-qa-fav-toggle="{{pw.id}}" title="{{#if pw.isFavorite}}Remover dos Favoritos{{else}}Adicionar aos Favoritos{{/if}}">
-                            <i class="fa-{{#if pw.isFavorite}}solid{{else}}regular{{/if}} fa-star"></i>
-                          </button>
+                          {{#unless ../isNpc}}
+                            <button type="button" class="t20pf2e-qa-fav-btn {{#if pw.isFavorite}}is-active{{/if}}"
+                              data-qa-fav-toggle="{{pw.id}}" title="{{#if pw.isFavorite}}Remover dos Favoritos{{else}}Adicionar aos Favoritos{{/if}}">
+                              <i class="fa-{{#if pw.isFavorite}}solid{{else}}regular{{/if}} fa-star"></i>
+                            </button>
+                          {{/unless}}
                         </div>
                       {{/each}}
                     </div>
@@ -219,23 +223,34 @@
           </section>
         {{/if}}
 
-        {{!-- Perícias Gerais (Busca em Tempo Real + Lista Completa) --}}
-        {{#if allSkills.length}}
+        {{!-- Perícias Gerais (Busca em Tempo Real + Lista Completa/Relevantes) --}}
+        {{#if skills.length}}
           <section class="t20pf2e-qa-section is-extra-skills">
             <button type="button" class="t20pf2e-qa-toggle-skills" data-qa-action="toggle-skills">
-              <span><i class="fa-solid fa-graduation-cap"></i> Perícias ({{allSkills.length}})</span>
+              <span><i class="fa-solid fa-graduation-cap"></i> Perícias ({{skills.length}}{{#if hasExtraSkills}}{{#unless showAllSkills}}/{{totalSkillsCount}}{{/unless}}{{/if}})</span>
               <i class="fa-solid {{#if showExtraSkills}}fa-chevron-up{{else}}fa-chevron-down{{/if}}"></i>
             </button>
             {{#if showExtraSkills}}
-              <div class="t20pf2e-qa-skill-search-wrap">
-                <i class="fa-solid fa-magnifying-glass t20pf2e-qa-search-icon"></i>
-                <input type="text" class="t20pf2e-qa-skill-search-input" placeholder="Filtrar perícia..." autocomplete="off">
-                <button type="button" class="t20pf2e-qa-search-clear" title="Limpar busca" style="display: none;">
-                  <i class="fa-solid fa-xmark"></i>
-                </button>
+              <div class="t20pf2e-qa-skills-toolbar">
+                <div class="t20pf2e-qa-skill-search-wrap">
+                  <i class="fa-solid fa-magnifying-glass t20pf2e-qa-search-icon"></i>
+                  <input type="text" class="t20pf2e-qa-skill-search-input" placeholder="Filtrar perícia..." autocomplete="off">
+                  <button type="button" class="t20pf2e-qa-search-clear" title="Limpar busca" style="display: none;">
+                    <i class="fa-solid fa-xmark"></i>
+                  </button>
+                </div>
+                {{#if hasExtraSkills}}
+                  <button type="button" class="t20pf2e-qa-skills-mode-btn" data-qa-action="toggle-section" data-qa-section="allSkillsMode">
+                    {{#if showAllSkills}}
+                      <i class="fa-solid fa-filter"></i> Mostrar Relevantes ({{relevantSkillsCount}})
+                    {{else}}
+                      <i class="fa-solid fa-list"></i> Mostrar todas ({{totalSkillsCount}})
+                    {{/if}}
+                  </button>
+                {{/if}}
               </div>
               <div class="t20pf2e-qa-chips-wrap is-spaced t20pf2e-qa-skills-list">
-                {{#each allSkills as |sk|}}
+                {{#each skills as |sk|}}
                   <button type="button" class="t20pf2e-qa-chip is-extra-skill {{#if sk.isTrained}}is-trained{{/if}}" data-qa-skill="{{sk.key}}" data-skill-name="{{sk.label}}" title="Rolar {{sk.label}}: {{sk.signed}}{{#if sk.isTrained}} (Treinada){{/if}}">
                     <span>{{sk.label}}</span>
                     <strong>{{sk.signed}}</strong>
