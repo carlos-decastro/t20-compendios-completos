@@ -6,6 +6,50 @@ const QA_TEMPLATE = `modules/${MODULE_ID}/templates/hud/token-quick-actions.hbs`
 const STORAGE_POS_KEY = "t20pf2e.tokenActionsPos";
 const STORAGE_COLLAPSE_KEY = "t20pf2e.tokenActionsCollapsed";
 const STORAGE_SKILLS_OPEN_KEY = "t20pf2e.tokenActionsExtraSkills";
+const STORAGE_POWER_FILTER_KEY = "t20pf2e.tokenActionsPowerFilter";
+const STORAGE_PASSIVE_OPEN_KEY = "t20pf2e.tokenActionsPassivesOpen";
+const SECTION_TOGGLES = {
+  skills: { prop: "_showExtraSkills", storageKey: STORAGE_SKILLS_OPEN_KEY, defaultOpen: false },
+  passives: { prop: "_showPassives", storageKey: STORAGE_PASSIVE_OPEN_KEY, defaultOpen: false },
+  attacks: { prop: "_showAttacks", storageKey: "t20pf2e.tokenActionsAttacksOpen", defaultOpen: true },
+  spells: { prop: "_showSpells", storageKey: "t20pf2e.tokenActionsSpellsOpen", defaultOpen: true },
+  powers: { prop: "_showPowers", storageKey: "t20pf2e.tokenActionsPowersOpen", defaultOpen: true },
+};
+const FLAG_FAVORITES_KEY = "quickActionFavorites";
+
+const ACTION_TYPE_DEFS = {
+  action: { key: "action", label: "Padrão", icon: "fa-circle-dot", color: "#7d1b1b" },
+  move: { key: "move", label: "Movimento", icon: "fa-person-walking", color: "#166534" },
+  reaction: { key: "reaction", label: "Reação", icon: "fa-bolt-lightning", color: "#d97706" },
+  free: { key: "free", label: "Livre", icon: "fa-feather", color: "#1d4ed8" },
+  full: { key: "full", label: "Completa", icon: "fa-hourglass", color: "#6b21a8" },
+  passive: { key: "passive", label: "Passiva", icon: "fa-shield", color: "#594c42" }
+};
+
+function normalizeActionExecution(item) {
+  const raw = String(item.system?.ativacao?.execucao ?? "").toLowerCase().trim();
+  const cost = Number(item.system?.ativacao?.custo ?? 0);
+  const hasRolls = Boolean(item.system?.rolls?.some((r) => r?.parts?.[0]?.[0]));
+  const desc = String(item.system?.description?.value || "").toLowerCase();
+
+  if (raw === "action" || raw === "padrao") return "action";
+  if (raw === "move" || raw === "movimento") return "move";
+  if (raw === "reaction" || raw === "reacao") return "reaction";
+  if (raw === "free" || raw === "livre") return "free";
+  if (raw === "full" || raw === "completa") return "full";
+  if (raw === "passive" || raw === "passiva") return "passive";
+
+  // If execution action wasn't set, infer from PM cost, rolls, and description:
+  if (cost > 0 || hasRolls) {
+    if (desc.includes("ação livre") || desc.includes("acao livre")) return "free";
+    if (desc.includes("reação") || desc.includes("reacao")) return "reaction";
+    if (desc.includes("ação de movimento") || desc.includes("acao de movimento")) return "move";
+    if (desc.includes("ação completa") || desc.includes("acao completa")) return "full";
+    return "action"; // In Tormenta20, active abilities with PM cost default to Ação Padrão!
+  }
+
+  return "passive";
+}
 
 const CORE_SKILL_DEFS = [
   { key: "inic", abbr: "Inic", label: "Iniciativa" },
@@ -87,13 +131,35 @@ function extractActorDefenses(actor) {
   };
 }
 
+function groupSpellsByCircle(spells) {
+  const groups = new Map();
+  for (const sp of spells) {
+    if (!groups.has(sp.circle)) groups.set(sp.circle, []);
+    groups.get(sp.circle).push(sp);
+  }
+  return [...groups.entries()]
+    .sort(([a], [b]) => a - b)
+    .map(([circle, list]) => ({ circle, label: `${circle}º Círculo`, spells: list }));
+}
+
 function extractActorCombatItems(actor) {
+  const isCharacter = actor?.type === "character";
   const attacks = [];
   const spells = [];
   const powers = [];
+  const inventoryItems = [];
+
+  let totalWeaponsCount = 0;
+  let totalSpellsCount = 0;
+  let totalPowersCount = 0;
 
   for (const item of actor?.items || []) {
+    const isFav = Boolean(item.flags?.tormenta20?.favorito);
+
     if (item.type === "arma") {
+      totalWeaponsCount++;
+      if (isCharacter && !isFav) continue;
+
       const toHit = item.labels?.toHit || "";
       const dano = item.labels?.dano || "";
       const crit = item.labels?.critico || "";
@@ -130,6 +196,9 @@ function extractActorCombatItems(actor) {
         });
       }
     } else if (item.type === "magia") {
+      totalSpellsCount++;
+      if (isCharacter && !isFav) continue;
+
       const pmCost = Number(item.system?.ativacao?.custo ?? 0);
       const circle = Number(item.system?.circulo ?? 1);
       const desc = stripHtml(item.system?.description?.value || "").slice(0, 180);
@@ -141,19 +210,60 @@ function extractActorCombatItems(actor) {
         tooltip: `${item.name} (${circle}º Círculo)${pmCost > 0 ? ` • ${pmCost} PM` : ""}${desc ? `\n${desc}` : ""}`
       });
     } else if (item.type === "poder") {
+      totalPowersCount++;
+      if (isCharacter && !isFav) continue;
+
       const pmCost = Number(item.system?.ativacao?.custo ?? 0);
       const desc = stripHtml(item.system?.description?.value || "").slice(0, 180);
+      const exec = normalizeActionExecution(item);
+      const actionDef = ACTION_TYPE_DEFS[exec] || { key: "other", label: "Outro", icon: "fa-bolt", color: "#594c42" };
+      const isPassive = exec === "passive";
       powers.push({
         id: item.id,
         name: item.name,
         cost: pmCost > 0 ? `${pmCost} PM` : "",
-        tooltip: `${item.name}${pmCost > 0 ? ` (${pmCost} PM)` : ""}${desc ? `\n${desc}` : ""}`
+        actionKey: exec,
+        actionLabel: actionDef.label,
+        actionIcon: actionDef.icon,
+        isPassive,
+        isFavorite: isFav,
+        tooltip: `${item.name} (${actionDef.label})${pmCost > 0 ? ` • ${pmCost} PM` : ""}${desc ? `\n${desc}` : ""}\nClique: rolar/usar • Clique na estrela: favoritar`
+      });
+    } else if (item.type === "consumivel" || item.type === "equipamento" || item.type === "tesouro") {
+      if (!isFav) continue;
+      const qtd = Number(item.system?.qtd ?? 1);
+      const desc = stripHtml(item.system?.description?.value || "").slice(0, 160);
+      const isConsumable = item.type === "consumivel";
+      const icon = isConsumable ? "fa-flask" : (item.type === "equipamento" ? "fa-shield-halved" : "fa-gem");
+      inventoryItems.push({
+        id: item.id,
+        name: item.name,
+        type: item.type,
+        qtd: qtd > 1 ? `${qtd}x` : "",
+        icon,
+        tooltip: `${item.name}${qtd > 1 ? ` (${qtd})` : ""}${desc ? `\n${desc}` : ""}\nClique para usar/rolar`
       });
     }
   }
 
+  // Sort powers: active before passive, then alphabetical
+  powers.sort((a, b) => {
+    if (a.isPassive !== b.isPassive) return a.isPassive ? 1 : -1;
+    return a.name.localeCompare(b.name, "pt-BR");
+  });
+
   spells.sort((a, b) => (a.circle - b.circle) || a.name.localeCompare(b.name, "pt-BR"));
-  return { attacks, spells, powers };
+  inventoryItems.sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+
+  return {
+    attacks,
+    spells,
+    powers,
+    inventoryItems,
+    totalWeaponsCount,
+    totalSpellsCount,
+    totalPowersCount
+  };
 }
 
 function extractActorSkills(actor) {
@@ -168,18 +278,18 @@ function extractActorSkills(actor) {
     };
   });
 
-  const extraSkills = [];
+  const allSkills = [];
   for (const [key, sk] of Object.entries(pericias)) {
-    if (CORE_SKILL_KEYS.has(key)) continue;
-    if (!sk || (!sk.treinado && !sk.outros)) continue;
-    extraSkills.push({
+    if (!sk) continue;
+    allSkills.push({
       key,
       label: sk.label || CONFIG?.T20?.pericias?.[key] || key,
-      signed: formatSigned(sk.value ?? 0)
+      signed: formatSigned(sk.value ?? 0),
+      isTrained: Boolean(sk.treinado)
     });
   }
-  extraSkills.sort((a, b) => a.label.localeCompare(b.label, "pt-BR"));
-  return { coreSkills, extraSkills };
+  allSkills.sort((a, b) => a.label.localeCompare(b.label, "pt-BR"));
+  return { coreSkills, allSkills };
 }
 
 async function triggerItemQuickAction(actor, itemId, event, grip = 0) {
@@ -256,6 +366,11 @@ export function registerTokenQuickActionsSettings() {
 export class TokenQuickActionsT20 {
   static _collapsed = localStorage.getItem(STORAGE_COLLAPSE_KEY) === "1";
   static _showExtraSkills = localStorage.getItem(STORAGE_SKILLS_OPEN_KEY) === "1";
+  static _powerFilter = localStorage.getItem(STORAGE_POWER_FILTER_KEY) || "all";
+  static _showPassives = localStorage.getItem(STORAGE_PASSIVE_OPEN_KEY) === "1";
+  static _showAttacks = localStorage.getItem(SECTION_TOGGLES.attacks.storageKey) !== "0";
+  static _showSpells = localStorage.getItem(SECTION_TOGGLES.spells.storageKey) !== "0";
+  static _showPowers = localStorage.getItem(SECTION_TOGGLES.powers.storageKey) !== "0";
 
   static init() {
     this._registerHooks();
@@ -435,17 +550,50 @@ export class TokenQuickActionsT20 {
 
     const actor = token.actor;
     const defenses = extractActorDefenses(actor);
-    const { attacks, spells, powers } = extractActorCombatItems(actor);
-    const { coreSkills, extraSkills } = extractActorSkills(actor);
+    const { attacks, spells, powers, inventoryItems, totalWeaponsCount, totalSpellsCount, totalPowersCount } = extractActorCombatItems(actor);
+    const { coreSkills, allSkills } = extractActorSkills(actor);
 
     const badgeText = actor.type === "npc"
       ? `ND ${actor.system?.attributes?.nd ?? "?"}`
       : `Nível ${actor.system?.attributes?.nivel?.value ?? 1}`;
 
+    const activePowers = powers.filter((p) => !p.isPassive);
+    const passivePowers = powers.filter((p) => p.isPassive);
+
+    // Filter powers according to selected action type
+    const currentFilter = this._powerFilter;
+    const filterPowers = (list) => {
+      if (currentFilter === "all") return list;
+      if (currentFilter === "action") return list.filter((p) => p.actionKey === "action");
+      if (currentFilter === "move") return list.filter((p) => p.actionKey === "move");
+      if (currentFilter === "free_react") return list.filter((p) => p.actionKey === "free" || p.actionKey === "reaction");
+      return list;
+    };
+
+    const visibleActivePowers = filterPowers(activePowers);
+    const visiblePassivePowers = filterPowers(passivePowers);
+
+    const powerFilters = [
+      { key: "all", label: "Todos", count: powers.length },
+      { key: "action", label: "Padrão", count: powers.filter((p) => p.actionKey === "action").length },
+      { key: "move", label: "Mov.", count: powers.filter((p) => p.actionKey === "move").length },
+      { key: "free_react", label: "Livre/Reação", count: powers.filter((p) => p.actionKey === "free" || p.actionKey === "reaction").length }
+    ].filter((f) => f.key === "all" || f.count > 0);
+
+    for (const f of powerFilters) {
+      f.isActive = f.key === currentFilter;
+    }
+
     const html = await foundry.applications.handlebars.renderTemplate(QA_TEMPLATE, {
       visible: true,
       collapsed: this._collapsed,
       showExtraSkills: this._showExtraSkills,
+      showPassives: this._showPassives,
+      showAttacks: this._showAttacks,
+      showSpells: this._showSpells,
+      showPowers: this._showPowers,
+      powerFilter: currentFilter,
+      powerFilters,
       name: token.name || actor.name,
       img: token.document?.texture?.src || actor.img,
       badgeText,
@@ -455,10 +603,20 @@ export class TokenQuickActionsT20 {
       defenseTooltip: defenses.defenseTooltip,
       spellDC: Number(actor.system?.attributes?.cd ?? 0) || null,
       coreSkills,
+      allSkills,
       attacks,
       spells,
+      spellCircles: groupSpellsByCircle(spells),
       powers,
-      extraSkills
+      inventoryItems,
+      hasWeaponsTotal: totalWeaponsCount > 0,
+      hasSpellsTotal: totalSpellsCount > 0,
+      hasPowersTotal: totalPowersCount > 0,
+      activePowers: visibleActivePowers,
+      passivePowers: visiblePassivePowers,
+      totalActiveCount: activePowers.length,
+      totalPassiveCount: passivePowers.length,
+      hasPassives: passivePowers.length > 0
     });
 
     root.innerHTML = html;
@@ -476,13 +634,64 @@ export class TokenQuickActionsT20 {
           this._collapsed = !this._collapsed;
           localStorage.setItem(STORAGE_COLLAPSE_KEY, this._collapsed ? "1" : "0");
           this.render();
-        } else if (action === "toggle-skills") {
-          this._showExtraSkills = !this._showExtraSkills;
-          localStorage.setItem(STORAGE_SKILLS_OPEN_KEY, this._showExtraSkills ? "1" : "0");
+        } else if (action === "toggle-skills" || action === "toggle-passives" || action === "toggle-section") {
+          const sectionKey =
+            action === "toggle-skills" ? "skills" : action === "toggle-passives" ? "passives" : btn.dataset.qaSection;
+          const toggle = SECTION_TOGGLES[sectionKey];
+          if (toggle) {
+            this[toggle.prop] = !this[toggle.prop];
+            localStorage.setItem(toggle.storageKey, this[toggle.prop] ? "1" : "0");
+            this.render();
+          }
+        } else if (action === "set-power-filter") {
+          const filter = btn.dataset.qaFilter || "all";
+          this._powerFilter = filter;
+          localStorage.setItem(STORAGE_POWER_FILTER_KEY, filter);
           this.render();
         }
       });
     });
+
+    root.querySelectorAll("[data-qa-fav-toggle]").forEach((btn) => {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const itemId = btn.dataset.qaFavToggle;
+        if (!itemId || !actor?.isOwner) return;
+        const item = actor.items?.get(itemId);
+        if (!item) return;
+
+        const current = Boolean(item.flags?.tormenta20?.favorito);
+        await item.setFlag("tormenta20", "favorito", !current);
+        this.render();
+      });
+    });
+
+    const skillSearchInput = root.querySelector(".t20pf2e-qa-skill-search-input");
+    const skillSearchClear = root.querySelector(".t20pf2e-qa-search-clear");
+    const skillChips = root.querySelectorAll(".t20pf2e-qa-skills-list .is-extra-skill");
+
+    if (skillSearchInput) {
+      skillSearchInput.addEventListener("input", () => {
+        const query = skillSearchInput.value.toLowerCase().trim();
+        if (skillSearchClear) skillSearchClear.style.display = query ? "inline-flex" : "none";
+        skillChips.forEach((chip) => {
+          const name = (chip.dataset.skillName || chip.textContent || "").toLowerCase();
+          chip.style.display = name.includes(query) ? "" : "none";
+        });
+      });
+
+      if (skillSearchClear) {
+        skillSearchClear.addEventListener("click", () => {
+          skillSearchInput.value = "";
+          skillSearchClear.style.display = "none";
+          skillChips.forEach((chip) => {
+            chip.style.display = "";
+          });
+          skillSearchInput.focus();
+        });
+      }
+    }
 
     root.querySelectorAll("[data-qa-skill]").forEach((btn) => {
       btn.addEventListener("click", (ev) => {

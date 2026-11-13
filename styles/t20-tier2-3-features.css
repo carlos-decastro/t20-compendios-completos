@@ -1541,6 +1541,36 @@
   color: #6d1313;
 }
 
+.t20pf2e-quick-actions button.t20pf2e-qa-sec-toggle {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  cursor: pointer;
+  font-family: inherit;
+  line-height: inherit;
+}
+
+.t20pf2e-quick-actions button.t20pf2e-qa-sec-toggle:hover,
+.t20pf2e-quick-actions button.t20pf2e-qa-sec-toggle:focus {
+  background: transparent;
+  box-shadow: none;
+  color: #8b1b1b;
+}
+
+.t20pf2e-qa-sec-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.t20pf2e-qa-sec-chev {
+  font-size: 10px;
+  opacity: 0.75;
+}
+
 .t20pf2e-qa-sec-hint {
   font-size: 10px;
   font-weight: 600;
@@ -1728,6 +1758,189 @@
   color: #ffffff;
 }
 
+.t20pf2e-qa-chip.is-item {
+  background: #fbf5ea;
+  border-color: #9c8a78;
+  color: #2b1f17;
+}
+
+.t20pf2e-qa-chip.is-item:hover {
+  background: #f5e8d2;
+  border-color: #7d1b1b;
+  color: #7d1b1b;
+}
+
+.t20pf2e-qa-chip.is-item i {
+  color: #8c5b38;
+}
+
+.t20pf2e-qa-chip.is-item strong {
+  margin-left: 4px;
+  font-size: 9.5px;
+  color: #7d1b1b;
+}
+
+/* Quick Actions: Power Filter Bar & Action Type Badges */
+.t20pf2e-qa-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-bottom: 5px;
+}
+
+.t20pf2e-qa-filter-btn {
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 3px;
+  border: 1px solid #cbb697;
+  background: #fbf5e9;
+  color: #4b3d33;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  line-height: 1;
+}
+
+.t20pf2e-qa-filter-btn:hover {
+  background: #eddcc2;
+  border-color: #7d1b1b;
+  color: #1f140c;
+}
+
+.t20pf2e-qa-filter-btn.is-active {
+  background: #7d1b1b;
+  border-color: #591111;
+  color: #fff6e6;
+  font-weight: 700;
+}
+
+.t20pf2e-qa-filter-btn.is-fav {
+  border-color: #d97706;
+}
+
+.t20pf2e-qa-filter-btn.is-fav.is-active {
+  background: #b45309;
+  border-color: #78350f;
+}
+
+.t20pf2e-qa-fcount {
+  font-size: 9px;
+  opacity: 0.85;
+}
+
+.t20pf2e-qa-chip-group {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 4px;
+  border: 1px solid #d6b672;
+  background: #fdf6e7;
+  overflow: hidden;
+  max-width: 100%;
+}
+
+.t20pf2e-qa-chip-group.is-favorite {
+  border-color: #d97706;
+  background: #fef9ed;
+  box-shadow: 0 0 3px rgba(217, 119, 6, 0.4);
+}
+
+.t20pf2e-qa-chip-group .t20pf2e-qa-chip.is-power {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  padding: 3px 5px;
+  max-width: calc(100% - 20px);
+}
+
+.t20pf2e-qa-chip-group.is-passive {
+  border-color: #cbb99e;
+  background: #f4ece0;
+}
+
+.t20pf2e-qa-act-badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 3px;
+  background: rgba(125, 27, 27, 0.12);
+  color: #7d1b1b;
+  white-space: nowrap;
+}
+
+.t20pf2e-qa-chip-group:hover .t20pf2e-qa-act-badge {
+  background: #7d1b1b;
+  color: #fff6e6;
+}
+
+.t20pf2e-qa-fav-btn {
+  width: 20px;
+  height: 22px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-left: 1px solid rgba(203, 182, 151, 0.5);
+  color: #9c8a77;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9.5px;
+  flex-shrink: 0;
+}
+
+.t20pf2e-qa-fav-btn:hover {
+  background: rgba(217, 119, 6, 0.15);
+  color: #b45309;
+}
+
+.t20pf2e-qa-fav-btn.is-active {
+  color: #d97706;
+}
+
+.t20pf2e-qa-pw-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.t20pf2e-qa-passives-wrap {
+  margin-top: 6px;
+  padding-top: 5px;
+  border-top: 1px dashed #d9c8ae;
+}
+
+.t20pf2e-qa-toggle-passives {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 6px;
+  border-radius: 4px;
+  border: 1px solid #cbb99e;
+  background: #f4ede1;
+  color: #5c473b;
+  font-size: 10.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.t20pf2e-qa-toggle-passives:hover,
+.t20pf2e-qa-toggle-passives.is-open {
+  background: #e8d9c2;
+  border-color: #9c8466;
+  color: #2b1f17;
+}
+
+.t20pf2e-qa-empty-hint {
+  font-size: 11px;
+  color: #7a6857;
+  font-style: italic;
+  padding: 2px 4px;
+}
+
 .t20pf2e-qa-pm {
   font-style: normal;
   font-size: 9.5px;
@@ -1753,6 +1966,200 @@
 
 .t20pf2e-qa-toggle-skills:hover {
   color: #7d1b1b;
+}
+
+.t20pf2e-qa-skill-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin: 4px 0 6px 0;
+}
+
+.t20pf2e-qa-search-icon {
+  position: absolute;
+  left: 7px;
+  color: #8c7866;
+  font-size: 10px;
+  pointer-events: none;
+}
+
+.t20pf2e-qa-skill-search-input {
+  width: 100% !important;
+  height: 22px !important;
+  padding: 2px 22px 2px 24px !important;
+  border-radius: 4px !important;
+  border: 1px solid #c9b99d !important;
+  background: #fbf8f2 !important;
+  color: #2b1f17 !important;
+  font-size: 11px !important;
+  font-family: inherit !important;
+  box-sizing: border-box !important;
+}
+
+.t20pf2e-qa-skill-search-input:focus {
+  border-color: #7d1b1b !important;
+  outline: none !important;
+  background: #fffdf9 !important;
+  box-shadow: 0 0 3px rgba(125, 27, 27, 0.25) !important;
+}
+
+.t20pf2e-qa-search-clear {
+  position: absolute;
+  right: 5px;
+  background: none;
+  border: none;
+  color: #8c7866;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.t20pf2e-qa-search-clear:hover {
+  color: #7d1b1b;
+}
+
+.t20pf2e-qa-chip.is-extra-skill.is-trained {
+  background: #fdf5e2;
+  border-color: #b58d52;
+  font-weight: 700;
+  color: #2b1f17;
+}
+
+/* 3 columns per row for Skills with smooth scrolling */
+.t20pf2e-qa-skills-list {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 4px !important;
+  max-height: 195px;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-right: 3px;
+  scrollbar-width: thin;
+  scrollbar-color: #c9b99d transparent;
+}
+
+.t20pf2e-qa-skills-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.t20pf2e-qa-skills-list::-webkit-scrollbar-thumb {
+  background: #c9b99d;
+  border-radius: 3px;
+}
+
+.t20pf2e-qa-skills-list .t20pf2e-qa-chip.is-extra-skill {
+  width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 2px 4px !important;
+  font-size: 10.5px !important;
+  height: 22px;
+}
+
+.t20pf2e-qa-skills-list .t20pf2e-qa-chip.is-extra-skill span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10px;
+  text-align: left;
+}
+
+.t20pf2e-qa-skills-list .t20pf2e-qa-chip.is-extra-skill strong {
+  margin-left: 3px;
+  font-size: 10px;
+  flex-shrink: 0;
+}
+
+/* Token Quick Actions: Spells grouped by circle in aligned 2-column grid */
+.t20pf2e-qa-circle-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.t20pf2e-qa-circle-group:last-child {
+  margin-bottom: 0;
+}
+
+.t20pf2e-qa-circle-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #1e4f8c;
+  border-bottom: 1px solid rgba(136, 174, 220, 0.45);
+  padding: 0 2px 2px 2px;
+}
+
+.t20pf2e-qa-circle-label em {
+  font-style: normal;
+  font-size: 9.5px;
+  color: #5b789b;
+}
+
+.t20pf2e-qa-spell-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.t20pf2e-qa-spell-grid .t20pf2e-qa-chip.is-spell {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 3px 6px;
+  height: 24px;
+}
+
+.t20pf2e-qa-spell-grid .t20pf2e-qa-chip.is-spell i {
+  flex-shrink: 0;
+  font-size: 10px;
+}
+
+.t20pf2e-qa-spell-grid .t20pf2e-qa-chip.is-spell span {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.t20pf2e-qa-spell-grid .t20pf2e-qa-chip.is-spell .t20pf2e-qa-pm {
+  flex-shrink: 0;
+}
+
+.t20pf2e-qa-empty-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #7a6857;
+  font-style: italic;
+  padding: 4px 6px;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 4px;
+}
+
+.t20pf2e-qa-empty-hint i {
+  color: #b58d52;
+  font-size: 12px;
+  flex-shrink: 0;
 }
 
 /* Conjurar Arma Weapon Picker Dialog */

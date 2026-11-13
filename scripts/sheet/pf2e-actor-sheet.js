@@ -13,7 +13,7 @@ import {
   levelUpClassOnActor,
   promptArcanistaPathDialog
 } from "../automation/character-builders.js";
-import { normalizeProgressKey } from "../data/class-progression-rules.js";
+import { getClassProgressionRule, normalizeProgressKey } from "../data/class-progression-rules.js";
 import {
   computeActorProgression,
   syncClassLevelProgression
@@ -222,6 +222,44 @@ export function buildPF2eSheetClass() {
         });
       });
 
+      // Remove Class when added by mistake or at Level 1
+      html.find("[data-pf2e-delete-class]").click(async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        if (!this.actor.isOwner) return;
+        const clsId = ev.currentTarget.dataset.pf2eDeleteClass;
+        const cls = this.actor.items.get(clsId);
+        if (!cls) return;
+
+        const ok = await foundry.applications.api.DialogV2.confirm({
+          window: { title: `Remover Classe — ${cls.name}` },
+          content: `<p>Remover a classe <strong>${cls.name}</strong> (Nível 1) do personagem?</p><p class="t20pf2e-muted">Todas as habilidades e poderes desta classe serão removidos da ficha.</p>`,
+          yes: { label: "Remover Classe" },
+          no: { label: "Cancelar" }
+        });
+        if (!ok) return;
+
+        const rule = getClassProgressionRule(cls.name);
+        const ruleKey = rule?.key || normalizeProgressKey(cls.name);
+        const deleteIds = new Set([cls.id]);
+
+        for (const it of this.actor.items) {
+          if (it.type !== "poder" && it.type !== "habilidade") continue;
+          const flags = it.flags?.[MODULE_ID] || {};
+          const isClassItem =
+            flags.classItemId === cls.id ||
+            flags.classKey === ruleKey ||
+            (flags.slotId && flags.slotId.startsWith(`${ruleKey}:`));
+
+          if (isClassItem) {
+            deleteIds.add(it.id);
+          }
+        }
+
+        await this.actor.deleteEmbeddedDocuments("Item", Array.from(deleteIds));
+        ui.notifications.info(`Classe ${cls.name} e habilidades vinculadas foram removidas de ${this.actor.name}.`);
+      });
+
       // Open contextual Compendium Browser to fill/replace a specific Progression Power Slot
       html.find("[data-pf2e-pick-slot]").click((ev) => {
         ev.preventDefault();
@@ -318,6 +356,7 @@ export function buildPF2eSheetClass() {
       });
 
       this._enhanceEquipmentAndCombatControls(rootEl);
+      this._enhanceFavoritesOnSheet(rootEl);
 
       const trainedBtn = html.find('[data-skill-only="trained"]');
       if (this._onlyTrainedSkills) trainedBtn.addClass("active");
@@ -475,21 +514,32 @@ export function buildPF2eSheetClass() {
             const is2H = equipmentSlots ? Math.floor(slotVal) === 12 : item.system?.equipado === 2;
             const is1H = equipmentSlots ? (slotVal > 0 && !is2H) : item.system?.equipado === 1;
             const can1H = item.system?.empunhadura !== "duas";
-            const isEquipped = is1H || is2H;
+            const can2H = item.system?.empunhadura !== "uma";
+
+            let badgeText = "Des.";
+            let badgeClass = "";
+            let badgeTitle = "Desequipada (clique para equipar)";
+            let nextMode = can1H ? 1 : 2;
+
+            if (is2H) {
+              badgeText = "2M";
+              badgeClass = "is-active-2h";
+              badgeTitle = "Equipada com 2 Mãos (clique para desequipar)";
+              nextMode = 0;
+            } else if (is1H) {
+              badgeText = "1M";
+              badgeClass = "is-active";
+              badgeTitle = can2H ? "Equipada em 1 Mão (clique para 2 Mãos)" : "Equipada em 1 Mão (clique para desequipar)";
+              nextMode = can2H ? 2 : 0;
+            }
 
             eqCell.innerHTML = `<div class="pf2e-equip-toggles">
-              ${can1H ? `<button type="button" class="pf2e-equip-btn ${is1H ? "is-active" : ""}" data-eq-mode="1" title="Equipar em 1 Mão">1M</button>` : ""}
-              <button type="button" class="pf2e-equip-btn ${is2H ? "is-active-2h" : ""}" data-eq-mode="2" title="Equipar com 2 Mãos">2M</button>
-              ${isEquipped ? `<button type="button" class="pf2e-equip-btn" data-eq-mode="0" title="Desequipar">Des.</button>` : ""}
+              <button type="button" class="pf2e-equip-btn ${badgeClass}" data-next-mode="${nextMode}" title="${badgeTitle}">${badgeText}</button>
             </div>`;
-            eqCell.querySelectorAll("[data-eq-mode]").forEach((btn) => {
-              btn.addEventListener("click", (ev) => {
-                ev.preventDefault();
-                ev.stopPropagation();
-                const reqMode = Number(btn.dataset.eqMode);
-                const nextMode = ((reqMode === 1 && is1H) || (reqMode === 2 && is2H)) ? 0 : reqMode;
-                setEquipMode(item, nextMode);
-              });
+            eqCell.querySelector("[data-next-mode]")?.addEventListener("click", (ev) => {
+              ev.preventDefault();
+              ev.stopPropagation();
+              setEquipMode(item, nextMode);
             });
           } else if (item.type === "equipamento") {
             const isEquipped = equipmentSlots ? slotVal > 0 : Boolean(item.system?.equipado);
@@ -528,6 +578,50 @@ export function buildPF2eSheetClass() {
             }
             rollsCell.appendChild(wrap);
           }
+        }
+      });
+    }
+
+    _enhanceFavoritesOnSheet(rootEl) {
+      if (!rootEl || !this.actor?.isOwner) return;
+
+      const validCombatTypes = new Set(["arma"]);
+      const validInventoryTypes = new Set(["equipamento", "consumivel", "tesouro"]);
+      const validPowerSpellTypes = new Set(["magia", "poder"]);
+
+      const selector = ".tab.combat .item[data-item-id], .tab.powers .item[data-item-id], .tab.spells .item[data-item-id], .tab.inventory .item[data-item-id]";
+
+      rootEl.querySelectorAll(selector).forEach((row) => {
+        const itemId = row.dataset.itemId;
+        const item = this.actor.items.get(itemId);
+        if (!item) return;
+
+        // Skip weapons in inventory tab (weapons are favorited in combat tab)
+        const inInv = row.closest(".tab.inventory");
+        const inCombat = row.closest(".tab.combat");
+        if (inInv && !validInventoryTypes.has(item.type)) return;
+        if (inCombat && !validCombatTypes.has(item.type)) return;
+        if (!inInv && !inCombat && !validPowerSpellTypes.has(item.type)) return;
+
+        if (row.querySelector(".pf2e-star-btn")) return;
+
+        const isFav = Boolean(item.flags?.tormenta20?.favorito);
+        const starBtn = document.createElement("a");
+        starBtn.className = `pf2e-star-btn ${isFav ? "is-favorite" : ""}`;
+        starBtn.dataset.tooltip = isFav ? "Remover dos Atalhos Rápidos (Favorito)" : "Adicionar aos Atalhos Rápidos (Favorito)";
+        starBtn.setAttribute("aria-label", "Favorito");
+        starBtn.innerHTML = `<i class="${isFav ? "fa-solid fa-star" : "fa-regular fa-star"}"></i>`;
+
+        starBtn.addEventListener("click", async (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          const current = Boolean(item.flags?.tormenta20?.favorito);
+          await item.setFlag("tormenta20", "favorito", !current);
+        });
+
+        const nameEl = row.querySelector(".item-name");
+        if (nameEl) {
+          nameEl.prepend(starBtn);
         }
       });
     }

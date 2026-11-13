@@ -47,78 +47,196 @@
         </section>
 
         {{!-- Ataques --}}
-        {{#if attacks.length}}
+        {{#if hasWeaponsTotal}}
           <section class="t20pf2e-qa-section">
-            <div class="t20pf2e-qa-sec-title">
+            <button type="button" class="t20pf2e-qa-sec-title t20pf2e-qa-sec-toggle" data-qa-action="toggle-section" data-qa-section="attacks" aria-expanded="{{#if showAttacks}}true{{else}}false{{/if}}">
               <span><i class="fa-solid fa-dice-d20"></i> Ataques</span>
-              <span class="t20pf2e-qa-sec-hint">1 clique rola</span>
-            </div>
-            <div class="t20pf2e-qa-grid">
-              {{#each attacks as |atk|}}
-                <button type="button" class="t20pf2e-qa-attack-btn" data-qa-item="{{atk.id}}" data-qa-grip="{{atk.grip}}" title="{{atk.tooltip}}">
-                  <span class="t20pf2e-qa-atk-main">
-                    <i class="fa-solid {{atk.icon}}"></i>
-                    <span class="t20pf2e-qa-atk-name">{{atk.name}}</span>
-                    {{#if atk.multi}}<em class="t20pf2e-qa-multi">{{atk.multi}}x</em>{{/if}}
-                  </span>
-                  <span class="t20pf2e-qa-atk-meta">
-                    {{#if atk.toHit}}<strong class="t20pf2e-qa-hit">{{atk.toHit}}</strong>{{/if}}
-                    {{#if atk.damage}}<span class="t20pf2e-qa-dmg">{{atk.damage}}</span>{{/if}}
-                  </span>
-                </button>
-              {{/each}}
-            </div>
+              <span class="t20pf2e-qa-sec-right">
+                {{#if attacks.length}}<span class="t20pf2e-qa-sec-hint">1 clique rola</span>{{/if}}
+                <i class="fa-solid fa-chevron-{{#if showAttacks}}up{{else}}down{{/if}} t20pf2e-qa-sec-chev"></i>
+              </span>
+            </button>
+            {{#if showAttacks}}
+              {{#if attacks.length}}
+                <div class="t20pf2e-qa-grid">
+                  {{#each attacks as |atk|}}
+                    <button type="button" class="t20pf2e-qa-attack-btn" data-qa-item="{{atk.id}}" data-qa-grip="{{atk.grip}}" title="{{atk.tooltip}}">
+                      <span class="t20pf2e-qa-atk-main">
+                        <i class="fa-solid {{atk.icon}}"></i>
+                        <span class="t20pf2e-qa-atk-name">{{atk.name}}</span>
+                        {{#if atk.multi}}<em class="t20pf2e-qa-multi">{{atk.multi}}x</em>{{/if}}
+                      </span>
+                      <span class="t20pf2e-qa-atk-meta">
+                        {{#if atk.toHit}}<strong class="t20pf2e-qa-hit">{{atk.toHit}}</strong>{{/if}}
+                        {{#if atk.damage}}<span class="t20pf2e-qa-dmg">{{atk.damage}}</span>{{/if}}
+                      </span>
+                    </button>
+                  {{/each}}
+                </div>
+              {{else}}
+                <span class="t20pf2e-qa-empty-hint">
+                  <i class="fa-regular fa-star"></i> Nenhum ataque favoritado na ficha. Marque a estrela ★ para exibir aqui.
+                </span>
+              {{/if}}
+            {{/if}}
           </section>
         {{/if}}
 
-        {{!-- Magias (somente se possuir) --}}
-        {{#if spells.length}}
+        {{!-- Magias (somente se possuir no grimório/ficha) --}}
+        {{#if hasSpellsTotal}}
           <section class="t20pf2e-qa-section">
-            <div class="t20pf2e-qa-sec-title">
+            <button type="button" class="t20pf2e-qa-sec-title t20pf2e-qa-sec-toggle" data-qa-action="toggle-section" data-qa-section="spells" aria-expanded="{{#if showSpells}}true{{else}}false{{/if}}">
               <span><i class="fa-solid fa-wand-sparkles"></i> Magias</span>
-              {{#if spellDC}}<span class="t20pf2e-qa-sec-dc">CD {{spellDC}}</span>{{/if}}
-            </div>
-            <div class="t20pf2e-qa-chips-wrap">
-              {{#each spells as |sp|}}
-                <button type="button" class="t20pf2e-qa-chip is-spell" data-qa-item="{{sp.id}}" title="{{sp.tooltip}}">
-                  <i class="fa-solid fa-wand-magic-sparkles"></i>
-                  <span>{{sp.name}}</span>
-                  {{#if sp.cost}}<em class="t20pf2e-qa-pm">{{sp.cost}}</em>{{/if}}
-                </button>
-              {{/each}}
-            </div>
+              <span class="t20pf2e-qa-sec-right">
+                {{#if spellDC}}<span class="t20pf2e-qa-sec-dc">CD {{spellDC}}</span>{{/if}}
+                <i class="fa-solid fa-chevron-{{#if showSpells}}up{{else}}down{{/if}} t20pf2e-qa-sec-chev"></i>
+              </span>
+            </button>
+            {{#if showSpells}}
+              {{#if spells.length}}
+                {{#each spellCircles as |grp|}}
+                  <div class="t20pf2e-qa-circle-group">
+                    <div class="t20pf2e-qa-circle-label">
+                      <span>{{grp.label}}</span>
+                      <em>{{grp.spells.length}}</em>
+                    </div>
+                    <div class="t20pf2e-qa-spell-grid">
+                      {{#each grp.spells as |sp|}}
+                        <button type="button" class="t20pf2e-qa-chip is-spell" data-qa-item="{{sp.id}}" title="{{sp.tooltip}}">
+                          <i class="fa-solid fa-wand-magic-sparkles"></i>
+                          <span>{{sp.name}}</span>
+                          {{#if sp.cost}}<em class="t20pf2e-qa-pm">{{sp.cost}}</em>{{/if}}
+                        </button>
+                      {{/each}}
+                    </div>
+                  </div>
+                {{/each}}
+              {{else}}
+                <span class="t20pf2e-qa-empty-hint">
+                  <i class="fa-regular fa-star"></i> Nenhuma magia favoritada (marque a ★ na ficha).
+                </span>
+              {{/if}}
+            {{/if}}
           </section>
         {{/if}}
 
         {{!-- Poderes / Habilidades Especiais (somente se possuir) --}}
-        {{#if powers.length}}
-          <section class="t20pf2e-qa-section">
-            <div class="t20pf2e-qa-sec-title">
+        {{#if hasPowersTotal}}
+          <section class="t20pf2e-qa-section is-powers">
+            <button type="button" class="t20pf2e-qa-sec-title t20pf2e-qa-sec-toggle" data-qa-action="toggle-section" data-qa-section="powers" aria-expanded="{{#if showPowers}}true{{else}}false{{/if}}">
               <span><i class="fa-solid fa-bolt"></i> Habilidades</span>
-              <span class="t20pf2e-qa-sec-hint">{{powers.length}}</span>
+              <span class="t20pf2e-qa-sec-right">
+                <span class="t20pf2e-qa-sec-hint">{{powers.length}}</span>
+                <i class="fa-solid fa-chevron-{{#if showPowers}}up{{else}}down{{/if}} t20pf2e-qa-sec-chev"></i>
+              </span>
+            </button>
+
+            {{#if showPowers}}
+
+            {{#if powers.length}}
+              {{!-- Filtros de Tipo de Ação --}}
+              {{#if (gt powerFilters.length 1)}}
+                <div class="t20pf2e-qa-filter-bar">
+                  {{#each powerFilters as |f|}}
+                    <button type="button"
+                      class="t20pf2e-qa-filter-btn {{#if f.isActive}}is-active{{/if}}"
+                      data-qa-action="set-power-filter" data-qa-filter="{{f.key}}">
+                      {{f.label}} <span class="t20pf2e-qa-fcount">{{f.count}}</span>
+                    </button>
+                  {{/each}}
+                </div>
+              {{/if}}
+
+              {{!-- Habilidades Ativas / em Ação --}}
+              <div class="t20pf2e-qa-chips-wrap">
+                {{#each activePowers as |pw|}}
+                  <div class="t20pf2e-qa-chip-group is-power {{#if pw.isFavorite}}is-favorite{{/if}}">
+                    <button type="button" class="t20pf2e-qa-chip is-power" data-qa-item="{{pw.id}}" title="{{pw.tooltip}}">
+                      <span class="t20pf2e-qa-act-badge" title="{{pw.actionLabel}}">{{pw.actionLabel}}</span>
+                      <span class="t20pf2e-qa-pw-name">{{pw.name}}</span>
+                      {{#if pw.cost}}<em class="t20pf2e-qa-pm">{{pw.cost}}</em>{{/if}}
+                    </button>
+                    <button type="button" class="t20pf2e-qa-fav-btn {{#if pw.isFavorite}}is-active{{/if}}"
+                      data-qa-fav-toggle="{{pw.id}}" title="{{#if pw.isFavorite}}Remover dos Favoritos{{else}}Adicionar aos Favoritos{{/if}}">
+                      <i class="fa-{{#if pw.isFavorite}}solid{{else}}regular{{/if}} fa-star"></i>
+                    </button>
+                  </div>
+                {{/each}}
+                {{#unless activePowers.length}}
+                  <span class="t20pf2e-qa-empty-hint">Nenhuma habilidade ativa deste tipo.</span>
+                {{/unless}}
+              </div>
+
+              {{!-- Gaveta Recolhível de Habilidades Passivas --}}
+              {{#if hasPassives}}
+                <div class="t20pf2e-qa-passives-wrap">
+                  <button type="button" class="t20pf2e-qa-toggle-passives {{#if showPassives}}is-open{{/if}}" data-qa-action="toggle-passives">
+                    <span><i class="fa-solid fa-shield-halved"></i> Habilidades Passivas ({{totalPassiveCount}})</span>
+                    <i class="fa-solid {{#if showPassives}}fa-chevron-up{{else}}fa-chevron-down{{/if}}"></i>
+                  </button>
+                  {{#if showPassives}}
+                    <div class="t20pf2e-qa-chips-wrap is-spaced">
+                      {{#each passivePowers as |pw|}}
+                        <div class="t20pf2e-qa-chip-group is-power is-passive {{#if pw.isFavorite}}is-favorite{{/if}}">
+                          <button type="button" class="t20pf2e-qa-chip is-power is-passive" data-qa-item="{{pw.id}}" title="{{pw.tooltip}}">
+                            <span class="t20pf2e-qa-pw-name">{{pw.name}}</span>
+                          </button>
+                          <button type="button" class="t20pf2e-qa-fav-btn {{#if pw.isFavorite}}is-active{{/if}}"
+                            data-qa-fav-toggle="{{pw.id}}" title="{{#if pw.isFavorite}}Remover dos Favoritos{{else}}Adicionar aos Favoritos{{/if}}">
+                            <i class="fa-{{#if pw.isFavorite}}solid{{else}}regular{{/if}} fa-star"></i>
+                          </button>
+                        </div>
+                      {{/each}}
+                    </div>
+                  {{/if}}
+                </div>
+              {{/if}}
+            {{else}}
+              <span class="t20pf2e-qa-empty-hint">
+                <i class="fa-regular fa-star"></i> Nenhuma habilidade favoritada (marque a ★ na ficha).
+              </span>
+            {{/if}}
+            {{/if}}
+          </section>
+        {{/if}}
+
+        {{!-- Itens & Consumíveis Favoritados --}}
+        {{#if inventoryItems.length}}
+          <section class="t20pf2e-qa-section is-inventory-items">
+            <div class="t20pf2e-qa-sec-title">
+              <span><i class="fa-solid fa-flask"></i> Itens & Consumíveis</span>
+              <span class="t20pf2e-qa-sec-hint">{{inventoryItems.length}}</span>
             </div>
             <div class="t20pf2e-qa-chips-wrap">
-              {{#each powers as |pw|}}
-                <button type="button" class="t20pf2e-qa-chip is-power" data-qa-item="{{pw.id}}" title="{{pw.tooltip}}">
-                  <span>{{pw.name}}</span>
-                  {{#if pw.cost}}<em class="t20pf2e-qa-pm">{{pw.cost}}</em>{{/if}}
+              {{#each inventoryItems as |it|}}
+                <button type="button" class="t20pf2e-qa-chip is-item" data-qa-item="{{it.id}}" title="{{it.tooltip}}">
+                  <i class="fa-solid {{it.icon}}"></i>
+                  <span>{{it.name}}</span>
+                  {{#if it.qtd}}<strong>{{it.qtd}}</strong>{{/if}}
                 </button>
               {{/each}}
             </div>
           </section>
         {{/if}}
 
-        {{!-- Perícias Extras (treinadas/relevantes, se possuir) --}}
-        {{#if extraSkills.length}}
+        {{!-- Perícias Gerais (Busca em Tempo Real + Lista Completa) --}}
+        {{#if allSkills.length}}
           <section class="t20pf2e-qa-section is-extra-skills">
             <button type="button" class="t20pf2e-qa-toggle-skills" data-qa-action="toggle-skills">
-              <span><i class="fa-solid fa-list-check"></i> Outras Perícias ({{extraSkills.length}})</span>
+              <span><i class="fa-solid fa-graduation-cap"></i> Perícias ({{allSkills.length}})</span>
               <i class="fa-solid {{#if showExtraSkills}}fa-chevron-up{{else}}fa-chevron-down{{/if}}"></i>
             </button>
             {{#if showExtraSkills}}
-              <div class="t20pf2e-qa-chips-wrap is-spaced">
-                {{#each extraSkills as |sk|}}
-                  <button type="button" class="t20pf2e-qa-chip is-extra-skill" data-qa-skill="{{sk.key}}" title="Rolar {{sk.label}}">
+              <div class="t20pf2e-qa-skill-search-wrap">
+                <i class="fa-solid fa-magnifying-glass t20pf2e-qa-search-icon"></i>
+                <input type="text" class="t20pf2e-qa-skill-search-input" placeholder="Filtrar perícia..." autocomplete="off">
+                <button type="button" class="t20pf2e-qa-search-clear" title="Limpar busca" style="display: none;">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+              <div class="t20pf2e-qa-chips-wrap is-spaced t20pf2e-qa-skills-list">
+                {{#each allSkills as |sk|}}
+                  <button type="button" class="t20pf2e-qa-chip is-extra-skill {{#if sk.isTrained}}is-trained{{/if}}" data-qa-skill="{{sk.key}}" data-skill-name="{{sk.label}}" title="Rolar {{sk.label}}: {{sk.signed}}{{#if sk.isTrained}} (Treinada){{/if}}">
                     <span>{{sk.label}}</span>
                     <strong>{{sk.signed}}</strong>
                   </button>

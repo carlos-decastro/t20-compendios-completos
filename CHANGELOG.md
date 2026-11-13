@@ -2,6 +2,20 @@
 
 Todas as alterações notáveis deste módulo serão documentadas neste arquivo.
 
+## [0.4.1] — 2026-11-13
+
+### Adicionado
+- **HUD de Ações Rápidas (`TokenQuickActionsT20`)**:
+  - **Magias agrupadas por círculo** (1º ao 5º círculo) em grade alinhada de 2 colunas com contagem por círculo.
+  - **Seções minimizáveis**: cabeçalhos de **Ataques**, **Magias** e **Habilidades** agora recolhem e expandem com persistência no `localStorage`, assim como **Perícias**.
+  - Filtro de ativação (*Todos* / *Livre/Reação*) e painel recolhível dedicado para **Habilidades Passivas** e **Favoritos**.
+
+### Corrigido
+- **Ficha Moderna (`CharacterSheetT20`)**:
+  - Corrigido layout dos **Espaços de Progressão (Poderes)** para evitar sobreposição do botão *Escolher Poder* e melhorar o espaçamento interno.
+  - Removido painel redundante na aba **Combate** para que a tabela de *Armas & Ataques* ocupe toda a largura.
+  - Adicionado espaçamento entre itens nas listas de **Poderes**, **Habilidades de Classe**, **Magias** e **Inventário** (incluindo barra de moedas e carga), além de espaçamento no ícone de **Defesa**.
+
 ## [0.4.0] — 2026-11-12
 
 ### Adicionado

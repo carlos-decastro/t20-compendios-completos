@@ -192,6 +192,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  padding: 4px 0 2px 6px;
 }
 
 .pf2e-shield-badge {
@@ -206,6 +207,11 @@
 }
 
 .pf2e-shield-badge i {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 42px;
   color: #7a1c1c;
 }
@@ -595,7 +601,7 @@ nav.pf2e-nav .item.active {
 
 .pf2e-two-col {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 12px;
   align-items: start;
 }
@@ -657,6 +663,10 @@ nav.pf2e-nav .item.active {
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .pf2e-small-btn:hover {
@@ -1110,6 +1120,28 @@ nav.pf2e-nav .item.active {
   color: #7a1c1c;
 }
 
+.pf2e-lvl-del-btn {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border-radius: 4px;
+  border: 1px solid #c7b497;
+  background: #f4efe6;
+  color: #8c2d2d;
+  font-size: 10px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.pf2e-lvl-del-btn:hover {
+  background: #7d1b1b;
+  border-color: #5c1111;
+  color: #fff;
+}
+
 .pf2e-sync-warn {
   color: #9b1c1c;
 }
@@ -1191,17 +1223,20 @@ nav.pf2e-nav .item.active {
 .pf2e-slot-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 4px;
+  gap: 8px;
 }
 
 .pf2e-slot-row {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 6px;
+  gap: 8px;
+  padding: 4px 8px;
   border-radius: 4px;
   font-size: 11.5px;
-  min-height: 28px;
+  min-height: 32px;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .pf2e-slot-row.is-filled {
@@ -1211,7 +1246,7 @@ nav.pf2e-nav .item.active {
 
 .pf2e-slot-row.is-empty {
   background: #fdfaf4;
-  border: 1px dashed #b8860b;
+  border: 1.5px dashed #b8860b;
 }
 
 .pf2e-slot-lvl {
@@ -1262,7 +1297,8 @@ nav.pf2e-nav .item.active {
 }
 
 .pf2e-slot-placeholder {
-  flex: 1;
+  flex: 1 1 auto;
+  min-width: 0;
   color: #6b5b4b;
   font-style: italic;
   overflow: hidden;
@@ -1305,8 +1341,9 @@ nav.pf2e-nav .item.active {
   flex: none;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
+  justify-content: center;
+  gap: 5px;
+  padding: 4px 12px;
   border-radius: 4px;
   border: 1px solid #7a1c1c;
   background: #7a1c1c;
@@ -1314,10 +1351,38 @@ nav.pf2e-nav .item.active {
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
+  white-space: nowrap;
+  box-sizing: border-box;
+  margin-left: auto;
+  margin-right: 4px;
+  transition: all 0.15s ease;
 }
 
 .pf2e-slot-pick-btn:hover {
   background: #a42828;
+  border-color: #5c1111;
+}
+
+/* Override Foundry's global button sizing (width: 100%, tall height) inside slot rows */
+.pf2e-sheet .pf2e-slot-row .pf2e-slot-pick-btn {
+  width: auto !important;
+  max-width: max-content;
+  height: 24px !important;
+  min-height: 0 !important;
+  line-height: 1 !important;
+  flex: 0 0 auto !important;
+  padding: 0 10px !important;
+  margin: 0 0 0 auto !important;
+  font-size: 11px !important;
+}
+
+.pf2e-sheet .pf2e-slot-row .pf2e-slot-btn {
+  width: 20px !important;
+  height: 20px !important;
+  min-height: 0 !important;
+  line-height: 1 !important;
+  flex: 0 0 20px !important;
+  margin: 0 !important;
 }
 
 .pf2e-slot-empty-note {
@@ -1338,8 +1403,8 @@ nav.pf2e-nav .item.active {
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 4px;
+  gap: 8px;
+  margin-bottom: 6px;
 }
 
 .pf2e-caster-title {
@@ -1349,6 +1414,7 @@ nav.pf2e-nav .item.active {
   gap: 6px;
   font-size: 12px;
   color: #1f1916;
+  min-width: 0;
 }
 
 .pf2e-caster-badge {
@@ -1374,7 +1440,10 @@ nav.pf2e-nav .item.active {
 .pf2e-caster-actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  flex-shrink: 0;
   gap: 6px;
+  margin-left: auto;
 }
 
 .pf2e-caster-metrics {
@@ -1394,6 +1463,57 @@ nav.pf2e-nav .item.active {
 .pf2e-quota-over {
   color: #9a3412;
   font-style: italic;
+}
+
+/* ========================================================================== */
+/* ITEM LISTS (Poderes, Magias, Combate, Inventário): ROW SPACING & HOVER     */
+/* ========================================================================== */
+
+.pf2e-sheet .tab .item-list {
+  padding: 0;
+  list-style: none;
+  margin: 0 0 12px 0;
+}
+
+.pf2e-sheet .tab .item-list > .item.item-header {
+  margin-bottom: 4px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.pf2e-sheet .tab .item-list > .item.item-header .item-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  white-space: nowrap;
+}
+
+.pf2e-sheet .tab .item-list > .item.item-header .item-controls .item-create {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pf2e-sheet .tab .item-list > .item[data-item-id] {
+  margin-bottom: 4px;
+  padding: 3px 10px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  background: rgba(251, 248, 242, 0.35);
+  border: 1px solid rgba(199, 180, 151, 0.35);
+  align-items: center;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.pf2e-sheet .tab .item-list > .item[data-item-id]:hover {
+  background: rgba(251, 248, 242, 0.85);
+  border-color: #b8860b;
+}
+
+.pf2e-sheet .tab .item-list > .item[data-item-id]:last-child {
+  margin-bottom: 0;
 }
 
 /* Level-up Summary & Choice Modals */
@@ -1447,3 +1567,257 @@ nav.pf2e-nav .item.active {
   margin-bottom: 6px;
   font-size: 12px;
 }
+
+/* ========================================================================== */
+/* COMBAT TAB: ARMAS & ATAQUES FULL-WIDTH TABLE & FAVORITES                   */
+/* ========================================================================== */
+
+.pf2e-sheet .tab.combat .pf2e-combat-weapons-panel {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* Responsive Grid layout for Armas & Ataques in Combat Tab (Full Width) */
+.pf2e-sheet .tab.combat .item-list .item {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.2fr) 34px 30px 36px !important;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.pf2e-sheet .tab.combat .item-list .item.item-header > div {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pf2e-sheet .tab.combat .item-list .item .item-name {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.pf2e-sheet .tab.combat .item-list .item .item-name label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+  color: #3b2f2f;
+  font-size: 12px;
+}
+
+.pf2e-sheet .tab.combat .item-list .item .item-rolls {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11.5px;
+  color: #3b2f2f;
+  line-height: 1.2;
+}
+
+.pf2e-sheet .tab.combat .item-list .item .item-qty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.pf2e-sheet .tab.combat .item-list .item .item-qty input {
+  width: 30px !important;
+  height: 22px !important;
+  text-align: center;
+  padding: 0 !important;
+  margin: 0 auto !important;
+  border: 1px solid #c7b497;
+  border-radius: 3px;
+  background: #fffdf9;
+  font-weight: 600;
+  font-size: 11.5px;
+}
+
+.pf2e-sheet .tab.combat .item-list .item .item-weight {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #5d4f43;
+}
+
+.pf2e-sheet .tab.combat .item-list .item .item-equipped {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.pf2e-sheet .tab.combat .item-list .item.item-header .item-qty,
+.pf2e-sheet .tab.combat .item-list .item.item-header .item-weight,
+.pf2e-sheet .tab.combat .item-list .item.item-header .item-equipped {
+  justify-content: center;
+  text-align: center;
+  font-weight: 700;
+}
+
+/* Sheet Favorite Star (★) */
+.pf2e-star-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-right: 2px;
+  color: #b5a895;
+  font-size: 13px;
+  cursor: pointer;
+  transition: color 0.15s ease, transform 0.15s ease;
+  flex: 0 0 20px;
+  text-decoration: none;
+}
+
+.pf2e-star-btn:hover {
+  color: #d97706;
+  transform: scale(1.15);
+}
+
+.pf2e-star-btn.is-favorite {
+  color: #eab308;
+  text-shadow: 0 0 4px rgba(234, 179, 8, 0.4);
+}
+
+.pf2e-star-btn.is-favorite:hover {
+  color: #ca8a04;
+}
+
+/* ========================================================================== */
+/* INVENTORY TAB: UNIFIED 4-LIST TABLE ALIGNMENT                             */
+/* ========================================================================== */
+
+/* Breathing room between currency header, the 4 lists and the encumbrance bar */
+.pf2e-sheet .tab.inventory header.flexrow {
+  margin-bottom: 10px;
+  align-items: center;
+  gap: 6px;
+}
+
+.pf2e-sheet .tab.inventory .inventory-list {
+  margin-bottom: 10px;
+}
+
+.pf2e-sheet .tab.inventory .inventory-list > .item-list:last-child {
+  margin-bottom: 0;
+}
+
+.pf2e-sheet .tab.inventory .encumbrance {
+  margin-top: 0;
+}
+
+.pf2e-sheet .tab.inventory .item-list .item {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(100px, 150px) 44px 38px 56px !important;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  box-sizing: border-box;
+}
+
+/* In Consumables and Loot (lists without rolls/def), span name across first 2 columns */
+.pf2e-sheet .tab.inventory .item-list .item:not(:has(.item-rolls)):not(:has(.item-def)) .item-name {
+  grid-column: span 2 !important;
+}
+
+/* Structural selector for Consumables & Loot fallback */
+.pf2e-sheet .tab.inventory .inventory-list > ol.item-list:nth-child(3) .item .item-name,
+.pf2e-sheet .tab.inventory .inventory-list > ol.item-list:nth-child(4) .item .item-name {
+  grid-column: span 2 !important;
+}
+
+.pf2e-sheet .tab.inventory .item-list .item .item-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.pf2e-sheet .tab.inventory .item-list .item .item-name label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+  color: #3b2f2f;
+  font-size: 12px;
+}
+
+.pf2e-sheet .tab.inventory .item-list .item .item-rolls,
+.pf2e-sheet .tab.inventory .item-list .item .item-def {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11.5px;
+  color: #3b2f2f;
+}
+
+.pf2e-sheet .tab.inventory .item-list .item .item-qty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.pf2e-sheet .tab.inventory .item-list .item .item-qty input {
+  width: 30px !important;
+  height: 22px !important;
+  text-align: center;
+  padding: 0 !important;
+  margin: 0 auto !important;
+  border: 1px solid #c7b497;
+  border-radius: 3px;
+  background: #fffdf9;
+  font-weight: 600;
+  font-size: 11.5px;
+}
+
+.pf2e-sheet .tab.inventory .item-list .item .item-weight {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #5d4f43;
+}
+
+.pf2e-sheet .tab.inventory .item-list .item .item-equipped {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.pf2e-sheet .tab.inventory .item-list .item.item-header .item-qty,
+.pf2e-sheet .tab.inventory .item-list .item.item-header .item-weight,
+.pf2e-sheet .tab.inventory .item-list .item.item-header .item-equipped,
+.pf2e-sheet .tab.inventory .item-list .item.item-header .item-def,
+.pf2e-sheet .tab.inventory .item-list .item.item-header .item-rolls {
+  justify-content: center;
+  text-align: center;
+  font-weight: 700;
+}
+

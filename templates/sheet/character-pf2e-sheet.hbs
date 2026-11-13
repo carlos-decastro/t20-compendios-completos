@@ -207,11 +207,15 @@
               {{#each actor.classes as |cls|}}
                 <span class="item pf2e-class-pill" data-item-id="{{cls._id}}">
                   <a class="item-control" title="Abrir ficha da classe {{cls.name}}">{{cls.name}} {{cls.system.niveis}}</a>
-                  {{#unless (eq cls.system.niveis 1)}}
+                  {{#if (eq cls.system.niveis 1)}}
+                    <button type="button" class="pf2e-lvl-del-btn" data-pf2e-delete-class="{{cls._id}}" title="Remover Classe {{cls.name}}">
+                      <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                  {{else}}
                     <button type="button" class="pf2e-lvl-down-btn" data-pf2e-leveldown="{{cls._id}}" title="Reduzir -1 Nível em {{cls.name}}">
                       <i class="fa-solid fa-arrow-down"></i>
                     </button>
-                  {{/unless}}
+                  {{/if}}
                   <button type="button" class="pf2e-lvl-up-btn" data-pf2e-levelup="{{cls._id}}" title="Subir +1 Nível em {{cls.name}}">
                     <i class="fa-solid fa-arrow-up"></i>
                   </button>
@@ -324,7 +328,7 @@
       {{!-- TAB 2: COMBATE & AÇÕES --}}
       <div class="tab combat" data-group="primary" data-tab="combat">
         <div class="pf2e-tab-toolbar">
-          <span class="pf2e-tab-hint">Clique no ícone da arma, magia ou poder favorito para rolar diretamente no chat.</span>
+          <span class="pf2e-tab-hint">Clique no ícone da arma para rolar diretamente no chat, ou na estrela (★) para enviar aos atalhos rápidos.</span>
           <div class="pf2e-toolbar-btns" style="display:flex; gap:6px; flex-wrap:wrap;">
             <button type="button" class="pf2e-browse-cta" data-pf2e-browse="efeitos">
               <i class="fa-solid fa-bolt"></i> Ações &amp; Buffs
@@ -334,18 +338,12 @@
             </button>
           </div>
         </div>
-        <div class="pf2e-two-col">
-          <div class="pf2e-panel">
-            <h3 class="pf2e-panel-title"><i class="fa-solid fa-dagger"></i> Armas & Ataques</h3>
-            {{> "tormenta20.list-weapon"}}
-          </div>
-          <div class="pf2e-panel">
-            <h3 class="pf2e-panel-title"><i class="fa-solid fa-sparkles"></i> Ações & Favoritos</h3>
-            {{> "tormenta20.list-favorites"}}
-            {{#if system.resources.shadow}}
-              <div class="resource">{{> "tormenta20.resources-extra"}}</div>
-            {{/if}}
-          </div>
+        <div class="pf2e-panel pf2e-combat-weapons-panel">
+          <h3 class="pf2e-panel-title"><i class="fa-solid fa-dagger"></i> Armas & Ataques</h3>
+          {{> "tormenta20.list-weapon"}}
+          {{#if system.resources.shadow}}
+            <div class="resource">{{> "tormenta20.resources-extra"}}</div>
+          {{/if}}
         </div>
       </div>
 
@@ -433,7 +431,7 @@
                       {{else}}
                         <div class="pf2e-slot-row is-empty">
                           <span class="pf2e-slot-lvl" title="Patamar {{slot.tier.label}}">Nv {{slot.level}}</span>
-                          <span class="pf2e-slot-placeholder">{{slot.label}} ou Geral ({{slot.tier.label}})</span>
+                          <span class="pf2e-slot-placeholder" title="{{slot.label}} ou Geral ({{slot.tier.label}})">{{slot.label}} ou Geral</span>
                           <button type="button" class="pf2e-slot-pick-btn"
                                   data-pf2e-pick-slot="1"
                                   data-slot-id="{{slot.slotId}}"
